@@ -1,5 +1,13 @@
 # PersonalOS — Domain Glossary
 
+## Withdrawal
+
+The act of a Soul moving Yield from their Wallet to an external destination. Withdrawals are processed in USDC stablecoin as the primary Payment Rail. Fiat off-ramps (Stripe/UPI) are secondary options. The domain is decoupled from any specific rail.
+
+## Payment Rail
+
+The external payment infrastructure used to process Withdrawals. Primary: USDC stablecoin on Base (Coinbase L2). Secondary: fiat rails (Stripe for US, UPI for India) via Coinbase's built-in on/off-ramp. Brands pay PersonalOS in fiat; PersonalOS converts to USDC before depositing Yield into a Soul's Wallet.
+
 ## Platinum
 
 A premium Soul subscription tier. Platinum Souls have verified higher Depth, making their Insights more accurate and valuable. The Exchange exposes Platinum Souls to higher-value Listings not available to standard Souls. Brands pay a premium bid to target Platinum Souls exclusively. The subscription fee is designed to be offset by higher Yield earned through premium Listings.
@@ -7,6 +15,10 @@ A premium Soul subscription tier. Platinum Souls have verified higher Depth, mak
 ## Revenue Streams
 
 PersonalOS earns through three mechanisms: (1) a take rate on every Claim — a percentage of the Brand's payment before Yield is deposited into the Soul's Wallet; (2) a Brand subscription for Exchange access; (3) a Platinum Soul subscription fee. The take rate aligns platform incentives with Soul earnings — PersonalOS makes more when Souls make more.
+
+## MVP Scope
+
+The first version proves money moves end to end. Constraints: one Signal Type (`financial.discretionary_spend`), one Provider (Plaid), one test Brand. A Soul connects their bank via Plaid, Transaktions Harvest into an E2E encrypted Ledger, local Cultivation produces an Insight score, the Exchange matches to a Listing, the Soul receives and Claims an Offer, USDC Yield lands in their Coinbase Smart Wallet.
 
 ## Signal Type
 
@@ -26,11 +38,15 @@ The marketplace where Brand Listings are matched to Souls based on their Insight
 
 ## Listing
 
-What a Brand puts into the marketplace: a target Insight category, a bid price, and the content to show a matching Soul. A Listing is active until its budget is exhausted or it is withdrawn. One Listing produces many Offers.
+What a Brand puts into the marketplace: a target Signal Type, a bid price per Claim, and the content to show a matching Soul. A Listing requires a pre-funded Budget in USDC held in escrow on Base. The Listing is active only while Budget remains. When a Claim is made, the Claim amount moves atomically from escrow to PersonalOS (fee) and the Soul's Wallet (Yield) via smart contract. One Listing produces many Offers.
+
+## Budget
+
+The USDC amount a Brand deposits into escrow on Base before a Listing goes live. A Listing is inactive without a Budget. As Claims are made, the Budget is drawn down. When the Budget is exhausted, the Listing deactivates automatically.
 
 ## Wallet
 
-A Soul's store of accumulated Yield within PersonalOS. A Soul has exactly one Wallet. The Wallet balance can be withdrawn or held. It grows only through Claims.
+A Soul's on-chain USDC wallet on Base (Coinbase L2), provisioned automatically via Coinbase Smart Wallet when a Soul joins. Keys are custodied via passkey/biometrics — no seed phrase required. Yield is deposited directly on-chain. A Soul can export their wallet at any time, achieving full non-custodial sovereignty if they choose. PersonalOS cannot access a Soul's Wallet funds.
 
 ## Yield
 
@@ -58,7 +74,7 @@ The process of recomputing a Soul's Insights from their Ledger. A Cultivation is
 
 ## Ledger
 
-The secure, append-only store of all Transaktions belonging to a Soul. Each Soul has exactly one Ledger. The Ledger is the canonical record of a Soul's data — nothing is deleted, only superseded. A Soul controls what leaves their Ledger.
+The secure, append-only store of all Transaktions belonging to a Soul. Each Soul has exactly one Ledger. Transaktions are end-to-end encrypted with the Soul's passkey (iCloud Keychain-backed on iOS) and stored permanently on Arweave via Irys bundling. PersonalOS never holds or reads the ciphertext. The Soul's device decrypts the Ledger locally; Cultivation runs on-device against the decrypted data; only Insight scores leave the device. The Ledger is the canonical record of a Soul's data — nothing is deleted, only superseded.
 
 ## Soul
 

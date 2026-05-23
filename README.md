@@ -62,4 +62,20 @@ The following areas are **not yet resolved** (continue grilling):
 
 ## Tech Stack
 
-Not yet decided. Domain modeling is in progress before any implementation choices are made.
+- **iOS app (Swift)** — primary client; Cultivation runs here, Coinbase Smart Wallet SDK, Plaid Link SDK
+- **Backend (TypeScript/Node.js)** — Exchange matching service, Insight score ingestion, Brand/Listing API
+- **Smart contracts (Solidity on Base)** — Budget escrow, atomic Claim settlement
+- **Storage** — Arweave via Irys (encrypted Ledger), PersonalOS server (Insight scores only)
+- **Payments** — USDC on Base (primary), Coinbase on/off-ramp for fiat Withdrawal
+
+## Architecture Decisions
+
+Key decisions are recorded in [`docs/adr/`](./docs/adr/):
+
+| ADR | Decision |
+|---|---|
+| [0001](./docs/adr/0001-continuous-exchange-matching.md) | Exchange runs continuous real-time matching |
+| [0002](./docs/adr/0002-base-usdc-payment-rail.md) | Base chain + USDC as primary Payment Rail |
+| [0003](./docs/adr/0003-e2e-encrypted-ledger-local-cultivation.md) | E2E encrypted Ledger, Cultivation runs on-device |
+| [0004](./docs/adr/0004-arweave-ledger-storage.md) | Arweave via Irys for permanent Ledger storage |
+| [0005](./docs/adr/0005-coinbase-smart-wallet.md) | Coinbase Smart Wallet for Soul Wallets |
