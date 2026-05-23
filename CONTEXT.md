@@ -62,7 +62,7 @@ What a Soul receives when their Insights match an active Listing. An Offer is sp
 
 ## Brand
 
-A company or advertiser that bids to reach Souls with relevant Insights. A Brand is the buyer in the PersonalOS marketplace. Brands bid for the right to make an Offer to a matching Soul — they never receive raw Transaktions or Insight scores. A Brand only learns a Soul responded to an Offer, nothing more.
+A company or advertiser that bids to reach Souls with relevant Insights. A Brand is the buyer in the PersonalOS marketplace. Brands bid for the right to make an Offer to a matching Soul — they never receive raw Transaktions or Insight scores. A Brand only learns a Soul responded to an Offer, nothing more. A funded Budget is a Brand's only credential — no KYB or identity verification is required. Listing content is reviewed before activation to prevent fraudulent Offers.
 
 ## Insight
 
