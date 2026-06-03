@@ -515,7 +515,7 @@ erDiagram
             <li><span class="field-name">version</span>    <span class="field-type">text (semver)</span></li>
           </ul>
           <div class="card-note info">
-            Owned and versioned by PersonalOS. Brands target a Signal Type when creating a Listing; Souls grant Permits per Signal Type.
+            Owned and versioned by PersonalOS. Brands target a Signal Type when creating a Listing; Souls grant Consents per Signal Type.
           </div>
         </div>
       </div>
@@ -537,7 +537,7 @@ erDiagram
             <li><span class="field-name">computed_at</span>         <span class="field-type">timestamptz</span></li>
           </ul>
           <div class="card-note info">
-            Derived propensity score. Computed on-device during Cultivation — only scores leave the device, never raw Transaktions. <strong>algorithm_version</strong> tracks which Cultivation algorithm produced this score. <strong>is_stale</strong> is set true when a new algorithm ships and re-cultivation is pending; the Exchange continues serving stale scores until re-cultivation completes in the background.
+            Derived propensity score. Computed on-device during Scoring — only scores leave the device, never raw Transaktions. <strong>algorithm_version</strong> tracks which Scoring algorithm produced this score. <strong>is_stale</strong> is set true when a new algorithm ships and re-scoring is pending; the Exchange continues serving stale scores until re-scoring completes in the background.
           </div>
         </div>
       </div>
@@ -559,10 +559,10 @@ erDiagram
             <li><span class="field-name">updated_at</span>             <span class="field-type">timestamptz</span></li>
           </ul>
           <div class="card-note info">
-            Per-Signal-Type real-buyer track record. Computed on-device during Cultivation — only the score reaches the server. Used in Exchange ranking: <code>bid × Conviction × recency_weight</code>.
+            Per-Signal-Type real-buyer track record. Computed on-device during Scoring — only the score reaches the server. Used in Exchange ranking: <code>bid × Conviction × recency_weight</code>.
           </div>
           <div class="card-note teal">
-            Score decays by 50% every 6 months of inactivity (no matching purchase detected in the Signal Type's conversion window). Never decays to zero. <strong>decay_reset_at</strong> is updated when a matching purchase Transaktion is detected in a Harvest. Conversion windows are per-Signal-Type and published in the open Cultivation algorithm.
+            Score decays by 50% every 6 months of inactivity (no matching purchase detected in the Signal Type's conversion window). Never decays to zero. <strong>decay_reset_at</strong> is updated when a matching purchase Transaktion is detected in a Harvest. Conversion windows are per-Signal-Type and published in the open Scoring algorithm.
           </div>
         </div>
       </div>
@@ -570,7 +570,7 @@ erDiagram
       <!-- PERMITS -->
       <div class="card">
         <div class="card-header">
-          <span class="card-table-name" style="color:var(--blue)">permits</span>
+          <span class="card-table-name" style="color:var(--blue)">consents</span>
           <span class="store-badge store-db">PersonalOS DB</span>
         </div>
         <div class="card-body">
@@ -585,7 +585,7 @@ erDiagram
             <li><span class="field-name">revoked_at</span>                 <span class="field-type">timestamptz NULLABLE</span></li>
           </ul>
           <div class="card-note info">
-            Active permit: <code>revoked_at IS NULL</code>. <strong>yield_floor_usdc</strong> is a hard pre-ranking gate — the Exchange never delivers an Offer below this value. <strong>notification_max_per_day</strong> and <strong>notification_quiet_hours</strong> are Soul-configured caps the Exchange respects as hard limits before push delivery. Default on signup: 1 push/day, no quiet hours.
+            Active consent: <code>revoked_at IS NULL</code>. <strong>yield_floor_usdc</strong> is a hard pre-ranking gate — the Exchange never delivers an Offer below this value. <strong>notification_max_per_day</strong> and <strong>notification_quiet_hours</strong> are Soul-configured caps the Exchange respects as hard limits before push delivery. Default on signup: 1 push/day, no quiet hours.
           </div>
         </div>
       </div>
@@ -743,7 +743,7 @@ flowchart TB
         I[(insights)]
         CV[(convictions)]
         ST[(signal_types)]
-        P[(permits)]
+        P[(consents)]
         L[(listings)]
         O[(offers)]
         C[(claims)]
@@ -770,7 +770,7 @@ flowchart TB
 
     subgraph IOS_DEVICE ["iOS Device / iCloud Keychain (ephemeral)"]
         direction TB
-        DL["Decrypted Ledger (Cultivation only)"]
+        DL["Decrypted Ledger (Scoring only)"]
         PK["Passkey (iCloud Keychain)"]
     end
 
@@ -778,9 +778,9 @@ flowchart TB
     K -- "batch upload (encrypted)" --> TX
     %% Arweave hash stored in souls
     LH -- "content hash pointer" --> S
-    %% Device decrypts for Cultivation
+    %% Device decrypts for Scoring
     LH -- "decrypt via Passkey" --> DL
-    %% Cultivation pushes aggregated signals to Insights
+    %% Scoring pushes aggregated signals to Insights
     DL -- "aggregated signals only" --> I
     %% Listing escrow locked on-chain
     L -- "escrow_tx_hash ref" --> ESC
@@ -788,7 +788,7 @@ flowchart TB
     C -- "chain_tx_hash ref" --> SETTLE
     %% Settlement credits Wallet
     SETTLE --> BAL
-    %% Exchange matches Permits+Insights → Offers
+    %% Exchange matches Consents+Insights → Offers
     I -. "Exchange matches" .-> O
     P -. "Exchange checks" .-> O
     %% Withdrawal reads wallet balance

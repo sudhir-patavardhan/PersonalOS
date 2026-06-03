@@ -298,7 +298,7 @@
     <li>
       <a href="#flow-2">
         <span class="num num-teal">2</span>
-        Harvest → Cultivation → Insight
+        Harvest → Scoring → Insight
       </a>
     </li>
     <li>
@@ -326,7 +326,7 @@
     <li>
       <a href="#flow-4">
         <span class="num num-blue">4</span>
-        Exchange: Cultivation-triggered
+        Exchange: Scoring-triggered
       </a>
     </li>
   </ul>
@@ -359,7 +359,7 @@
     <h1>PersonalOS <span>System Sequences</span></h1>
     <p>
       End-to-end sequence diagrams for every major flow in the PersonalOS platform —
-      from Soul onboarding through Harvest, Cultivation, Exchange matching, Claim settlement,
+      from Soul onboarding through Harvest, Scoring, Exchange matching, Claim settlement,
       and Brand lifecycle. All system boundaries, async steps, and data-store interactions are shown.
     </p>
 
@@ -445,17 +445,17 @@ sequenceDiagram
   </section>
 
   <!-- ══════════════════════════════
-       FLOW 2: Harvest → Cultivation → Insight Update
+       FLOW 2: Harvest → Scoring → Insight Update
   ══════════════════════════════ -->
   <section class="flow-card" id="flow-2">
     <div class="flow-card-header">
       <div class="flow-number" style="background:var(--teal-dim); color:var(--teal);">2</div>
       <div class="meta">
-        <h2>Harvest → Cultivation → Insight Update</h2>
+        <h2>Harvest → Scoring → Insight Update</h2>
         <p>
           Scheduled Harvest pulls raw Transaktions from Plaid, encrypts them with the Soul's
           passkey-derived key on-device, writes the encrypted Ledger shard to Arweave via Irys,
-          then triggers on-device Cultivation. The device decrypts locally, computes Insight
+          then triggers on-device Scoring. The device decrypts locally, computes Insight
           propensity scores, and returns only scores to the backend. Raw data never leaves the device
           in plaintext, and PersonalOS never holds the decryption key.
         </p>
@@ -511,8 +511,8 @@ sequenceDiagram
     DB-->>BE: OK
     BE-->>App: 200 {depth_score_updated}
 
-    Note over App,BE: Cultivation — all computation on-device
-    App->>App: Trigger Cultivation job (background task)
+    Note over App,BE: Scoring — all computation on-device
+    App->>App: Trigger Scoring job (background task)
     App->>Irys: GET /arweave/{arweave_tx_id} — fetch all Ledger shards for soul
     Irys-->>App: encrypted_ledger_shards[]
     App->>iCloud: Fetch encryption key
@@ -527,7 +527,7 @@ sequenceDiagram
     DB-->>BE: OK
     BE-->>App: 200 {insights_stored: N}
 
-    Note over BE: Cultivation-triggered Exchange matching fired here (see Flow 4)
+    Note over BE: Scoring-triggered Exchange matching fired here (see Flow 4)
     BE->>BE: emit CULTIVATION_COMPLETE event {soul_id, updated_signal_types[]}
       </pre>
     </div>
@@ -543,8 +543,8 @@ sequenceDiagram
         <h2>Exchange Matching: Listing-triggered</h2>
         <p>
           A Brand's newly-approved and funded Listing goes live. The Exchange scans all Souls
-          who have a matching Permit for the Listing's Signal Type, whose current Insight score
-          meets the Listing's targeting threshold, and whose Permit Yield floor is at or below
+          who have a matching Consent for the Listing's Signal Type, whose current Insight score
+          meets the Listing's targeting threshold, and whose Consent Yield floor is at or below
           the Listing's bid. Matched Souls receive push notifications for each resulting Offer.
         </p>
       </div>
@@ -567,7 +567,7 @@ sequenceDiagram
     BE->>Exchange: emit LISTING_ACTIVATED {listing_id, signal_type, bid_usdc, min_score_threshold, budget_remaining}
 
     Note over Exchange,DB: Fan-out match across all eligible Souls
-    Exchange->>DB: SELECT soul_id, score, wallet_address<br/>FROM soul_insights SI<br/>JOIN permits P ON SI.soul_id = P.soul_id AND SI.signal_type = P.signal_type<br/>JOIN soul_accounts SA ON SI.soul_id = SA.soul_id<br/>WHERE SI.signal_type = listing.signal_type<br/>  AND SI.score >= listing.min_score_threshold<br/>AND P.yield_floor_usdc &lt;= listing.bid_usdc<br/>  AND SA.status = 'active'<br/>  AND NOT EXISTS (SELECT 1 FROM offers WHERE soul_id=SI.soul_id AND listing_id=listing.id AND status != 'expired')
+    Exchange->>DB: SELECT soul_id, score, wallet_address<br/>FROM soul_insights SI<br/>JOIN consents P ON SI.soul_id = P.soul_id AND SI.signal_type = P.signal_type<br/>JOIN soul_accounts SA ON SI.soul_id = SA.soul_id<br/>WHERE SI.signal_type = listing.signal_type<br/>  AND SI.score >= listing.min_score_threshold<br/>AND P.yield_floor_usdc &lt;= listing.bid_usdc<br/>  AND SA.status = 'active'<br/>  AND NOT EXISTS (SELECT 1 FROM offers WHERE soul_id=SI.soul_id AND listing_id=listing.id AND status != 'expired')
     DB-->>Exchange: matched_souls[] (soul_id, score, wallet_address, yield_floor)
 
     loop For each matched Soul
@@ -589,17 +589,17 @@ sequenceDiagram
   </section>
 
   <!-- ══════════════════════════════
-       FLOW 4: Exchange Matching — Cultivation-triggered
+       FLOW 4: Exchange Matching — Scoring-triggered
   ══════════════════════════════ -->
   <section class="flow-card" id="flow-4">
     <div class="flow-card-header">
       <div class="flow-number" style="background:var(--blue-dim); color:var(--blue);">4</div>
       <div class="meta">
-        <h2>Exchange Matching: Cultivation-triggered</h2>
+        <h2>Exchange Matching: Scoring-triggered</h2>
         <p>
-          When Cultivation completes for a single Soul (see Flow 2), the backend fires a
+          When Scoring completes for a single Soul (see Flow 2), the backend fires a
           CULTIVATION_COMPLETE event. The Exchange matches that one Soul against all active
-          Listings whose Signal Types appear in the updated Insight set, checking Permit and
+          Listings whose Signal Types appear in the updated Insight set, checking Consent and
           Yield floor eligibility. New Offers are delivered via push.
         </p>
       </div>
@@ -616,7 +616,7 @@ sequenceDiagram
     Note over BE,Exchange: Triggered at end of Flow 2
     BE->>Exchange: CULTIVATION_COMPLETE {soul_id, updated_signal_types: [automotive.new_vehicle_purchase, ...]}
 
-    Exchange->>DB: SELECT soul_id, yield_floor_usdc, signal_type<br/>FROM permits<br/>WHERE soul_id = ? AND signal_type IN (updated_signal_types)
+    Exchange->>DB: SELECT soul_id, yield_floor_usdc, signal_type<br/>FROM consents<br/>WHERE soul_id = ? AND signal_type IN (updated_signal_types)
     DB-->>Exchange: soul_permits[] (signal_type, yield_floor_usdc)
 
     Exchange->>DB: SELECT listing_id, signal_type, bid_usdc, min_score_threshold, budget_remaining, content_ref, brand_name<br/>FROM listings<br/>WHERE status = 'active'<br/>  AND signal_type IN (soul_signal_types)<br/>  AND budget_remaining > 0
@@ -626,7 +626,7 @@ sequenceDiagram
         Exchange->>DB: SELECT score FROM soul_insights WHERE soul_id=? AND signal_type=listing.signal_type
         DB-->>Exchange: current_score
 
-        alt score >= listing.min_score_threshold AND permit.yield_floor_usdc <= listing.bid_usdc
+        alt score >= listing.min_score_threshold AND consent.yield_floor_usdc <= listing.bid_usdc
             Exchange->>DB: SELECT 1 FROM offers WHERE soul_id=? AND listing_id=? AND status != 'expired'
             DB-->>Exchange: existing_offer?
 
@@ -642,7 +642,7 @@ sequenceDiagram
         end
     end
 
-    Exchange->>DB: INSERT exchange_run_log {trigger=cultivation_complete, soul_id, checked_listings, new_offers_created, ran_at}
+    Exchange->>DB: INSERT exchange_run_log {trigger=scoring_complete, soul_id, checked_listings, new_offers_created, ran_at}
     DB-->>Exchange: OK
       </pre>
     </div>

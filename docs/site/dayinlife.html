@@ -559,7 +559,7 @@
     <div class="actor-badge soul-badge">👤</div>
     <div class="actor-meta soul-meta">
       <h2>The Soul</h2>
-      <p class="role-desc">Individual data owner. Earns USDC Yield when Brands match their Insights. Controls every Permit.</p>
+      <p class="role-desc">Individual data owner. Earns USDC Yield when Brands match their Insights. Controls every Consent.</p>
     </div>
   </div>
 
@@ -575,7 +575,7 @@
     </div>
     <div class="metric-card">
       <div class="metric-val soul-val">3</div>
-      <div class="metric-label">Active Permits</div>
+      <div class="metric-label">Active Consents</div>
     </div>
   </div>
 
@@ -599,7 +599,7 @@
         <div class="tl-spine"><div class="tl-dot tl-system-dot"></div><div class="tl-line"></div></div>
         <div class="tl-content">
           <div class="tl-tag tag-system">System — on-device</div>
-          <div class="tl-event">Cultivation runs locally</div>
+          <div class="tl-event">Scoring runs locally</div>
           <div class="tl-desc">The iOS app wakes via background task, decrypts Transaktions on-device using the Soul's passkey-derived key, runs the ML model, and emits updated Insight scores to PersonalOS. Raw spend data never leaves the device.</div>
         </div>
       </div>
@@ -610,7 +610,7 @@
         <div class="tl-content">
           <div class="tl-tag tag-system">System — Exchange</div>
           <div class="tl-event">Exchange match run triggered</div>
-          <div class="tl-desc">Fresh Insight scores kick the Exchange. It compares the Soul's active Permits against all live Listings. The <code>automotive.new_vehicle_purchase</code> Insight at 0.87 matches an auto dealer Listing bidding $4.50, above the Soul's $2.00 Yield floor.</div>
+          <div class="tl-desc">Fresh Insight scores kick the Exchange. It compares the Soul's active Consents against all live Listings. The <code>automotive.new_vehicle_purchase</code> Insight at 0.87 matches an auto dealer Listing bidding $4.50, above the Soul's $2.00 Yield floor.</div>
         </div>
       </div>
 
@@ -639,7 +639,7 @@
         <div class="tl-spine"><div class="tl-dot soul-dot"></div><div class="tl-line"></div></div>
         <div class="tl-content">
           <div class="tl-tag tag-soul">Soul — iOS app</div>
-          <div class="tl-event">Permit settings reviewed</div>
+          <div class="tl-event">Consent settings reviewed</div>
           <div class="tl-desc">The Soul raises the Yield floor for <code>travel.frequent_flier</code> to $3.00. Lower-bid Listings targeting that Signal Type will no longer match them. No brand is notified — the change takes effect in the next Exchange run.</div>
         </div>
       </div>
@@ -661,13 +661,13 @@
   <p class="section-label soul-label">Narrative</p>
   <div class="narrative">
     <p>
-      Maya woke up to something she didn't expect when she first signed up for PersonalOS: a push notification with money attached. While she slept, the platform's scheduled Harvest pulled her bank Transaktions through her Plaid Konnection, encrypted every record end-to-end, and wrote the ciphertext to Arweave. Her phone then ran Cultivation in the background — decrypting and processing <strong>on-device only</strong>, computing fresh Insight scores without any raw financial data ever leaving her hands. The highest-scoring Insight, <code>automotive.new_vehicle_purchase</code> at 0.87, reflected months of car-related transactions she'd honestly forgotten about.
+      Maya woke up to something she didn't expect when she first signed up for PersonalOS: a push notification with money attached. While she slept, the platform's scheduled Harvest pulled her bank Transaktions through her Plaid Konnection, encrypted every record end-to-end, and wrote the ciphertext to Arweave. Her phone then ran Scoring in the background — decrypting and processing <strong>on-device only</strong>, computing fresh Insight scores without any raw financial data ever leaving her hands. The highest-scoring Insight, <code>automotive.new_vehicle_purchase</code> at 0.87, reflected months of car-related transactions she'd honestly forgotten about.
     </p>
     <p>
-      When the Exchange ran at 3:41 am, it found a live auto dealer Listing bidding $4.50 per Claim — well above Maya's self-set Yield floor of $2.00 for that Signal Type. The Offer was created and queued. By 9:00 am she had a push notification. Two taps and $4.50 USDC landed in her non-custodial Coinbase Smart Wallet on Base. The entire settlement was atomic, on-chain, and required zero trust in PersonalOS — if the escrow didn't release, the Claim didn't register. Later that afternoon she adjusted her Permit floor for <strong>travel.frequent_flier</strong> upward, quietly filtering out low-value Listings without anyone being notified.
+      When the Exchange ran at 3:41 am, it found a live auto dealer Listing bidding $4.50 per Claim — well above Maya's self-set Yield floor of $2.00 for that Signal Type. The Offer was created and queued. By 9:00 am she had a push notification. Two taps and $4.50 USDC landed in her non-custodial Coinbase Smart Wallet on Base. The entire settlement was atomic, on-chain, and required zero trust in PersonalOS — if the escrow didn't release, the Claim didn't register. Later that afternoon she adjusted her Consent floor for <strong>travel.frequent_flier</strong> upward, quietly filtering out low-value Listings without anyone being notified.
     </p>
     <p>
-      By 6:00 pm she opened the Wallet tab, saw her balance, and initiated a Withdrawal to her bank account via the Coinbase off-ramp. No yield-sharing with a data broker. No behavioral profile sold. She earned because she chose to, on her terms, and she can revoke every Permit at any time with no penalty.
+      By 6:00 pm she opened the Wallet tab, saw her balance, and initiated a Withdrawal to her bank account via the Coinbase off-ramp. No yield-sharing with a data broker. No behavioral profile sold. She earned because she chose to, on her terms, and she can revoke every Consent at any time with no penalty.
     </p>
   </div>
 
@@ -691,7 +691,7 @@
       <div class="ev-line"><span class="ev-ts">03:40:45</span><span class="ev-event">INSIGHT_UPDATED</span><span class="ev-arrow">→</span><span class="ev-payload">soul_id=soul_m7x2, insights_count=6</span></div>
       <div class="ev-line"><span class="ev-ts">03:40:45</span><span class="ev-event">CULTIVATION_COMPLETE</span><span class="ev-arrow">→</span><span class="ev-note">// raw Transaktions never left device</span></div>
       <div class="ev-separator">──────────────────────────────────────────────────────────</div>
-      <div class="ev-line"><span class="ev-ts">03:41:00</span><span class="ev-event">EXCHANGE_MATCH_RUN</span><span class="ev-arrow">→</span><span class="ev-payload">trigger=cultivation_complete, soul_id=soul_m7x2</span></div>
+      <div class="ev-line"><span class="ev-ts">03:41:00</span><span class="ev-event">EXCHANGE_MATCH_RUN</span><span class="ev-arrow">→</span><span class="ev-payload">trigger=scoring_complete, soul_id=soul_m7x2</span></div>
       <div class="ev-line"><span class="ev-ts">03:41:01</span><span class="ev-event">PERMIT_CHECK</span><span class="ev-arrow">→</span><span class="ev-payload">signal=automotive.new_vehicle_purchase, floor=$2.00, listing_bid=$4.50 <span class="ev-ok">✓ above floor</span></span></div>
       <div class="ev-line"><span class="ev-ts">03:41:01</span><span class="ev-event">OFFER_CREATED</span><span class="ev-arrow">→</span><span class="ev-payload">offer_id=off_9q8p, listing_id=lst_au77, yield=$4.50</span></div>
       <div class="ev-line"><span class="ev-ts">03:41:02</span><span class="ev-event">PUSH_QUEUED</span><span class="ev-arrow">→</span><span class="ev-payload">soul_id=soul_m7x2, deliver_at=09:00</span></div>
@@ -716,7 +716,7 @@
         <li>Offer bid amount ($4.50) and Signal Type category</li>
         <li>Personalized Offer creative from the Brand</li>
         <li>Their own Insight scores and Ledger Depth</li>
-        <li>Permit settings they configured (floor per Signal Type)</li>
+        <li>Consent settings they configured (floor per Signal Type)</li>
         <li>Wallet USDC balance and full transaction history</li>
         <li>Konnection status (established / syncing / disconnected)</li>
         <li>Harvest schedule and last-run timestamp</li>
@@ -729,7 +729,7 @@
         <li>Which specific Brand funded the Offer</li>
         <li>How many other Souls were matched to the same Listing</li>
         <li>Raw Transaktion ciphertext on Arweave</li>
-        <li>Other Souls' Insight scores or Permit floors</li>
+        <li>Other Souls' Insight scores or Consent floors</li>
         <li>PersonalOS internal match-scoring logic</li>
         <li>Brand's total Listing Budget or Campaign strategy</li>
         <li>Exchange match rate or platform revenue metrics</li>
@@ -818,7 +818,7 @@
         <div class="tl-content">
           <div class="tl-tag tag-system">System — Exchange</div>
           <div class="tl-event">Listing goes live — Exchange match run triggered</div>
-          <div class="tl-desc">Exchange scans all Souls with active Permits for <code>automotive.new_vehicle_purchase</code> whose Insight scores exceed the Listing threshold and whose Yield floor is at or below $4.50. Matching Offers created and queued.</div>
+          <div class="tl-desc">Exchange scans all Souls with active Consents for <code>automotive.new_vehicle_purchase</code> whose Insight scores exceed the Listing threshold and whose Yield floor is at or below $4.50. Matching Offers created and queued.</div>
         </div>
       </div>
 
@@ -910,7 +910,7 @@
         <li>Raw financial transactions or bank data behind Insights</li>
         <li>Individual Insight scores of any Soul</li>
         <li>Other Brands' Listings, bids, or campaign strategies</li>
-        <li>Soul Permit settings or Yield floor values</li>
+        <li>Soul Consent settings or Yield floor values</li>
         <li>Exchange match algorithm internals</li>
         <li>Platform Admin review notes or decision rationale</li>
       </ul>
@@ -978,7 +978,7 @@
         <div class="tl-content">
           <div class="tl-tag tag-admin">Admin — signal catalogue</div>
           <div class="tl-event">Signal Type request reviewed and published</div>
-          <div class="tl-desc">A Brand submitted a request for a new Signal Type: <code>home_improvement.major_renovation</code>. Admin reviews the proposed schema, validates that Cultivation can compute a reliable score from bank data, creates version 1.0, and publishes to the catalogue. Brands can now target it.</div>
+          <div class="tl-desc">A Brand submitted a request for a new Signal Type: <code>home_improvement.major_renovation</code>. Admin reviews the proposed schema, validates that Scoring can compute a reliable score from bank data, creates version 1.0, and publishes to the catalogue. Brands can now target it.</div>
         </div>
       </div>
 
@@ -988,7 +988,7 @@
         <div class="tl-content">
           <div class="tl-tag tag-admin">Admin — Exchange health</div>
           <div class="tl-event">Exchange health check: 73% match rate, 12 active Listings</div>
-          <div class="tl-desc">Dashboard shows: 12 live Listings, $2,400 in active escrow across all Brands, 73% match rate (Offers created / Exchange runs), 88% Claim conversion. One Listing (<code>lst_rv99</code>) has a 22% match rate — flagged for low Soul Permit adoption in that Signal Type.</div>
+          <div class="tl-desc">Dashboard shows: 12 live Listings, $2,400 in active escrow across all Brands, 73% match rate (Offers created / Exchange runs), 88% Claim conversion. One Listing (<code>lst_rv99</code>) has a 22% match rate — flagged for low Soul Consent adoption in that Signal Type.</div>
         </div>
       </div>
 
@@ -1021,7 +1021,7 @@
       The Platform Admin's morning begins in the review queue — three Listings waiting for judgment. This is the human trust layer of PersonalOS. Two clear approvals: established Brands, Signal Types used correctly, Offer creative factual. The third is a newly onboarded auto parts Brand whose creative promised "guaranteed cash back" with no terms. <strong>Rejected with code <code>MISLEADING_OFFER_CONTENT</code></strong>. The Brand was notified within minutes with a detailed rejection reason and an invitation to resubmit with accurate language. PersonalOS's value to Souls depends entirely on Offers being trustworthy — the review queue is not a rubber stamp.
     </p>
     <p>
-      At 10:00 am, a new Signal Type request landed from a Brand wanting to reach homeowners planning major renovations. The Admin validated the proposed scoring schema against what Cultivation could reliably derive from bank Transaktions, confirmed internal ML team sign-off, and published <code>home_improvement.major_renovation v1.0</code> to the catalogue. Within hours, three Brands had expressed interest. At 11:00 am the Exchange health dashboard showed a strong 73% match rate across 12 live Listings with $2,400 in active escrow — one outlier flagged for low Soul Permit adoption in its Signal Type, which signals either poor awareness or low Soul interest in that category.
+      At 10:00 am, a new Signal Type request landed from a Brand wanting to reach homeowners planning major renovations. The Admin validated the proposed scoring schema against what Scoring could reliably derive from bank Transaktions, confirmed internal ML team sign-off, and published <code>home_improvement.major_renovation v1.0</code> to the catalogue. Within hours, three Brands had expressed interest. At 11:00 am the Exchange health dashboard showed a strong 73% match rate across 12 live Listings with $2,400 in active escrow — one outlier flagged for low Soul Consent adoption in its Signal Type, which signals either poor awareness or low Soul interest in that category.
     </p>
     <p>
       The afternoon brought a support ticket: a Soul's Plaid Konnection had silently expired, halting Harvests for three days. The Admin traced the Konnection status, triggered a re-auth deep-link, confirmed Harvest resumed, and closed the ticket in 22 minutes. By 4:00 pm the daily revenue picture was healthy: $340 in Claim take-rate, two new Brand subscriptions added via Stripe. The platform is not a data marketplace in the traditional sense — PersonalOS never reads plaintext data and never sells audiences — but the economics are strong precisely because the consent model drives higher Claim conversion than any lookalike audience ever could.
@@ -1081,7 +1081,7 @@
       <div class="data-col-title never-title">Admin never sees</div>
       <ul>
         <li>Raw bank Transaktions or email content (always encrypted)</li>
-        <li>Individual Soul Insight scores or Permit floor values</li>
+        <li>Individual Soul Insight scores or Consent floor values</li>
         <li>Which Soul accepted which Offer (Claim is anonymous)</li>
         <li>Arweave ciphertext contents — no decryption key held by platform</li>
         <li>Soul's passkey or Wallet private key</li>

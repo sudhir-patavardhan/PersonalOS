@@ -14,23 +14,23 @@ PersonalOS earns through two mechanisms: (1) a take rate on every Claim — a pe
 
 ## MVP Scope
 
-The first version proves money moves end to end. Constraints: one Signal Type (`financial.discretionary_spend`), one Provider (Plaid), one test Brand. A Soul connects their bank via Plaid, Transaktions Harvest into an E2E encrypted Ledger, local Cultivation produces an Insight score, the Exchange matches to a Listing, the Soul receives and Claims an Offer, USDC Yield lands in their Coinbase Smart Wallet.
+The first version proves money moves end to end. Constraints: one Signal Type (`financial.discretionary_spend`), one Provider (Plaid), one test Brand. A Soul connects their bank via Plaid, Transaktions Harvest into an E2E encrypted Ledger, local Scoring produces an Insight score, the Exchange matches to a Listing, the Soul receives and Claims an Offer, USDC Yield lands in their Coinbase Smart Wallet.
 
 ## Signal Type
 
-A named, versioned category of Insight defined and maintained by PersonalOS (e.g. `automotive.new_vehicle_purchase`, `travel.flight_intent`). Signal Types are the shared vocabulary between Souls (who grant Permits per Signal Type) and Brands (who target Listings at a Signal Type). Signal Types are owned by PersonalOS — Brands cannot define their own.
+A named, versioned category of Insight defined and maintained by PersonalOS (e.g. `automotive.new_vehicle_purchase`, `travel.flight_intent`). Signal Types are the shared vocabulary between Souls (who grant Consents per Signal Type) and Brands (who target Listings at a Signal Type). Signal Types are owned by PersonalOS — Brands cannot define their own.
 
-## Permit
+## Consent
 
-A Soul's explicit consent for the Exchange to match them against Listings in a specific Insight category. A Permit includes a minimum Yield floor — the Exchange will not deliver an Offer unless the Listing's bid meets or exceeds that floor. A Soul has zero or more Permits, one per opted-in category. When a Soul revokes a Permit, all pending and delivered Offers in that Signal Type expire immediately; Offers already in a seen state remain claimable for a 10-minute grace period before also expiring. Permit revocation is instantaneous from the Soul's perspective — no further matching occurs the moment the Permit is revoked.
+A Soul's explicit consent for the Exchange to match them against Listings in a specific Insight category. A Consent includes a minimum Yield floor — the Exchange will not deliver an Offer unless the Listing's bid meets or exceeds that floor. A Soul has zero or more Consents, one per opted-in category. When a Soul revokes a Consent, all pending and delivered Offers in that Signal Type expire immediately; Offers already in a seen state remain claimable for a 10-minute grace period before also expiring. Consent revocation is instantaneous from the Soul's perspective — no further matching occurs the moment the Consent is revoked.
 
 ## Depth
 
-A measure of how complete and valuable a Soul's Ledger is. Higher Depth means richer Transaktions across more Konnections, which produces more accurate Insights and commands higher Yield floors. PersonalOS uses Depth to recommend minimum Yield floors when a Soul creates a Permit.
+A measure of how complete and valuable a Soul's Ledger is. Higher Depth means richer Transaktions across more Konnections, which produces more accurate Insights and commands higher Yield floors. PersonalOS uses Depth to recommend minimum Yield floors when a Soul creates a Consent.
 
 ## Exchange
 
-The marketplace where Brand Listings are matched to Souls based on their Insights. The Exchange runs continuous real-time matching — triggered both when a new Listing is posted (match against all eligible Souls) and when a Cultivation completes (match that Soul against all active Listings). Brands list on the Exchange; Souls receive Offers from it. The Exchange is the core monetization platform of PersonalOS.
+The marketplace where Brand Listings are matched to Souls based on their Insights. The Exchange runs continuous real-time matching — triggered both when a new Listing is posted (match against all eligible Souls) and when a Scoring completes (match that Soul against all active Listings). Brands list on the Exchange; Souls receive Offers from it. The Exchange is the core monetization platform of PersonalOS.
 
 ## Listing
 
@@ -50,15 +50,15 @@ The payment deposited into a Soul's Wallet when they make a Claim. Yield is the 
 
 ## Claim
 
-The act of a Soul accepting an Offer. A Claim is the billable event — it is what the Brand pays for. One Offer can produce at most one Claim. A Claim triggers atomic USDC settlement on Base: the Brand's Budget escrow splits into a PersonalOS platform fee and Yield deposited into the Soul's Wallet. Settlement confirms within ~2 seconds; the app displays success optimistically on tap and resolves to a confirmed state on-chain. The Soul receives a receipt showing the Yield earned, their updated Wallet balance, and the Voucher if one was included — the Signal Type category is shown, not the Brand name. All Claims appear in the Soul's Claim history with date, Signal Type, Yield amount, and running Wallet balance. After a Claim, Cultivation monitors subsequent Harvests for matching purchases in the same Signal Type category — if detected, the Soul's Conviction for that Signal Type increases. There is no direct attribution between a Claim and a downstream purchase; the purchase signal alone is sufficient.
+The act of a Soul accepting an Offer. A Claim is the billable event — it is what the Brand pays for. One Offer can produce at most one Claim. A Claim triggers atomic USDC settlement on Base: the Brand's Budget escrow splits into a PersonalOS platform fee and Yield deposited into the Soul's Wallet. Settlement confirms within ~2 seconds; the app displays success optimistically on tap and resolves to a confirmed state on-chain. The Soul receives a receipt showing the Yield earned, their updated Wallet balance, and the Voucher if one was included — the Signal Type category is shown, not the Brand name. All Claims appear in the Soul's Claim history with date, Signal Type, Yield amount, and running Wallet balance. After a Claim, Scoring monitors subsequent Harvests for matching purchases in the same Signal Type category — if detected, the Soul's Conviction for that Signal Type increases. There is no direct attribution between a Claim and a downstream purchase; the purchase signal alone is sufficient.
 
 ## Conviction
 
-A per-Signal-Type measure of a Soul's track record as a real buyer in that category. Conviction increases when a Harvest detects a matching purchase Transaktion after a Claim in the same Signal Type — regardless of whether that purchase was caused by the specific Listing. Conviction is a directional category-level signal, not strict attribution. Higher Conviction commands higher recommended Yield floors on the Exchange, making high-Conviction Souls more valuable to Brands bidding in that category. Conviction is computed during Cultivation alongside Insights.
+A per-Signal-Type measure of a Soul's track record as a real buyer in that category. Conviction increases when a Harvest detects a matching purchase Transaktion after a Claim in the same Signal Type — regardless of whether that purchase was caused by the specific Listing. Conviction is a directional category-level signal, not strict attribution. Higher Conviction commands higher recommended Yield floors on the Exchange, making high-Conviction Souls more valuable to Brands bidding in that category. Conviction is computed during Scoring alongside Insights.
 
 ## Offer
 
-What a Soul receives when their Insights match an active Listing. An Offer is specific to one Soul and one Listing — the same Listing will never re-match the same Soul, even after an Offer expires unused. A Soul may hold multiple simultaneous Offers across different Listings; they are presented as a feed ordered by Yield value descending. An Offer moves through a defined lifecycle: pending (created by Exchange, not yet pushed) → delivered (push notification sent) → seen (Soul opened the Offer in-app) → claimed (Soul accepted) or dismissed (Soul declined) or expired (72 hours elapsed from delivery without action, or Listing Budget exhausted). The expiry clock starts from delivery — not from when the Soul first opens the app. On expiry, the Budget allocation is released and the Exchange may match that Listing to another eligible Soul. A Soul seeing an Offer reveals nothing to the Brand; only a Claim does. A dismissed Offer is indistinguishable from a seen Offer from the Brand's perspective. When a Soul dismisses Offers in the same Signal Type category 3 or more times within 30 days, the app prompts them to raise their Yield floor for that category — turning a pattern of negative engagement into a Permit refinement opportunity rather than a silent signal.
+What a Soul receives when their Insights match an active Listing. An Offer is specific to one Soul and one Listing — the same Listing will never re-match the same Soul, even after an Offer expires unused. A Soul may hold multiple simultaneous Offers across different Listings; they are presented as a feed ordered by Yield value descending. An Offer moves through a defined lifecycle: pending (created by Exchange, not yet pushed) → delivered (push notification sent) → seen (Soul opened the Offer in-app) → claimed (Soul accepted) or dismissed (Soul declined) or expired (72 hours elapsed from delivery without action, or Listing Budget exhausted). The expiry clock starts from delivery — not from when the Soul first opens the app. On expiry, the Budget allocation is released and the Exchange may match that Listing to another eligible Soul. A Soul seeing an Offer reveals nothing to the Brand; only a Claim does. A dismissed Offer is indistinguishable from a seen Offer from the Brand's perspective. When a Soul dismisses Offers in the same Signal Type category 3 or more times within 30 days, the app prompts them to raise their Yield floor for that category — turning a pattern of negative engagement into a Consent refinement opportunity rather than a silent signal.
 
 ## Voucher
 
@@ -70,15 +70,15 @@ A company or advertiser that bids to reach Souls with relevant Insights. A Brand
 
 ## Insight
 
-A derived signal computed from a Soul's Ledger during a Cultivation. An Insight represents a Soul's propensity toward a particular product, service, or category — it is never a raw Transaktion. Insights are the only thing the Exchange ever acts on. Raw Transaktions remain in the Ledger and are never exposed externally.
+A derived signal computed from a Soul's Ledger during a Scoring. An Insight represents a Soul's propensity toward a particular product, service, or category — it is never a raw Transaktion. Insights are the only thing the Exchange ever acts on. Raw Transaktions remain in the Ledger and are never exposed externally.
 
-## Cultivation
+## Scoring
 
-The process of recomputing a Soul's Insights and Conviction scores from their Ledger. A Cultivation is triggered when a Harvest adds enough new Transaktions to meaningfully change the Soul's Depth. One Cultivation updates all Insights and all per-Signal-Type Conviction scores for that Soul. Cultivation turns harvested raw data into actionable signals — only the resulting scores leave the device.
+The process of recomputing a Soul's Insights and Conviction scores from their Ledger. A Scoring is triggered when a Harvest adds enough new Transaktions to meaningfully change the Soul's Depth. One Scoring updates all Insights and all per-Signal-Type Conviction scores for that Soul. Scoring turns harvested raw data into actionable signals — only the resulting scores leave the device.
 
 ## Ledger
 
-The secure, append-only store of all Transaktions belonging to a Soul. Each Soul has exactly one Ledger. Transaktions are end-to-end encrypted with the Soul's passkey (iCloud Keychain-backed on iOS) and stored permanently on Arweave via Irys bundling. PersonalOS never holds or reads the ciphertext. The Soul's device decrypts the Ledger locally; Cultivation runs on-device against the decrypted data; only Insight scores leave the device. The Ledger is the canonical record of a Soul's data — nothing is deleted, only superseded.
+The secure, append-only store of all Transaktions belonging to a Soul. Each Soul has exactly one Ledger. Transaktions are end-to-end encrypted with the Soul's passkey (iCloud Keychain-backed on iOS) and stored permanently on Arweave via Irys bundling. PersonalOS never holds or reads the ciphertext. The Soul's device decrypts the Ledger locally; Scoring runs on-device against the decrypted data; only Insight scores leave the device. The Ledger is the canonical record of a Soul's data — nothing is deleted, only superseded.
 
 ## Soul
 

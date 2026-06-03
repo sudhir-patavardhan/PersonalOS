@@ -20,10 +20,10 @@ Key concepts at a glance:
 | **Harvest** | Pulling new data through a Konnection into the Ledger |
 | **Transaktion** | A single raw data record in the Ledger |
 | **Ledger** | A Soul's secure, append-only store of all Transaktions |
-| **Cultivation** | Recomputing a Soul's Insights from their Ledger |
+| **Scoring** | Recomputing a Soul's Insights from their Ledger |
 | **Insight** | A derived propensity signal — the only thing that ever leaves the Ledger |
 | **Signal Type** | A named Insight category defined by PersonalOS (e.g. `automotive.new_vehicle_purchase`) |
-| **Permit** | A Soul's opt-in consent for a Signal Type, with a minimum Yield floor |
+| **Consent** | A Soul's opt-in consent for a Signal Type, with a minimum Yield floor |
 | **Depth** | A measure of how rich and complete a Soul's Ledger is |
 | **Exchange** | The real-time marketplace that matches Listings to Souls |
 | **Brand** | A company that bids to reach Souls on the Exchange |
@@ -37,19 +37,19 @@ Key concepts at a glance:
 
 1. **Konnections** — Soul signup + Plaid integration. A Soul connects their bank via Plaid; Transaktions Harvest into the Ledger.
 2. **Ledger** — Secure storage and display of a Soul's Transaktions.
-3. **Cultivation** — Compute Insights from Ledger data. Start with financial Signal Types.
-4. **Exchange (v1)** — Brand Listings, Permit-gated matching, Offer delivery.
+3. **Scoring** — Compute Insights from Ledger data. Start with financial Signal Types.
+4. **Exchange (v1)** — Brand Listings, Consent-gated matching, Offer delivery.
 5. **Claims + Wallet** — Claim flow, Yield deposit, Wallet balance display.
 
 ## Domain Modeling Status
 
 The domain model is being developed via grilling sessions (`/grill-with-docs`). The following areas are **resolved**:
 
-- Core data flow: Soul → Konnection → Harvest → Transaktion → Ledger → Cultivation → Insight
+- Core data flow: Soul → Konnection → Harvest → Transaktion → Ledger → Scoring → Insight
 - Exchange mechanics: Listing → matching → Offer → Claim → Yield → Wallet
-- Consent model: Permit per Signal Type with Yield floor
+- Consent model: Consent per Signal Type with Yield floor
 - Revenue model: take rate on Claims + Brand subscription
-- Exchange matching: continuous real-time (triggered on new Listing and on Cultivation)
+- Exchange matching: continuous real-time (triggered on new Listing and on Scoring)
 
 The following areas are **not yet resolved** (continue grilling):
 
@@ -61,7 +61,7 @@ The following areas are **not yet resolved** (continue grilling):
 
 ## Tech Stack
 
-- **iOS app (Swift)** — primary client; Cultivation runs here, Coinbase Smart Wallet SDK, Plaid Link SDK
+- **iOS app (Swift)** — primary client; Scoring runs here, Coinbase Smart Wallet SDK, Plaid Link SDK
 - **Backend (TypeScript/Node.js)** — Exchange matching service, Insight score ingestion, Brand/Listing API
 - **Smart contracts (Solidity on Base)** — Budget escrow, atomic Claim settlement
 - **Storage** — Arweave via Irys (encrypted Ledger), PersonalOS server (Insight scores only)
@@ -75,6 +75,6 @@ Key decisions are recorded in [`docs/adr/`](./docs/adr/):
 |---|---|
 | [0001](./docs/adr/0001-continuous-exchange-matching.md) | Exchange runs continuous real-time matching |
 | [0002](./docs/adr/0002-base-usdc-payment-rail.md) | Base chain + USDC as primary Payment Rail |
-| [0003](./docs/adr/0003-e2e-encrypted-ledger-local-cultivation.md) | E2E encrypted Ledger, Cultivation runs on-device |
+| [0003](./docs/adr/0003-e2e-encrypted-ledger-local-scoring.md) | E2E encrypted Ledger, Scoring runs on-device |
 | [0004](./docs/adr/0004-arweave-ledger-storage.md) | Arweave via Irys for permanent Ledger storage |
 | [0005](./docs/adr/0005-coinbase-smart-wallet.md) | Coinbase Smart Wallet for Soul Wallets |

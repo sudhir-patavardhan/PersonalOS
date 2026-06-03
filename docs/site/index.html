@@ -312,7 +312,7 @@ flowchart LR
         S(["Soul"]) --> KC["Connect Bank\nKonnection"]
         KC --> HV["Harvest\nscheduled + on-demand"]
         HV -->|"encrypted batch"| AR[("Arweave\nLedger")]
-        AR -->|"decrypt on device"| CV["Cultivation\niOS only"]
+        AR -->|"decrypt on device"| CV["Scoring\niOS only"]
         CV -->|"scores only"| IN[("Insights +\nConviction")]
     end
 
@@ -364,7 +364,7 @@ flowchart LR
         <div class="card-desc">All 8 major flows with autonumbered steps, actor lanes, and data store interactions.</div>
         <div class="card-meta">
           <span><span class="dot blue"></span>Soul Onboarding</span>
-          <span><span class="dot blue"></span>Harvest → Cultivation → Insight</span>
+          <span><span class="dot blue"></span>Harvest → Scoring → Insight</span>
           <span><span class="dot blue"></span>Exchange Matching (×2 triggers)</span>
           <span><span class="dot blue"></span>Offer → Claim → Yield Settlement</span>
           <span><span class="dot blue"></span>Withdrawal</span>
@@ -418,11 +418,11 @@ flowchart LR
       <div class="legend-item"><strong>Harvest</strong><span>scheduled pull of Transaktions</span></div>
       <div class="legend-item"><strong>Transaktion</strong><span>immutable raw data record</span></div>
       <div class="legend-item"><strong>Ledger</strong><span>encrypted append-only store on Arweave</span></div>
-      <div class="legend-item"><strong>Cultivation</strong><span>on-device Insight computation</span></div>
+      <div class="legend-item"><strong>Scoring</strong><span>on-device Insight computation</span></div>
       <div class="legend-item"><strong>Insight</strong><span>derived propensity score</span></div>
       <div class="legend-item"><strong>Conviction</strong><span>per-Signal-Type real-buyer track record; decays over time</span></div>
       <div class="legend-item"><strong>Signal Type</strong><span>named Insight category</span></div>
-      <div class="legend-item"><strong>Permit</strong><span>consent per Signal Type + Yield floor + notification settings</span></div>
+      <div class="legend-item"><strong>Consent</strong><span>consent per Signal Type + Yield floor + notification settings</span></div>
       <div class="legend-item"><strong>Depth</strong><span>measure of Ledger richness</span></div>
       <div class="legend-item"><strong>Exchange</strong><span>continuous real-time matching engine</span></div>
       <div class="legend-item"><strong>Listing</strong><span>Brand's entry: Signal Type + bid + Budget</span></div>
