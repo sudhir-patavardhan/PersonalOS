@@ -419,12 +419,15 @@ erDiagram
             <li><span class="field-name pk">id</span>            <span class="field-type">uuid PK</span></li>
             <li><span class="field-name">email</span>            <span class="field-type">text UNIQUE</span></li>
             <li><span class="field-name hash">arweave_ledger_hash</span> <span class="field-type">text</span></li>
+            <li><span class="field-name">arweave_account_model</span>   <span class="field-type">enum (shared | soul_owned)</span></li>
+            <li><span class="field-name hash">arweave_wallet_address</span> <span class="field-type">text nullable</span></li>
             <li><span class="field-name hash">wallet_address</span>      <span class="field-type">text</span></li>
             <li><span class="field-name">depth_score</span>      <span class="field-type">numeric(6,3)</span></li>
             <li><span class="field-name">created_at</span>       <span class="field-type">timestamptz</span></li>
           </ul>
           <div class="card-note teal">
-            <strong>arweave_ledger_hash</strong> is a pointer to the encrypted Ledger on Arweave — PersonalOS never stores or decrypts the underlying Transaktions.
+            <strong>arweave_ledger_hash</strong> is a pointer to the encrypted Ledger on Arweave — PersonalOS never stores or decrypts the underlying Transaktions.<br/><br/>
+            <strong>arweave_account_model</strong> determines whose Arweave wallet holds the Ledger. <code>shared</code> (default): PersonalOS writes via a single Irys account — batched, low cost (~$100/yr at 100k Souls). <code>soul_owned</code> (opt-in): PersonalOS writes to the Soul's own Arweave wallet address, stored in <strong>arweave_wallet_address</strong> — higher per-transaction cost but full transferability and platform-independent ownership.
           </div>
           <div class="card-note info">
             <strong>wallet_address</strong> is the Soul's Coinbase Smart Wallet on Base. Balance state lives on-chain only.
@@ -690,6 +693,9 @@ flowchart TB
         TX[["encrypted Transaktion batches"]]
         LH["Ledger (content-addressed)"]
         TX --> LH
+        AM{"account model"}
+        AM -- "shared (default)" --> IRYS["PersonalOS Irys account\nbatched · ~$100/yr at 100k Souls"]
+        AM -- "soul_owned (opt-in)" --> SW["Soul's Arweave wallet\nfull portability · higher tx cost"]
     end
 
     subgraph BASE_CHAIN ["Base Chain (on-chain)"]
