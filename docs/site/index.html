@@ -5,13 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PersonalOS — Platform Architecture</title>
   <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-  <script>mermaid.initialize({ startOnLoad: true, theme: 'dark', flowchart: { curve: 'basis' } });</script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      flowchart: { curve: 'basis', padding: 20 },
+      themeVariables: {
+        primaryColor: '#1a1a2e',
+        primaryTextColor: '#e2e8f0',
+        primaryBorderColor: '#3b82f6',
+        lineColor: '#475569',
+        secondaryColor: '#12121a',
+        tertiaryColor: '#0a0a0f',
+        clusterBkg: '#0f0f1a',
+        clusterBorder: '#2a2a3d',
+        titleColor: '#94a3b8',
+        edgeLabelBackground: '#0a0a0f',
+        fontFamily: 'Inter, system-ui, sans-serif'
+      }
+    });
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --bg:        #0a0a0f;
       --surface:   #12121a;
+      --surface2:  #0f0f1a;
       --border:    #1e1e2e;
       --text:      #e2e8f0;
       --muted:     #64748b;
@@ -64,41 +84,105 @@
     .hero {
       max-width: 900px;
       margin: 0 auto;
-      padding: 80px 2rem 60px;
+      padding: 72px 2rem 40px;
       text-align: center;
     }
     .hero-eyebrow {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
+      font-family: monospace;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1.25rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 span { color: var(--blue); }
+    .hero-narrative {
+      font-size: 0.95rem;
+      color: var(--muted);
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+    .hero-narrative strong { color: var(--text); font-weight: 600; }
+
+    /* ── FLOW HERO ── */
+    .flow-hero {
+      max-width: 1300px;
+      margin: 48px auto 0;
+      padding: 0 2rem;
+    }
+    .flow-hero-diagram {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      overflow-x: auto;
+      position: relative;
+    }
+    .flow-hero-diagram::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(59,130,246,0.04) 0%, rgba(20,184,166,0.04) 50%, rgba(168,85,247,0.04) 100%);
+      pointer-events: none;
+    }
+    .flow-hero-diagram .mermaid {
+      min-width: 900px;
+      display: flex;
+      justify-content: center;
+    }
+    .actor-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      justify-content: center;
+    }
+    .actor-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.5rem 1.1rem 0.5rem 0.75rem;
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+    .actor-pill .dot { width: 8px; height: 8px; flex-shrink: 0; }
+    .actor-pill strong { color: var(--text); margin-right: 2px; }
+    .actor-pill span { color: var(--muted); }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: 0.72rem;
       font-family: monospace;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: var(--teal);
-      margin-bottom: 1.5rem;
-    }
-    .hero h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -0.02em;
+      color: var(--muted);
       margin-bottom: 1.25rem;
     }
-    .hero h1 span { color: var(--blue); }
-    .hero p {
-      font-size: 1.05rem;
-      color: var(--muted);
-      max-width: 560px;
-      margin: 0 auto 3rem;
-      line-height: 1.7;
-    }
 
-    /* ── ARTIFACT CARDS ── */
+    /* ── DEEP DIVES ── */
+    .deep-dives {
+      max-width: 900px;
+      margin: 80px auto 0;
+      padding: 0 2rem;
+    }
     .cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 1.5rem;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 2rem 80px;
+      margin-top: 0;
+      padding-bottom: 80px;
     }
     .card {
       display: block;
@@ -110,62 +194,57 @@
       transition: border-color 0.2s, transform 0.2s;
     }
     .card:hover { transform: translateY(-3px); }
-    .card.blue  { border-top: 3px solid var(--blue);   }
-    .card.teal  { border-top: 3px solid var(--teal);   }
-    .card.purple{ border-top: 3px solid var(--purple);  }
+    .card.blue   { border-top: 3px solid var(--blue);   }
+    .card.teal   { border-top: 3px solid var(--teal);   }
+    .card.purple { border-top: 3px solid var(--purple); }
     .card:hover.blue   { border-color: var(--blue);   }
     .card:hover.teal   { border-color: var(--teal);   }
     .card:hover.purple { border-color: var(--purple); }
-
-    .card-icon {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      display: block;
-    }
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 0.5rem;
-    }
-    .card-desc {
-      font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 1.25rem;
-    }
-    .card-meta {
-      font-size: 0.72rem;
-      font-family: monospace;
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-      padding-top: 0.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
+    .card-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+    .card-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+    .card-desc  { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.25rem; }
+    .card-meta  {
+      font-size: 0.72rem; font-family: monospace; color: var(--muted);
+      border-top: 1px solid var(--border); padding-top: 0.75rem;
+      display: flex; flex-direction: column; gap: 3px;
     }
     .card-meta span { display: flex; align-items: center; gap: 6px; }
-    .dot {
-      display: inline-block;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
+    .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
     .dot.blue   { background: var(--blue);   }
     .dot.teal   { background: var(--teal);   }
     .dot.purple { background: var(--purple); }
-
     .card-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-top: 1rem;
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; font-weight: 600; margin-top: 1rem;
     }
     .card.blue   .card-cta { color: var(--blue);   }
     .card.teal   .card-cta { color: var(--teal);   }
     .card.purple .card-cta { color: var(--purple); }
+
+    /* ── STORE PILLS ── */
+    .stores {
+      max-width: 900px;
+      margin: 0 auto 60px;
+      padding: 0 2rem;
+    }
+    .stores-title {
+      font-size: 0.72rem;
+      font-family: monospace;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .store-row { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+    .store-pill {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 999px; padding: 0.4rem 1rem 0.4rem 0.6rem;
+      font-size: 0.78rem;
+    }
+    .store-pill .dot { width: 8px; height: 8px; }
+    .store-pill strong { color: var(--text); }
+    .store-pill span   { color: var(--muted); }
 
     /* ── DOMAIN LEGEND ── */
     .legend {
@@ -174,9 +253,9 @@
       padding: 0 2rem;
     }
     .legend-title {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-family: monospace;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 1rem;
@@ -187,77 +266,12 @@
       gap: 0.5rem;
     }
     .legend-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.75rem;
-      display: flex;
-      align-items: flex-start;
-      gap: 0.5rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; padding: 0.5rem 0.75rem; font-size: 0.75rem;
+      display: flex; align-items: flex-start; gap: 0.5rem;
     }
-    .legend-item strong {
-      font-family: monospace;
-      color: var(--text);
-      white-space: nowrap;
-    }
-    .legend-item span { color: var(--muted); line-height: 1.4; }
-
-    /* ── STORE PILLS ── */
-    .stores {
-      max-width: 900px;
-      margin: 0 auto 60px;
-      padding: 0 2rem;
-    }
-    .stores-title {
-      font-size: 0.75rem;
-      font-family: monospace;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 1rem;
-    }
-    .store-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-    .store-pill {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.4rem 1rem 0.4rem 0.6rem;
-      font-size: 0.78rem;
-    }
-    .store-pill .dot { width: 8px; height: 8px; }
-    .store-pill strong { color: var(--text); }
-    .store-pill span { color: var(--muted); }
-
-    /* ── FLOW DIAGRAM ── */
-    .flow {
-      max-width: 1100px;
-      margin: 0 auto 80px;
-      padding: 0 2rem;
-    }
-    .flow-title {
-      font-size: 0.75rem;
-      font-family: monospace;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 1rem;
-    }
-    .flow-diagram {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 2rem;
-      overflow-x: auto;
-    }
-    .flow-diagram .mermaid { min-width: 700px; }
+    .legend-item strong { font-family: monospace; color: var(--text); white-space: nowrap; }
+    .legend-item span   { color: var(--muted); line-height: 1.4; }
 
     footer {
       border-top: 1px solid var(--border);
@@ -276,60 +290,23 @@
     <span class="nav-badge">Audience: Architects &amp; Data Scientists</span>
   </nav>
 
+  <!-- ── HERO ── -->
   <div class="hero">
-    <div class="hero-eyebrow">Platform Architecture Reference</div>
-    <h1>Data sovereignty,<br /><span>made legible</span></h1>
-    <p>Three visual artifacts covering every major flow, the full data model, and a day in the life of each actor. Built for architects and data scientists.</p>
+    <div class="hero-eyebrow">End-to-End Platform Architecture</div>
+    <h1>Own your data.<br /><span>Earn from it.</span></h1>
+    <p class="hero-narrative">
+      Souls connect their financial accounts — transactions <strong>encrypt on-device</strong> and write permanently to <strong>Arweave</strong>, where only the Soul holds the key.
+      A personal AI running entirely on iOS computes propensity Insights from the encrypted data; <strong>only scores ever leave the device</strong>.
+      The Exchange continuously matches Insights to Brand bids — ranked by <strong>bid × Conviction × recency</strong> — and when a Soul claims an Offer,
+      <strong>USDC Yield settles atomically on Base chain</strong> in seconds via an immutable smart contract.
+    </p>
   </div>
 
-  <div class="cards">
-
-    <a href="sequences.html" class="card blue">
-      <span class="card-icon">⟶</span>
-      <div class="card-title">Sequence Diagrams</div>
-      <div class="card-desc">All 8 major flows with autonumbered steps, actor lanes, and data store interactions.</div>
-      <div class="card-meta">
-        <span><span class="dot blue"></span>Soul Onboarding</span>
-        <span><span class="dot blue"></span>Harvest → Cultivation → Insight</span>
-        <span><span class="dot blue"></span>Exchange Matching (×2 triggers)</span>
-        <span><span class="dot blue"></span>Offer → Claim → Yield Settlement</span>
-        <span><span class="dot blue"></span>Withdrawal</span>
-        <span><span class="dot blue"></span>Brand Onboarding &amp; Listing Lifecycle</span>
-      </div>
-      <div class="card-cta">Open diagrams →</div>
-    </a>
-
-    <a href="datamodel.html" class="card teal">
-      <span class="card-icon">⬡</span>
-      <div class="card-title">Data Model</div>
-      <div class="card-desc">Entity relationships, per-table schema cards, and a storage topology diagram across all 4 stores.</div>
-      <div class="card-meta">
-        <span><span class="dot teal"></span>ER diagram — 12 entities</span>
-        <span><span class="dot teal"></span>Schema cards with types &amp; privacy notes</span>
-        <span><span class="dot teal"></span>Storage topology: DB / Arweave / Base / Device</span>
-      </div>
-      <div class="card-cta">Open data model →</div>
-    </a>
-
-    <a href="dayinlife.html" class="card purple">
-      <span class="card-icon">◷</span>
-      <div class="card-title">Day in the Life</div>
-      <div class="card-desc">Timestamped actor narratives with system event traces and data visibility breakdowns for all three roles.</div>
-      <div class="card-meta">
-        <span><span class="dot blue"></span>Soul — earns Yield while they sleep</span>
-        <span><span class="dot purple"></span>Brand — funds Listings, watches Claims roll in</span>
-        <span><span class="dot" style="background:var(--amber)"></span>Platform Admin — reviews, monitors, supports</span>
-      </div>
-      <div class="card-cta">Open narratives →</div>
-    </a>
-
-  </div>
-
-  <div class="flow">
-    <div class="flow-title">Platform Flows — End to End</div>
-    <div class="flow-diagram">
+  <!-- ── FLOW DIAGRAM (hero element) ── -->
+  <div class="flow-hero">
+    <div class="flow-hero-diagram">
       <div class="mermaid">
-%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#12121a', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#3b82f6', 'lineColor': '#64748b', 'secondaryColor': '#1e1e2e', 'tertiaryColor': '#0a0a0f', 'clusterBkg': '#12121a', 'clusterBorder': '#1e1e2e', 'titleColor': '#e2e8f0', 'edgeLabelBackground': '#12121a'}}}%%
+%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#1a1a2e', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#334155', 'lineColor': '#475569', 'secondaryColor': '#12121a', 'tertiaryColor': '#0a0a0f', 'clusterBkg': '#0f0f1a', 'clusterBorder': '#2a2a3d', 'titleColor': '#94a3b8', 'edgeLabelBackground': '#0a0a0f', 'nodeBorder': '#334155', 'mainBkg': '#1a1a2e'}}}%%
 flowchart LR
     subgraph SOUL ["Soul"]
         S(["Soul"]) --> KC["Connect Bank\nKonnection"]
@@ -356,12 +333,77 @@ flowchart LR
     end
       </div>
     </div>
+
+    <div class="actor-pills">
+      <div class="actor-pill">
+        <span class="dot" style="background:var(--blue)"></span>
+        <strong>Soul</strong>
+        <span>connects financial data · earns USDC Yield · holds the only decryption key</span>
+      </div>
+      <div class="actor-pill">
+        <span class="dot" style="background:var(--teal)"></span>
+        <strong>Exchange</strong>
+        <span>ranks Offers by bid × Conviction × recency · delivers intelligently — never floods</span>
+      </div>
+      <div class="actor-pill">
+        <span class="dot" style="background:var(--purple)"></span>
+        <strong>Brand</strong>
+        <span>bids for matching Souls · funds Budget in USDC escrow · pays only on Claim</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DEEP DIVES ── -->
+  <div class="deep-dives">
+    <div class="section-label">Explore in depth</div>
+    <div class="cards">
+
+      <a href="sequences.html" class="card blue">
+        <span class="card-icon">⟶</span>
+        <div class="card-title">Sequence Diagrams</div>
+        <div class="card-desc">All 8 major flows with autonumbered steps, actor lanes, and data store interactions.</div>
+        <div class="card-meta">
+          <span><span class="dot blue"></span>Soul Onboarding</span>
+          <span><span class="dot blue"></span>Harvest → Cultivation → Insight</span>
+          <span><span class="dot blue"></span>Exchange Matching (×2 triggers)</span>
+          <span><span class="dot blue"></span>Offer → Claim → Yield Settlement</span>
+          <span><span class="dot blue"></span>Withdrawal</span>
+          <span><span class="dot blue"></span>Brand Onboarding &amp; Listing Lifecycle</span>
+        </div>
+        <div class="card-cta">Open diagrams →</div>
+      </a>
+
+      <a href="datamodel.html" class="card teal">
+        <span class="card-icon">⬡</span>
+        <div class="card-title">Data Model</div>
+        <div class="card-desc">Entity relationships, per-table schema cards, and a storage topology diagram across all 4 stores.</div>
+        <div class="card-meta">
+          <span><span class="dot teal"></span>ER diagram — 13 entities</span>
+          <span><span class="dot teal"></span>Schema cards with types &amp; privacy notes</span>
+          <span><span class="dot teal"></span>Storage topology: DB / Arweave / Base / Device</span>
+        </div>
+        <div class="card-cta">Open data model →</div>
+      </a>
+
+      <a href="dayinlife.html" class="card purple">
+        <span class="card-icon">◷</span>
+        <div class="card-title">Day in the Life</div>
+        <div class="card-desc">Timestamped actor narratives with system event traces and data visibility breakdowns for all three roles.</div>
+        <div class="card-meta">
+          <span><span class="dot blue"></span>Soul — earns Yield while they sleep</span>
+          <span><span class="dot purple"></span>Brand — funds Listings, watches Claims roll in</span>
+          <span><span class="dot" style="background:var(--amber)"></span>Platform Admin — reviews, monitors, supports</span>
+        </div>
+        <div class="card-cta">Open narratives →</div>
+      </a>
+
+    </div>
   </div>
 
   <div class="stores">
     <div class="stores-title">Data Stores</div>
     <div class="store-row">
-      <div class="store-pill"><span class="dot blue"></span><strong>PersonalOS DB</strong><span>accounts, Insights, Offers, Claims, Listings</span></div>
+      <div class="store-pill"><span class="dot blue"></span><strong>PersonalOS DB</strong><span>accounts, Insights, Conviction, Offers, Claims, Listings</span></div>
       <div class="store-pill"><span class="dot teal"></span><strong>Arweave via Irys</strong><span>E2E encrypted Ledger — shared (default) or Soul-owned wallet (opt-in)</span></div>
       <div class="store-pill"><span class="dot" style="background:var(--amber)"></span><strong>Base Chain</strong><span>Budget escrow, Claim settlement, Soul Wallet balances</span></div>
       <div class="store-pill"><span class="dot purple"></span><strong>iOS / iCloud Keychain</strong><span>Ephemeral decrypted Ledger, passkey — never leaves device</span></div>
@@ -378,17 +420,17 @@ flowchart LR
       <div class="legend-item"><strong>Ledger</strong><span>encrypted append-only store on Arweave</span></div>
       <div class="legend-item"><strong>Cultivation</strong><span>on-device Insight computation</span></div>
       <div class="legend-item"><strong>Insight</strong><span>derived propensity score</span></div>
+      <div class="legend-item"><strong>Conviction</strong><span>per-Signal-Type real-buyer track record; decays over time</span></div>
       <div class="legend-item"><strong>Signal Type</strong><span>named Insight category</span></div>
-      <div class="legend-item"><strong>Permit</strong><span>consent per Signal Type + Yield floor</span></div>
+      <div class="legend-item"><strong>Permit</strong><span>consent per Signal Type + Yield floor + notification settings</span></div>
       <div class="legend-item"><strong>Depth</strong><span>measure of Ledger richness</span></div>
       <div class="legend-item"><strong>Exchange</strong><span>continuous real-time matching engine</span></div>
       <div class="legend-item"><strong>Listing</strong><span>Brand's entry: Signal Type + bid + Budget</span></div>
       <div class="legend-item"><strong>Budget</strong><span>USDC escrow on Base per Listing</span></div>
-      <div class="legend-item"><strong>Offer</strong><span>matched Listing → specific Soul</span></div>
+      <div class="legend-item"><strong>Offer</strong><span>matched Listing → specific Soul, ranked by composite score</span></div>
       <div class="legend-item"><strong>Claim</strong><span>Soul accepts Offer — billable event</span></div>
       <div class="legend-item"><strong>Yield</strong><span>USDC deposited to Soul's Wallet</span></div>
-      <div class="legend-item"><strong>Conviction</strong><span>per-Signal-Type real-buyer track record; decays over time</span></div>
-      <div class="legend-item"><strong>Voucher</strong><span>optional Brand promo included with Claim; integrity is Brand's responsibility</span></div>
+      <div class="legend-item"><strong>Voucher</strong><span>optional Brand promo included with Claim</span></div>
       <div class="legend-item"><strong>Wallet</strong><span>Coinbase Smart Wallet on Base</span></div>
       <div class="legend-item"><strong>Withdrawal</strong><span>USDC → fiat via Coinbase off-ramp</span></div>
     </div>
