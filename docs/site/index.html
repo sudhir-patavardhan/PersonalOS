@@ -312,8 +312,9 @@ flowchart LR
         S(["Soul"]) --> KC["Connect Bank\nKonnection"]
         KC --> HV["Harvest\nscheduled + on-demand"]
         HV -->|"encrypted batch"| AR[("Arweave\nLedger")]
-        AR -->|"decrypt on device"| CV["Scoring\niOS only"]
-        CV -->|"scores only"| IN[("Insights +\nConviction")]
+        AR -->|"decrypt on device"| SCOR["Scoring
+iOS only"]
+        SCOR -->|"scores only"| IN[("Insights +\nConviction")]
     end
 
     subgraph BRAND ["Brand"]
@@ -329,7 +330,7 @@ flowchart LR
         CL -->|"atomic settlement"| SC["Smart Contract"]
         SC -->|"Yield"| WL[("Soul Wallet\nBase Chain")]
         SC -->|"platform fee"| PO(["PersonalOS"])
-        CL -.->|"purchase detected\nvia next Harvest"| CV
+        CL -.->|"purchase detected\nvia next Harvest"| SCOR
     end
       </div>
     </div>
@@ -420,8 +421,8 @@ flowchart LR
       <div class="legend-item"><strong>Ledger</strong><span>encrypted append-only store on Arweave</span></div>
       <div class="legend-item"><strong>Scoring</strong><span>on-device Insight computation</span></div>
       <div class="legend-item"><strong>Insight</strong><span>derived propensity score</span></div>
-      <div class="legend-item"><strong>Conviction</strong><span>per-Signal-Type real-buyer track record; decays over time</span></div>
-      <div class="legend-item"><strong>Category</strong><span>named Insight category</span></div>
+      <div class="legend-item"><strong>Conviction</strong><span>per-Category real-buyer track record; decays over time</span></div>
+      <div class="legend-item"><strong>Category</strong><span>named, versioned type of consumer intent (e.g. <code>automotive.new_vehicle_purchase</code>); Souls grant Consents per Category, Brands target Listings at a Category</span></div>
       <div class="legend-item"><strong>Consent</strong><span>consent per Category + Yield floor + notification settings</span></div>
       <div class="legend-item"><strong>Depth</strong><span>measure of Ledger richness</span></div>
       <div class="legend-item"><strong>Exchange</strong><span>continuous real-time matching engine</span></div>

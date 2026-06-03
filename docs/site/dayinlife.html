@@ -640,7 +640,7 @@
         <div class="tl-content">
           <div class="tl-tag tag-soul">Soul — iOS app</div>
           <div class="tl-event">Consent settings reviewed</div>
-          <div class="tl-desc">The Soul raises the Yield floor for <code>travel.frequent_flier</code> to $3.00. Lower-bid Listings targeting that Category will no longer match them. No brand is notified — the change takes effect in the next Exchange run.</div>
+          <div class="tl-desc">The Soul raises the Yield floor for <code>travel.frequent_flier</code> to $3.00. Lower-bid Listings targeting that Category will no longer match this Soul. No brand is notified — the change takes effect in the next Exchange run.</div>
         </div>
       </div>
 
@@ -661,7 +661,7 @@
   <p class="section-label soul-label">Narrative</p>
   <div class="narrative">
     <p>
-      Maya woke up to something she didn't expect when she first signed up for PersonalOS: a push notification with money attached. While she slept, the platform's scheduled Harvest pulled her bank Transaktions through her Plaid Konnection, encrypted every record end-to-end, and wrote the ciphertext to Arweave. Her phone then ran Scoring in the background — decrypting and processing <strong>on-device only</strong>, computing fresh Insight scores without any raw financial data ever leaving her hands. The highest-scoring Insight, <code>automotive.new_vehicle_purchase</code> at 0.87, reflected months of car-related transactions she'd honestly forgotten about.
+      Maya woke up to something she didn't expect when she first signed up for PersonalOS: a push notification with money attached. While she slept, the platform's scheduled Harvest pulled her bank Transaktions through her Plaid Konnection, encrypted every record end-to-end, and wrote the ciphertext to Arweave. Her phone then the Scoring process ran in the background — decrypting and processing <strong>on-device only</strong>, computing fresh Insight scores without any raw financial data ever leaving her hands. The highest-scoring Insight, <code>automotive.new_vehicle_purchase</code> at 0.87, reflected months of car-related transactions she'd honestly forgotten about.
     </p>
     <p>
       When the Exchange ran at 3:41 am, it found a live auto dealer Listing bidding $4.50 per Claim — well above Maya's self-set Yield floor of $2.00 for that Category. The Offer was created and queued. By 9:00 am she had a push notification. Two taps and $4.50 USDC landed in her non-custodial Coinbase Smart Wallet on Base. The entire settlement was atomic, on-chain, and required zero trust in PersonalOS — if the escrow didn't release, the Claim didn't register. Later that afternoon she adjusted her Consent floor for <strong>travel.frequent_flier</strong> upward, quietly filtering out low-value Listings without anyone being notified.
@@ -685,14 +685,14 @@
       <div class="ev-line"><span class="ev-ts">02:00:09</span><span class="ev-event">ARWEAVE_WRITE</span><span class="ev-arrow">→</span><span class="ev-payload">tx_ids=[ar_0a1b…, ar_2c3d…], ledger_depth=+12</span></div>
       <div class="ev-line"><span class="ev-ts">02:00:10</span><span class="ev-event">HARVEST_COMPLETE</span><span class="ev-arrow">→</span><span class="ev-note">// ciphertext written; PersonalOS holds no plaintext</span></div>
       <div class="ev-separator">──────────────────────────────────────────────────────────</div>
-      <div class="ev-line"><span class="ev-ts">03:40:00</span><span class="ev-event">CULTIVATION_STARTED</span><span class="ev-arrow">→</span><span class="ev-payload">device=on-device, ledger_depth=847</span></div>
-      <div class="ev-line"><span class="ev-ts">03:40:44</span><span class="ev-event">INSIGHT_COMPUTED</span><span class="ev-arrow">→</span><span class="ev-payload">signal=automotive.new_vehicle_purchase, score=0.87</span></div>
-      <div class="ev-line"><span class="ev-ts">03:40:44</span><span class="ev-event">INSIGHT_COMPUTED</span><span class="ev-arrow">→</span><span class="ev-payload">signal=travel.frequent_flier, score=0.72</span></div>
+      <div class="ev-line"><span class="ev-ts">03:40:00</span><span class="ev-event">SCORING_STARTED</span><span class="ev-arrow">→</span><span class="ev-payload">device=on-device, ledger_depth=847</span></div>
+      <div class="ev-line"><span class="ev-ts">03:40:44</span><span class="ev-event">INSIGHT_COMPUTED</span><span class="ev-arrow">→</span><span class="ev-payload">category=automotive.new_vehicle_purchase, score=0.87</span></div>
+      <div class="ev-line"><span class="ev-ts">03:40:44</span><span class="ev-event">INSIGHT_COMPUTED</span><span class="ev-arrow">→</span><span class="ev-payload">category=travel.frequent_flier, score=0.72</span></div>
       <div class="ev-line"><span class="ev-ts">03:40:45</span><span class="ev-event">INSIGHT_UPDATED</span><span class="ev-arrow">→</span><span class="ev-payload">soul_id=soul_m7x2, insights_count=6</span></div>
-      <div class="ev-line"><span class="ev-ts">03:40:45</span><span class="ev-event">CULTIVATION_COMPLETE</span><span class="ev-arrow">→</span><span class="ev-note">// raw Transaktions never left device</span></div>
+      <div class="ev-line"><span class="ev-ts">03:40:45</span><span class="ev-event">SCORING_COMPLETE</span><span class="ev-arrow">→</span><span class="ev-note">// raw Transaktions never left device</span></div>
       <div class="ev-separator">──────────────────────────────────────────────────────────</div>
       <div class="ev-line"><span class="ev-ts">03:41:00</span><span class="ev-event">EXCHANGE_MATCH_RUN</span><span class="ev-arrow">→</span><span class="ev-payload">trigger=scoring_complete, soul_id=soul_m7x2</span></div>
-      <div class="ev-line"><span class="ev-ts">03:41:01</span><span class="ev-event">PERMIT_CHECK</span><span class="ev-arrow">→</span><span class="ev-payload">signal=automotive.new_vehicle_purchase, floor=$2.00, listing_bid=$4.50 <span class="ev-ok">✓ above floor</span></span></div>
+      <div class="ev-line"><span class="ev-ts">03:41:01</span><span class="ev-event">CONSENT_CHECK</span><span class="ev-arrow">→</span><span class="ev-payload">category=automotive.new_vehicle_purchase, floor=$2.00, listing_bid=$4.50 <span class="ev-ok">✓ above floor</span></span></div>
       <div class="ev-line"><span class="ev-ts">03:41:01</span><span class="ev-event">OFFER_CREATED</span><span class="ev-arrow">→</span><span class="ev-payload">offer_id=off_9q8p, listing_id=lst_au77, yield=$4.50</span></div>
       <div class="ev-line"><span class="ev-ts">03:41:02</span><span class="ev-event">PUSH_QUEUED</span><span class="ev-arrow">→</span><span class="ev-payload">soul_id=soul_m7x2, deliver_at=09:00</span></div>
       <div class="ev-separator">──────────────────────────────────────────────────────────</div>
@@ -713,7 +713,7 @@
     <div class="data-col sees-col">
       <div class="data-col-title sees-title">Soul sees</div>
       <ul>
-        <li>Offer bid amount ($4.50) and Category category</li>
+        <li>Offer bid amount ($4.50) and Category</li>
         <li>Personalized Offer creative from the Brand</li>
         <li>Their own Insight scores and Ledger Depth</li>
         <li>Consent settings they configured (floor per Category)</li>
@@ -865,7 +865,7 @@
       <span class="events-filename">personalos://events — brand session</span>
     </div>
     <div class="events-body">
-      <div class="ev-line"><span class="ev-ts">09:00:00</span><span class="ev-event">LISTING_DRAFT_CREATED</span><span class="ev-arrow">→</span><span class="ev-payload">brand_id=brd_au01, signal=automotive.new_vehicle_purchase, bid=$4.50</span></div>
+      <div class="ev-line"><span class="ev-ts">09:00:00</span><span class="ev-event">LISTING_DRAFT_CREATED</span><span class="ev-arrow">→</span><span class="ev-payload">brand_id=brd_au01, category=automotive.new_vehicle_purchase, bid=$4.50</span></div>
       <div class="ev-line"><span class="ev-ts">09:28:41</span><span class="ev-event">LISTING_SUBMITTED</span><span class="ev-arrow">→</span><span class="ev-payload">listing_id=lst_au77, status=pending_review</span></div>
       <div class="ev-line"><span class="ev-ts">09:28:42</span><span class="ev-event">REVIEW_QUEUE_PUSH</span><span class="ev-arrow">→</span><span class="ev-payload">admin_notify=true</span></div>
       <div class="ev-separator">──────────────────────────────────────────────────────────</div>
@@ -1021,7 +1021,7 @@
       The Platform Admin's morning begins in the review queue — three Listings waiting for judgment. This is the human trust layer of PersonalOS. Two clear approvals: established Brands, Categories used correctly, Offer creative factual. The third is a newly onboarded auto parts Brand whose creative promised "guaranteed cash back" with no terms. <strong>Rejected with code <code>MISLEADING_OFFER_CONTENT</code></strong>. The Brand was notified within minutes with a detailed rejection reason and an invitation to resubmit with accurate language. PersonalOS's value to Souls depends entirely on Offers being trustworthy — the review queue is not a rubber stamp.
     </p>
     <p>
-      At 10:00 am, a new Category request landed from a Brand wanting to reach homeowners planning major renovations. The Admin validated the proposed scoring schema against what Scoring could reliably derive from bank Transaktions, confirmed internal ML team sign-off, and published <code>home_improvement.major_renovation v1.0</code> to the catalogue. Within hours, three Brands had expressed interest. At 11:00 am the Exchange health dashboard showed a strong 73% match rate across 12 live Listings with $2,400 in active escrow — one outlier flagged for low Soul Consent adoption in its Category, which signals either poor awareness or low Soul interest in that category.
+      At 10:00 am, a new Category request landed from a Brand wanting to reach homeowners planning major renovations. The Admin validated the proposed scoring schema against what Scoring could reliably derive from bank Transaktions, confirmed internal ML team sign-off, and published <code>home_improvement.major_renovation v1.0</code> to the catalogue. Within hours, three Brands had expressed interest. At 11:00 am the Exchange health dashboard showed a strong 73% match rate across 12 live Listings with $2,400 in active escrow — one outlier flagged for low Soul Consent adoption in its Category, which signals either poor awareness or low Soul interest in that Category.
     </p>
     <p>
       The afternoon brought a support ticket: a Soul's Plaid Konnection had silently expired, halting Harvests for three days. The Admin traced the Konnection status, triggered a re-auth deep-link, confirmed Harvest resumed, and closed the ticket in 22 minutes. By 4:00 pm the daily revenue picture was healthy: $340 in Claim take-rate, two new Brand subscriptions added via Stripe. The platform is not a data marketplace in the traditional sense — PersonalOS never reads plaintext data and never sells audiences — but the economics are strong precisely because the consent model drives higher Claim conversion than any lookalike audience ever could.
@@ -1044,8 +1044,8 @@
       <div class="ev-line"><span class="ev-ts">08:31:55</span><span class="ev-event">LISTING_REJECTED</span><span class="ev-arrow">→</span><span class="ev-payload">listing_id=lst_ap33, reason=MISLEADING_OFFER_CONTENT <span class="ev-err">✗</span></span></div>
       <div class="ev-line"><span class="ev-ts">08:31:56</span><span class="ev-event">BRAND_NOTIFIED</span><span class="ev-arrow">→</span><span class="ev-payload">brand_id=brd_ap33, status=rejected, resubmit_allowed=true</span></div>
       <div class="ev-separator">──────────────────────────────────────────────────────────</div>
-      <div class="ev-line"><span class="ev-ts">10:00:00</span><span class="ev-event">SIGNAL_TYPE_REQUEST_REVIEWED</span><span class="ev-arrow">→</span><span class="ev-payload">signal=home_improvement.major_renovation</span></div>
-      <div class="ev-line"><span class="ev-ts">10:07:33</span><span class="ev-event">SIGNAL_TYPE_PUBLISHED</span><span class="ev-arrow">→</span><span class="ev-payload">signal=home_improvement.major_renovation, version=1.0 <span class="ev-ok">✓</span></span></div>
+      <div class="ev-line"><span class="ev-ts">10:00:00</span><span class="ev-event">CATEGORY_REQUEST_REVIEWED</span><span class="ev-arrow">→</span><span class="ev-payload">signal=home_improvement.major_renovation</span></div>
+      <div class="ev-line"><span class="ev-ts">10:07:33</span><span class="ev-event">CATEGORY_PUBLISHED</span><span class="ev-arrow">→</span><span class="ev-payload">category=home_improvement.major_renovation, version=1.0 <span class="ev-ok">✓</span></span></div>
       <div class="ev-line"><span class="ev-ts">10:07:34</span><span class="ev-event">CATALOGUE_UPDATED</span><span class="ev-arrow">→</span><span class="ev-payload">total_categories=14</span></div>
       <div class="ev-separator">──────────────────────────────────────────────────────────</div>
       <div class="ev-line"><span class="ev-ts">11:00:00</span><span class="ev-event">EXCHANGE_HEALTH_SNAPSHOT</span><span class="ev-arrow">→</span><span class="ev-payload">active_listings=12, escrow=$2400, match_rate=73%, claim_conv=88%</span></div>

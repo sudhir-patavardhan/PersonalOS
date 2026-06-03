@@ -341,12 +341,12 @@ erDiagram
         timestamp decay_reset_at
         timestamp updated_at
     }
-    SIGNAL_TYPE {
+    CATEGORY {
         uuid id PK
         string name
         string version
     }
-    PERMIT {
+    CONSENT {
         uuid id PK
         uuid soul_id FK
         uuid category_id FK
@@ -407,18 +407,18 @@ erDiagram
     }
 
     SOUL        ||--o{ KONNECTION  : "has many"
-    SOUL        ||--o{ PERMIT      : "has many"
+    SOUL        ||--o{ CONSENT     : "has many"
     SOUL        ||--o{ INSIGHT     : "has many"
     SOUL        ||--|| WALLET      : "has one (address only)"
     SOUL        ||--o{ OFFER       : "receives"
     SOUL        ||--o{ WITHDRAWAL  : "initiates"
     KONNECTION  ||--o{ TRANSAKTION : "sourced into (Arweave)"
-    PERMIT      }o--|| SIGNAL_TYPE : "consents to"
-    INSIGHT     }o--|| SIGNAL_TYPE : "scored for"
-    CONVICTION  }o--|| SIGNAL_TYPE : "scored for"
+    CONSENT     }o--|| CATEGORY   : "consents to"
+    INSIGHT     }o--|| CATEGORY   : "scored for"
+    CONVICTION  }o--|| CATEGORY   : "scored for"
     SOUL        ||--o{ CONVICTION  : "has many"
     BRAND       ||--o{ LISTING     : "creates"
-    LISTING     }o--|| SIGNAL_TYPE : "targets"
+    LISTING     }o--|| CATEGORY   : "targets"
     LISTING     ||--o{ OFFER       : "matched to"
     OFFER       ||--o| CLAIM       : "settled as"
       </div>
@@ -502,7 +502,7 @@ erDiagram
         </div>
       </div>
 
-      <!-- SIGNAL_TYPES -->
+      <!-- CATEGORIES -->
       <div class="card">
         <div class="card-header">
           <span class="card-table-name" style="color:var(--blue)">categories</span>
@@ -537,7 +537,7 @@ erDiagram
             <li><span class="field-name">computed_at</span>         <span class="field-type">timestamptz</span></li>
           </ul>
           <div class="card-note info">
-            Derived propensity score. Computed on-device during Scoring — only scores leave the device, never raw Transaktions. <strong>algorithm_version</strong> tracks which Scoring algorithm produced this score. <strong>is_stale</strong> is set true when a new algorithm ships and re-scoring is pending; the Exchange continues serving stale scores until re-scoring completes in the background.
+            Derived propensity score. Computed on-device during Scoring — only scores leave the device, never raw Transaktions. <strong>algorithm_version</strong> tracks which Scoring algorithm produced this score. <strong>is_stale</strong> is set true when a new algorithm ships and re-running Scoring is pending; the Exchange continues serving stale scores until the next Scoring run completes in the background.
           </div>
         </div>
       </div>
@@ -562,7 +562,7 @@ erDiagram
             Per-Signal-Type real-buyer track record. Computed on-device during Scoring — only the score reaches the server. Used in Exchange ranking: <code>bid × Conviction × recency_weight</code>.
           </div>
           <div class="card-note teal">
-            Score decays by 50% every 6 months of inactivity (no matching purchase detected in the Category's conversion window). Never decays to zero. <strong>decay_reset_at</strong> is updated when a matching purchase Transaktion is detected in a Harvest. Conversion windows are per-Signal-Type and published in the open Scoring algorithm.
+            Score decays by 50% every 6 months of inactivity (no matching purchase detected in the Category's conversion window). Never decays to zero. <strong>decay_reset_at</strong> is updated when a matching purchase Transaktion is detected in a Harvest. Conversion windows are per-Category and published in the open Scoring algorithm.
           </div>
         </div>
       </div>

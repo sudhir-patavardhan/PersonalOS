@@ -528,7 +528,7 @@ sequenceDiagram
     BE-->>App: 200 {insights_stored: N}
 
     Note over BE: Scoring-triggered Exchange matching fired here (see Flow 4)
-    BE->>BE: emit CULTIVATION_COMPLETE event {soul_id, updated_categories[]}
+    BE->>BE: emit SCORING_COMPLETE event {soul_id, updated_categories[]}
       </pre>
     </div>
   </section>
@@ -598,7 +598,7 @@ sequenceDiagram
         <h2>Exchange Matching: Scoring-triggered</h2>
         <p>
           When Scoring completes for a single Soul (see Flow 2), the backend fires a
-          CULTIVATION_COMPLETE event. The Exchange matches that one Soul against all active
+          SCORING_COMPLETE event. The Exchange matches that one Soul against all active
           Listings whose Categories appear in the updated Insight set, checking Consent and
           Yield floor eligibility. New Offers are delivered via push.
         </p>
@@ -614,10 +614,10 @@ sequenceDiagram
     participant App as iOS App (this Soul)
 
     Note over BE,Exchange: Triggered at end of Flow 2
-    BE->>Exchange: CULTIVATION_COMPLETE {soul_id, updated_categories: [automotive.new_vehicle_purchase, ...]}
+    BE->>Exchange: SCORING_COMPLETE {soul_id, updated_categories: [automotive.new_vehicle_purchase, ...]}
 
     Exchange->>DB: SELECT soul_id, yield_floor_usdc, category<br/>FROM consents<br/>WHERE soul_id = ? AND category IN (updated_categories)
-    DB-->>Exchange: soul_permits[] (category, yield_floor_usdc)
+    DB-->>Exchange: soul_consents[] (category, yield_floor_usdc)
 
     Exchange->>DB: SELECT listing_id, category, bid_usdc, min_score_threshold, budget_remaining, content_ref, brand_name<br/>FROM listings<br/>WHERE status = 'active'<br/>  AND category IN (soul_categories)<br/>  AND budget_remaining > 0
     DB-->>Exchange: candidate_listings[]
