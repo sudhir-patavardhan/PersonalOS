@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PersonalOS — Data Model</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0f;
+      --surface:   #111118;
+      --surface2:  #1a1a28;
+      --border:    #2a2a40;
+      --text:      #e2e8f0;
+      --muted:     #94a3b8;
+      --blue:      #3b82f6;
+      --teal:      #14b8a6;
+      --purple:    #a855f7;
+      --amber:     #f59e0b;
+      --red:       #ef4444;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      transition: color 0.15s;
+    }
+    nav a:hover { color: var(--text); }
+    nav .brand {
+      color: var(--text);
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.03em;
+    }
+    nav .sep { color: var(--border); }
+    nav .current { color: var(--blue); font-weight: 500; }
+
+    /* ── HERO ── */
+    header {
+      padding: 3.5rem 2rem 2.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .audience-badge {
+      display: inline-block;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      color: var(--purple);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+    }
+    h1 span { color: var(--blue); }
+    .subtitle {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 640px;
+    }
+
+    /* ── LEGEND ── */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-blue   { background: var(--blue); }
+    .dot-teal   { background: var(--teal); }
+    .dot-amber  { background: var(--amber); }
+    .dot-purple { background: var(--purple); }
+
+    /* ── LAYOUT ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 5rem;
+    }
+
+    section { margin-bottom: 4rem; }
+
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    h2::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── DIAGRAM CONTAINERS ── */
+    .diagram-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      overflow-x: auto;
+    }
+    .mermaid {
+      min-width: 600px;
+    }
+
+    /* ── SCHEMA CARDS GRID ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .card:hover { border-color: #3a3a58; }
+
+    .card-header {
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-table-name {
+      font-family: "SF Mono", "Fira Code", "Fira Mono", monospace;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .store-badge {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .store-db     { background: rgba(59,130,246,0.18); color: var(--blue);   border: 1px solid rgba(59,130,246,0.3); }
+    .store-arweave{ background: rgba(20,184,166,0.18); color: var(--teal);   border: 1px solid rgba(20,184,166,0.3); }
+    .store-chain  { background: rgba(245,158,11,0.18); color: var(--amber);  border: 1px solid rgba(245,158,11,0.3); }
+    .store-device { background: rgba(168,85,247,0.18); color: var(--purple); border: 1px solid rgba(168,85,247,0.3); }
+
+    .card-body { padding: 1rem 1.25rem; }
+
+    .field-list { list-style: none; }
+    .field-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(42,42,64,0.6);
+      font-size: 13px;
+      gap: 1rem;
+    }
+    .field-list li:last-child { border-bottom: none; }
+
+    .field-name {
+      font-family: "SF Mono", "Fira Code", monospace;
+      color: var(--text);
+      flex-shrink: 0;
+    }
+    .field-name.pk   { color: var(--amber); }
+    .field-name.fk   { color: var(--blue); }
+    .field-name.hash { color: var(--teal); }
+
+    .field-type {
+      color: var(--muted);
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .card-note {
+      margin-top: 0.85rem;
+      padding: 0.6rem 0.85rem;
+      background: rgba(245,158,11,0.08);
+      border-left: 3px solid var(--amber);
+      border-radius: 4px;
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+    .card-note.info {
+      background: rgba(59,130,246,0.08);
+      border-left-color: var(--blue);
+    }
+    .card-note.teal {
+      background: rgba(20,184,166,0.08);
+      border-left-color: var(--teal);
+    }
+    .card-note.purple {
+      background: rgba(168,85,247,0.08);
+      border-left-color: var(--purple);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      nav { padding: 0 1rem; }
+      header, main { padding-left: 1rem; padding-right: 1rem; }
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="index.html" class="brand">PersonalOS</a>
+  <span class="sep">/</span>
+  <a href="index.html">Docs</a>
+  <span class="sep">/</span>
+  <span class="current">Data Model</span>
+</nav>
+
+<!-- ── HERO ── -->
+<header>
+  <div class="audience-badge">Audience: Architects &amp; Data Scientists</div>
+  <h1>PersonalOS <span>Data Model</span></h1>
+  <p class="subtitle">
+    Full schema reference — entities, relationships, storage locations, and privacy notes.
+    PersonalOS never reads raw transaction data; it holds only encrypted pointers.
+  </p>
+
+  <div class="legend">
+    <div class="legend-item"><span class="legend-dot dot-blue"></span>PersonalOS DB (PostgreSQL)</div>
+    <div class="legend-item"><span class="legend-dot dot-teal"></span>Arweave (encrypted, permanent)</div>
+    <div class="legend-item"><span class="legend-dot dot-amber"></span>Base chain (on-chain)</div>
+    <div class="legend-item"><span class="legend-dot dot-purple"></span>iOS device / iCloud Keychain (ephemeral)</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ── 1. ER DIAGRAM ── -->
+  <section id="er-diagram">
+    <h2>Entity-Relationship Diagram</h2>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+erDiagram
+    SOUL {
+        uuid id PK
+        string email
+        string arweave_ledger_hash
+        string wallet_address
+        float depth_score
+        timestamp created_at
+    }
+    KONNECTION {
+        uuid id PK
+        uuid soul_id FK
+        string provider
+        string status
+        string plaid_access_token
+        timestamp last_harvest_at
+    }
+    TRANSAKTION {
+        uuid id
+        uuid konnection_id FK
+        string type
+        string source
+        timestamp ts
+        string arweave_tx_id
+    }
+    INSIGHT {
+        uuid id PK
+        uuid soul_id FK
+        uuid signal_type_id FK
+        float score
+        timestamp computed_at
+    }
+    SIGNAL_TYPE {
+        uuid id PK
+        string name
+        string version
+    }
+    PERMIT {
+        uuid id PK
+        uuid soul_id FK
+        uuid signal_type_id FK
+        decimal yield_floor_usdc
+        timestamp created_at
+        timestamp revoked_at
+    }
+    WALLET {
+        string wallet_address PK
+        string chain
+    }
+    BRAND {
+        uuid id PK
+        string name
+        string subscription_status
+        string stripe_subscription_id
+    }
+    LISTING {
+        uuid id PK
+        uuid brand_id FK
+        uuid signal_type_id FK
+        decimal bid_per_claim_usdc
+        text content
+        string status
+        string on_chain_escrow_tx_hash
+        decimal budget_remaining_usdc
+    }
+    OFFER {
+        uuid id PK
+        uuid soul_id FK
+        uuid listing_id FK
+        string status
+        timestamp delivered_at
+    }
+    CLAIM {
+        uuid id PK
+        uuid offer_id FK
+        decimal usdc_gross
+        decimal platform_fee_usdc
+        decimal yield_usdc
+        string chain_tx_hash
+        timestamp claimed_at
+    }
+    WITHDRAWAL {
+        uuid id PK
+        uuid soul_id FK
+        decimal amount_usdc
+        string coinbase_offramp_ref
+        string status
+        timestamp initiated_at
+    }
+
+    SOUL        ||--o{ KONNECTION  : "has many"
+    SOUL        ||--o{ PERMIT      : "has many"
+    SOUL        ||--o{ INSIGHT     : "has many"
+    SOUL        ||--|| WALLET      : "has one (address only)"
+    SOUL        ||--o{ OFFER       : "receives"
+    SOUL        ||--o{ WITHDRAWAL  : "initiates"
+    KONNECTION  ||--o{ TRANSAKTION : "sourced into (Arweave)"
+    PERMIT      }o--|| SIGNAL_TYPE : "consents to"
+    INSIGHT     }o--|| SIGNAL_TYPE : "scored for"
+    BRAND       ||--o{ LISTING     : "creates"
+    LISTING     }o--|| SIGNAL_TYPE : "targets"
+    LISTING     ||--o{ OFFER       : "matched to"
+    OFFER       ||--o| CLAIM       : "settled as"
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 2. SCHEMA CARDS ── -->
+  <section id="schema-cards">
+    <h2>Table-by-Table Schema</h2>
+    <div class="cards-grid">
+
+      <!-- SOULS -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-table-name" style="color:var(--blue)">souls</span>
+          <span class="store-badge store-db">PersonalOS DB</span>
+        </div>
+        <div class="card-body">
+          <ul class="field-list">
+            <li><span class="field-name pk">id</span>            <span class="field-type">uuid PK</span></li>
+            <li><span class="field-name">email</span>            <span class="field-type">text UNIQUE</span></li>
+            <li><span class="field-name hash">arweave_ledger_hash</span> <span class="field-type">text</span></li>
+            <li><span class="field-name hash">wallet_address</span>      <span class="field-type">text</span></li>
+            <li><span class="field-name">depth_score</span>      <span class="field-type">numeric(6,3)</span></li>
+            <li><span class="field-name">created_at</span>       <span class="field-type">timestamptz</span></li>
+          </ul>
+          <div class="card-note teal">
+            <strong>arweave_ledger_hash</strong> is a pointer to the encrypted Ledger on Arweave — PersonalOS never stores or decrypts the underlying Transaktions.
+          </div>
+          <div class="card-note info">
+            <strong>wallet_address</strong> is the Soul's Coinbase Smart Wallet on Base. Balance state lives on-chain only.
+          </div>
+        </div>
+      </div>
+
+      <!-- KONNECTIONS -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-table-name" style="color:var(--blue)">konnections</span>
+          <span class="store-badge store-db">PersonalOS DB</span>
+        </div>
+        <div class="card-body">
+          <ul class="field-list">
+            <li><span class="field-name pk">id</span>                   <span class="field-type">uuid PK</span></li>
+            <li><span class="field-name fk">soul_id</span>              <span class="field-type">uuid FK → souls</span></li>
+            <li><span class="field-name">provider</span>                <span class="field-type">text (plaid | gmail)</span></li>
+            <li><span class="field-name">status</span>                  <span class="field-type">enum</span></li>
+            <li><span class="field-name">plaid_access_token</span>      <span class="field-type">text</span></li>
+            <li><span class="field-name">last_harvest_at</span>         <span class="field-type">timestamptz</span></li>
+          </ul>
+          <div class="card-note">
+            <strong>plaid_access_token</strong> is encrypted at rest (envelope encryption via KMS). Never logged or transmitted in plaintext.
+          </div>
+          <div class="card-note info">
+            Status values: <code>established</code> · <code>syncing</code> · <code>disconnected</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSAKTIONS (Arweave) -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-table-name" style="color:var(--teal)">transaktions</span>
+          <span class="store-badge store-arweave">Arweave only</span>
+        </div>
+        <div class="card-body">
+          <ul class="field-list">
+            <li><span class="field-name pk">id</span>                   <span class="field-type">uuid (within payload)</span></li>
+            <li><span class="field-name fk">konnection_id</span>        <span class="field-type">uuid (within payload)</span></li>
+            <li><span class="field-name">type</span>                    <span class="field-type">text (bank_transaction | email)</span></li>
+            <li><span class="field-name">source</span>                  <span class="field-type">text</span></li>
+            <li><span class="field-name">ts</span>                      <span class="field-type">timestamptz</span></li>
+            <li><span class="field-name hash">arweave_tx_id</span>      <span class="field-type">text (Arweave TxID)</span></li>
+          </ul>
+          <div class="card-note teal">
+            Immutable. Stored in encrypted batches on Arweave. PersonalOS holds <strong>only the Arweave content hash</strong> on the Soul record. This entity does <strong>not exist in the PostgreSQL database</strong>.
+          </div>
+        </div>
+      </div>
+
+      <!-- SIGNAL_TYPES -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-table-name" style="color:var(--blue)">signal_types</span>
+          <span class="store-badge store-db">PersonalOS DB</span>
+        </div>
+        <div class="card-body">
+          <ul class="field-list">
+            <li><span class="field-name pk">id</span>      <span class="field-type">uuid PK</span></li>
+            <li><span class="field-name">name</span>       <span class="field-type">text UNIQUE (e.g. automotive.new_vehicle_purchase)</span></li>
+            <li><span class="field-name">version</span>    <span class="field-type">text (semver)</span></li>
+          </ul>
+          <div class="card-note info">
+            Owned and versioned by PersonalOS. Brands target a Signal Type when creating a Listing; Souls grant Permits per Signal Type.
+          </div>
+        </div>
+      </div>
+
+      <!-- INSIGHTS -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-table-name" style="color:var(--blue)">insights</span>
+          <span class="store-badge store-db">PersonalOS DB</span>
+        </div>
+        <div class="card-body">
+          <ul class="field-list">
+            <li><span class="field-name pk">id</span>               <span class="field-type">uuid PK</span></li>
+            <li><span class="field-name fk">soul_id</span>          <span class="field-type">uuid FK → souls</span></li>
+            <li><span class="field-name fk">signal_type_id</span>   <span class="field-type">uuid FK → signal_types</span></li>
+            <li><span class="field-name">score</span>               <span class="field-type">numeric(5,4)</span></li>
+            <li><span class="field-name">computed_at</span>         <span class="field-type">timestamptz</span></li>
+          </ul>
+          <div class="card-note info">
+            Derived propensity score. Computed by PersonalOS ML pipeline from the Ledger <em>without</em> reading raw Transaktions — the Soul's device decrypts and sends aggregated signals during Cultivation.
+          </div>
+        </div>
+      </div>
+
+      <!-- PERMITS -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-table-name" style="color:var(--blue)">permits</span>
+          <span class="store-badge store-db">PersonalOS DB</span>
+        </div>
+        <div class="card-body">
+          <ul class="field-list">
+            <li><span class="field-name pk">id</span>               <span class="field-type">uuid PK</span></li>
+            <li><span class="field-name fk">soul_id</span>          <span class="field-type">uuid FK → souls</span></li>
+            <li><span class="field-name fk">signal_type_id</span>   <span class="field-type">uuid FK → signal_types</span></li>
+            <li><span class="field-name">yield_floor_usdc</span>    <span class="field-type">numeric(12,6)</span></li>
+            <li><span class="field-name">created_at</span>          <span class="field-type">timestamptz</span></li>
+            <li><span class="field-name">revoked_at</span>          <span class="field-type">timestamptz NULLABLE</span></li>
+          </ul>
+          <div class="card-note info">
+            Active permit: <code>revoked_at IS NULL</code>. The Soul sets a minimum price floor; Offers below this value are suppressed by the Exchange.
+          </div>
+        </div>
+      </div>
+
+      <!-- BRANDS -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-table-name" style="color:var(--blue)">brands</span>
+          <span class="store-badge store-db">PersonalOS DB</span>
+        </div>
+        <div class="card-body">
+          <ul class="field-list">
+            <li><span class="field-name pk">id</span>                      <span class="field-type">uuid PK</span></li>
+            <li><span class="field-name">name</span>                       <span class="field-type">text</span></li>
+            <li><span class="field-name">subscription_status</span>        <span class="field-type">enum</span></li>
+            <li><span class="field-name">stripe_subscription_id</span>     <span class="field-type">text</span></li>
+          </ul>
+          <div class="card-note">
+            <strong>stripe_subscription_id</strong> is treated as a sensitive billing reference — access is restricted to billing service only.
+          </div>
+        </div>
+      </div>
+
+      <!-- LISTINGS -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-table-name" style="color:var(--blue)">listings</span>
+          <span class="store-badge store-db">PersonalOS DB</span>
+        </div>
+        <div class="card-body">
+          <ul class="field-list">
+            <li><span class="field-name pk">id</span>                       <span class="field-type">uuid PK</span></li>
+            <li><span class="field-name fk">brand_id</span>                 <span class="field-type">uuid FK → brands</span></li>
+            <li><span class="field-name fk">signal_type_id</span>           <span class="field-type">uuid FK → signal_types</span></li>
+            <li><span class="field-name">bid_per_claim_usdc</span>          <span class="field-type">numeric(12,6)</span></li>
+            <li><span class="field-name">content</span>                     <span class="field-type">jsonb (creative)</span></li>
+            <li><span class="field-name">status</span>                      <span class="field-type">enum</span></li>
+            <li><span class="field-name hash">on_chain_escrow_tx_hash</span><span class="field-type">text</span></li>
+            <li><span class="field-name">budget_remaining_usdc</span>       <span class="field-type">numeric(16,6)</span></li>
+          </ul>
+          <div class="card-note">
+            Status values: <code>pending_review</code> · <code>active</code> · <code>exhausted</code>
+          </div>
+          <div class="card-note teal">
+            <strong>on_chain_escrow_tx_hash</strong> is a pointer to the escrow event on Base. Budget state of record is on-chain; <code>budget_remaining_usdc</code> is a denormalized cache updated by event listeners.
+          </div>
+        </div>
+      </div>
+
+      <!-- OFFERS -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-table-name" style="color:var(--blue)">offers</span>
+          <span class="store-badge store-db">PersonalOS DB</span>
+        </div>
+        <div class="card-body">
+          <ul class="field-list">
+            <li><span class="field-name pk">id</span>            <span class="field-type">uuid PK</span></li>
+            <li><span class="field-name fk">soul_id</span>       <span class="field-type">uuid FK → souls</span></li>
+            <li><span class="field-name fk">listing_id</span>    <span class="field-type">uuid FK → listings</span></li>
+            <li><span class="field-name">status</span>           <span class="field-type">enum</span></li>
+            <li><span class="field-name">delivered_at</span>     <span class="field-type">timestamptz NULLABLE</span></li>
+          </ul>
+          <div class="card-note info">
+            Status lifecycle: <code>pending</code> → <code>seen</code> → <code>claimed</code> | <code>expired</code>. Created by the Exchange (event-driven, no persistent Exchange entity).
+          </div>
+        </div>
+      </div>
+
+      <!-- CLAIMS -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-table-name" style="color:var(--blue)">claims</span>
+          <span class="store-badge store-db">PersonalOS DB</span>
+        </div>
+        <div class="card-body">
+          <ul class="field-list">
+            <li><span class="field-name pk">id</span>                 <span class="field-type">uuid PK</span></li>
+            <li><span class="field-name fk">offer_id</span>           <span class="field-type">uuid FK → offers</span></li>
+            <li><span class="field-name">usdc_gross</span>            <span class="field-type">numeric(12,6)</span></li>
+            <li><span class="field-name">platform_fee_usdc</span>     <span class="field-type">numeric(12,6)</span></li>
+            <li><span class="field-name">yield_usdc</span>            <span class="field-type">numeric(12,6)</span></li>
+            <li><span class="field-name hash">chain_tx_hash</span>    <span class="field-type">text</span></li>
+            <li><span class="field-name">claimed_at</span>            <span class="field-type">timestamptz</span></li>
+          </ul>
+          <div class="card-note teal">
+            <strong>chain_tx_hash</strong> references the settlement event on Base. <code>yield_usdc = usdc_gross − platform_fee_usdc</code>. On-chain state is authoritative; DB row is an audit mirror.
+          </div>
+        </div>
+      </div>
+
+      <!-- WITHDRAWALS -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-table-name" style="color:var(--blue)">withdrawals</span>
+          <span class="store-badge store-db">PersonalOS DB</span>
+        </div>
+        <div class="card-body">
+          <ul class="field-list">
+            <li><span class="field-name pk">id</span>                    <span class="field-type">uuid PK</span></li>
+            <li><span class="field-name fk">soul_id</span>               <span class="field-type">uuid FK → souls</span></li>
+            <li><span class="field-name">amount_usdc</span>              <span class="field-type">numeric(16,6)</span></li>
+            <li><span class="field-name">coinbase_offramp_ref</span>     <span class="field-type">text</span></li>
+            <li><span class="field-name">status</span>                   <span class="field-type">enum</span></li>
+            <li><span class="field-name">initiated_at</span>             <span class="field-type">timestamptz</span></li>
+          </ul>
+          <div class="card-note info">
+            Soul moves USDC from their non-custodial Base Wallet to fiat via Coinbase offramp. <code>coinbase_offramp_ref</code> is the external transaction reference.
+          </div>
+        </div>
+      </div>
+
+      <!-- WALLET (on-chain) -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-table-name" style="color:var(--amber)">wallet</span>
+          <span class="store-badge store-chain">Base chain</span>
+        </div>
+        <div class="card-body">
+          <ul class="field-list">
+            <li><span class="field-name pk">wallet_address</span>   <span class="field-type">address (EVM)</span></li>
+            <li><span class="field-name">usdc_balance</span>        <span class="field-type">uint256 (on-chain)</span></li>
+            <li><span class="field-name">chain</span>               <span class="field-type">Base mainnet</span></li>
+          </ul>
+          <div class="card-note">
+            Non-custodial Coinbase Smart Wallet. PersonalOS stores only <code>wallet_address</code> on the <code>souls</code> row. USDC balance and transfer history live on-chain only — PersonalOS reads via event indexer.
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /cards-grid -->
+  </section>
+
+  <!-- ── 3. STORAGE TOPOLOGY ── -->
+  <section id="storage-topology">
+    <h2>Storage Topology</h2>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TB
+    subgraph PERSONALOS_DB ["PersonalOS DB (PostgreSQL)"]
+        direction TB
+        S[(souls)]
+        K[(konnections)]
+        I[(insights)]
+        ST[(signal_types)]
+        P[(permits)]
+        L[(listings)]
+        O[(offers)]
+        C[(claims)]
+        B[(brands)]
+        W[(withdrawals)]
+    end
+
+    subgraph ARWEAVE ["Arweave (permanent, encrypted)"]
+        direction TB
+        TX[["encrypted Transaktion batches"]]
+        LH["Ledger (content-addressed)"]
+        TX --> LH
+    end
+
+    subgraph BASE_CHAIN ["Base Chain (on-chain)"]
+        direction TB
+        ESC["Budget Escrow (per Listing)"]
+        SETTLE["Claim Settlement Events"]
+        BAL["Soul Wallet USDC Balance"]
+    end
+
+    subgraph IOS_DEVICE ["iOS Device / iCloud Keychain (ephemeral)"]
+        direction TB
+        DL["Decrypted Ledger (Cultivation only)"]
+        PK["Passkey (iCloud Keychain)"]
+    end
+
+    %% Konnection harvests → Arweave
+    K -- "batch upload (encrypted)" --> TX
+    %% Arweave hash stored in souls
+    LH -- "content hash pointer" --> S
+    %% Device decrypts for Cultivation
+    LH -- "decrypt via Passkey" --> DL
+    %% Cultivation pushes aggregated signals to Insights
+    DL -- "aggregated signals only" --> I
+    %% Listing escrow locked on-chain
+    L -- "escrow_tx_hash ref" --> ESC
+    %% Claim settled on-chain
+    C -- "chain_tx_hash ref" --> SETTLE
+    %% Settlement credits Wallet
+    SETTLE --> BAL
+    %% Exchange matches Permits+Insights → Offers
+    I -. "Exchange matches" .-> O
+    P -. "Exchange checks" .-> O
+    %% Withdrawal reads wallet balance
+    W -- "offramp trigger" --> BAL
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      background:       '#111118',
+      primaryColor:     '#1e293b',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#3b82f6',
+      lineColor:        '#475569',
+      secondaryColor:   '#1a1a28',
+      tertiaryColor:    '#0f172a',
+      edgeLabelBackground: '#1a1a28',
+      clusterBkg:       '#111118',
+      clusterBorder:    '#2a2a40',
+      titleColor:       '#94a3b8',
+      fontFamily:       '"Inter", system-ui, sans-serif',
+    },
+    er: {
+      diagramPadding: 40,
+      layoutDirection: 'TB',
+      minEntityWidth: 100,
+      minEntityHeight: 75,
+      entityPadding: 15,
+      useMaxWidth: true,
+    },
+    flowchart: {
+      useMaxWidth: true,
+      htmlLabels: true,
+      curve: 'basis',
+    },
+  });
+</script>
+</body>
+</html>

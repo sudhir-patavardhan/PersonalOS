@@ -32,7 +32,6 @@ Key concepts at a glance:
 | **Claim** | A Soul accepting an Offer — the billable event |
 | **Yield** | Payment deposited into a Soul's Wallet after a Claim |
 | **Wallet** | A Soul's accumulated Yield balance |
-| **Platinum** | Premium Soul tier with higher Depth, better Offers, and higher Yield floors |
 
 ## Build Order (MVP)
 
@@ -49,7 +48,7 @@ The domain model is being developed via grilling sessions (`/grill-with-docs`). 
 - Core data flow: Soul → Konnection → Harvest → Transaktion → Ledger → Cultivation → Insight
 - Exchange mechanics: Listing → matching → Offer → Claim → Yield → Wallet
 - Consent model: Permit per Signal Type with Yield floor
-- Revenue model: take rate on Claims + Brand subscription + Platinum Soul subscription
+- Revenue model: take rate on Claims + Brand subscription
 - Exchange matching: continuous real-time (triggered on new Listing and on Cultivation)
 
 The following areas are **not yet resolved** (continue grilling):

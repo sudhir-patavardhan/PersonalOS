@@ -81,7 +81,6 @@ Everything that needs to be in place before implementation begins, ordered by pr
 **What for:** Recurring Brand subscription billing for Exchange access (one of the three revenue streams).
 
 - Sign up: `dashboard.stripe.com`
-- Soul Platinum subscriptions on iOS go through **Apple In-App Purchase**, not Stripe (App Store requirement)
 - Stripe handles Brand-facing web billing only
 - Can defer until Brand onboarding is built
 

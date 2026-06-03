@@ -8,13 +8,9 @@ The act of a Soul moving Yield from their Wallet to an external destination. Wit
 
 The external payment infrastructure used to process Withdrawals. Primary: USDC stablecoin on Base (Coinbase L2). Secondary: fiat rails (Stripe for US, UPI for India) via Coinbase's built-in on/off-ramp. Brands pay PersonalOS in fiat; PersonalOS converts to USDC before depositing Yield into a Soul's Wallet.
 
-## Platinum
-
-A premium Soul subscription tier. Platinum Souls have verified higher Depth, making their Insights more accurate and valuable. The Exchange exposes Platinum Souls to higher-value Listings not available to standard Souls. Brands pay a premium bid to target Platinum Souls exclusively. The subscription fee is designed to be offset by higher Yield earned through premium Listings.
-
 ## Revenue Streams
 
-PersonalOS earns through three mechanisms: (1) a take rate on every Claim — a percentage of the Brand's payment before Yield is deposited into the Soul's Wallet; (2) a Brand subscription for Exchange access; (3) a Platinum Soul subscription fee. The take rate aligns platform incentives with Soul earnings — PersonalOS makes more when Souls make more.
+PersonalOS earns through two mechanisms: (1) a take rate on every Claim — a percentage of the Brand's payment before Yield is deposited into the Soul's Wallet; (2) a Brand subscription for Exchange access. The take rate aligns platform incentives with Soul earnings — PersonalOS makes more when Souls make more.
 
 ## MVP Scope
 
@@ -26,7 +22,7 @@ A named, versioned category of Insight defined and maintained by PersonalOS (e.g
 
 ## Permit
 
-A Soul's explicit consent for the Exchange to match them against Listings in a specific Insight category. A Permit includes a minimum Yield floor — the Exchange will not deliver an Offer unless the Listing's bid meets or exceeds that floor. A Soul has zero or more Permits, one per opted-in category.
+A Soul's explicit consent for the Exchange to match them against Listings in a specific Insight category. A Permit includes a minimum Yield floor — the Exchange will not deliver an Offer unless the Listing's bid meets or exceeds that floor. A Soul has zero or more Permits, one per opted-in category. When a Soul revokes a Permit, all pending and delivered Offers in that Signal Type expire immediately; Offers already in a seen state remain claimable for a 10-minute grace period before also expiring. Permit revocation is instantaneous from the Soul's perspective — no further matching occurs the moment the Permit is revoked.
 
 ## Depth
 
@@ -38,7 +34,7 @@ The marketplace where Brand Listings are matched to Souls based on their Insight
 
 ## Listing
 
-What a Brand puts into the marketplace: a target Signal Type, a bid price per Claim, and the content to show a matching Soul. A Listing requires a pre-funded Budget in USDC held in escrow on Base. The Listing is active only while Budget remains. When a Claim is made, the Claim amount moves atomically from escrow to PersonalOS (fee) and the Soul's Wallet (Yield) via smart contract. One Listing produces many Offers.
+What a Brand puts into the marketplace: a target Signal Type, a bid price per Claim, creative content to show a matching Soul, and an optional Voucher. A Listing requires a pre-funded Budget in USDC held in escrow on Base. The Listing is active only while Budget remains. When a Claim is made, the Claim amount moves atomically from escrow to PersonalOS (fee) and the Soul's Wallet (Yield) via smart contract. One Listing produces many Offers.
 
 ## Budget
 
@@ -54,15 +50,23 @@ The payment deposited into a Soul's Wallet when they make a Claim. Yield is the 
 
 ## Claim
 
-The act of a Soul accepting an Offer. A Claim is the billable event — it is what the Brand pays for. One Offer can produce at most one Claim. A Claim triggers a payment to the Soul.
+The act of a Soul accepting an Offer. A Claim is the billable event — it is what the Brand pays for. One Offer can produce at most one Claim. A Claim triggers atomic USDC settlement on Base: the Brand's Budget escrow splits into a PersonalOS platform fee and Yield deposited into the Soul's Wallet. Settlement confirms within ~2 seconds; the app displays success optimistically on tap and resolves to a confirmed state on-chain. The Soul receives a receipt showing the Yield earned, their updated Wallet balance, and the Voucher if one was included — the Signal Type category is shown, not the Brand name. All Claims appear in the Soul's Claim history with date, Signal Type, Yield amount, and running Wallet balance. After a Claim, Cultivation monitors subsequent Harvests for matching purchases in the same Signal Type category — if detected, the Soul's Conviction for that Signal Type increases. There is no direct attribution between a Claim and a downstream purchase; the purchase signal alone is sufficient.
+
+## Conviction
+
+A per-Signal-Type measure of a Soul's track record as a real buyer in that category. Conviction increases when a Harvest detects a matching purchase Transaktion after a Claim in the same Signal Type — regardless of whether that purchase was caused by the specific Listing. Conviction is a directional category-level signal, not strict attribution. Higher Conviction commands higher recommended Yield floors on the Exchange, making high-Conviction Souls more valuable to Brands bidding in that category. Conviction is computed during Cultivation alongside Insights.
 
 ## Offer
 
-What a Soul receives when their Insights match an active Listing. An Offer is specific to one Soul and one Listing. The Soul decides whether to engage — there is no obligation. A Soul seeing an Offer reveals nothing to the Brand; only engagement does.
+What a Soul receives when their Insights match an active Listing. An Offer is specific to one Soul and one Listing — the same Listing will never re-match the same Soul, even after an Offer expires unused. A Soul may hold multiple simultaneous Offers across different Listings; they are presented as a feed ordered by Yield value descending. An Offer moves through a defined lifecycle: pending (created by Exchange, not yet pushed) → delivered (push notification sent) → seen (Soul opened the Offer in-app) → claimed (Soul accepted) or dismissed (Soul declined) or expired (72 hours elapsed from delivery without action, or Listing Budget exhausted). The expiry clock starts from delivery — not from when the Soul first opens the app. On expiry, the Budget allocation is released and the Exchange may match that Listing to another eligible Soul. A Soul seeing an Offer reveals nothing to the Brand; only a Claim does. A dismissed Offer is indistinguishable from a seen Offer from the Brand's perspective. When a Soul dismisses Offers in the same Signal Type category 3 or more times within 30 days, the app prompts them to raise their Yield floor for that category — turning a pattern of negative engagement into a Permit refinement opportunity rather than a silent signal.
+
+## Voucher
+
+An optional discount, promo code, or access offer included by a Brand in a Listing's content. When a Soul Claims an Offer, they receive the Voucher alongside their Yield. A Voucher is a marketing asset — it gives the Soul tangible value beyond Yield and incentivises a real purchase. Voucher codes are non-unique per Soul; PersonalOS does not track Voucher redemption. Whether the Soul redeems the Voucher is irrelevant to Conviction — only the downstream purchase Transaktion detected via Harvest matters.
 
 ## Brand
 
-A company or advertiser that bids to reach Souls with relevant Insights. A Brand is the buyer in the PersonalOS marketplace. Brands bid for the right to make an Offer to a matching Soul — they never receive raw Transaktions or Insight scores. A Brand only learns a Soul responded to an Offer, nothing more. A funded Budget is a Brand's only credential — no KYB or identity verification is required. Listing content is reviewed before activation to prevent fraudulent Offers.
+A company or advertiser that bids to reach Souls with relevant Insights. A Brand is the buyer in the PersonalOS marketplace. Brands bid for the right to make an Offer to a matching Soul — they never receive raw Transaktions or Insight scores. A Brand only learns a Soul responded to an Offer, nothing more. A Brand's dashboard shows aggregate Listing performance only: Claims count, total USDC spent, Budget remaining, Offers delivered, and aggregate claim rate (Offers delivered ÷ Claims). No Soul-level data is ever exposed. A funded Budget is a Brand's only credential — no KYB or identity verification is required. Listing content is reviewed before activation to prevent fraudulent Offers.
 
 ## Insight
 
@@ -70,7 +74,7 @@ A derived signal computed from a Soul's Ledger during a Cultivation. An Insight 
 
 ## Cultivation
 
-The process of recomputing a Soul's Insights from their Ledger. A Cultivation is triggered when a Harvest adds enough new Transaktions to meaningfully change the Soul's Depth. One Cultivation updates all Insights for that Soul. Cultivation turns harvested raw data into actionable signals.
+The process of recomputing a Soul's Insights and Conviction scores from their Ledger. A Cultivation is triggered when a Harvest adds enough new Transaktions to meaningfully change the Soul's Depth. One Cultivation updates all Insights and all per-Signal-Type Conviction scores for that Soul. Cultivation turns harvested raw data into actionable signals — only the resulting scores leave the device.
 
 ## Ledger
 

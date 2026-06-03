@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Day in the Life — PersonalOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --bg-card: #111118;
+      --bg-card-2: #16161f;
+      --border: #1e1e2e;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --soul: #3b82f6;
+      --soul-dim: rgba(59,130,246,0.12);
+      --soul-border: rgba(59,130,246,0.3);
+      --brand: #a855f7;
+      --brand-dim: rgba(168,85,247,0.12);
+      --brand-border: rgba(168,85,247,0.3);
+      --admin: #f59e0b;
+      --admin-dim: rgba(245,158,11,0.12);
+      --admin-border: rgba(245,158,11,0.3);
+      --green: #22c55e;
+      --terminal-bg: #080810;
+      --terminal-border: #1a1a2e;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      height: 56px;
+    }
+
+    .nav-back {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--text); }
+    .nav-back svg { width: 14px; height: 14px; }
+
+    .nav-sep {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
+    }
+
+    .nav-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .nav-audience {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      background: var(--bg-card-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3px 10px;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      padding: 4rem 2rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+
+    .hero p {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 600px;
+    }
+
+    /* ─── TABS ─── */
+    .tab-bar {
+      max-width: 900px;
+      margin: 2.5rem auto 0;
+      padding: 0 2rem;
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text-dim);
+      transition: color 0.2s, border-color 0.2s;
+      border-radius: 6px 6px 0 0;
+    }
+
+    .tab-btn[data-actor="soul"]  { }
+    .tab-btn[data-actor="brand"] { }
+    .tab-btn[data-actor="admin"] { }
+
+    .tab-btn.active[data-actor="soul"]  { color: var(--soul);  border-bottom-color: var(--soul);  }
+    .tab-btn.active[data-actor="brand"] { color: var(--brand); border-bottom-color: var(--brand); }
+    .tab-btn.active[data-actor="admin"] { color: var(--admin); border-bottom-color: var(--admin); }
+
+    .tab-btn:hover:not(.active)[data-actor="soul"]  { color: var(--soul);  }
+    .tab-btn:hover:not(.active)[data-actor="brand"] { color: var(--brand); }
+    .tab-btn:hover:not(.active)[data-actor="admin"] { color: var(--admin); }
+
+    /* ─── PANELS ─── */
+    .tab-panel {
+      display: none;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 5rem;
+    }
+    .tab-panel.active { display: block; }
+
+    /* ─── ACTOR HEADER ─── */
+    .actor-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .actor-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .soul-badge  { background: var(--soul-dim);  border: 1px solid var(--soul-border);  }
+    .brand-badge { background: var(--brand-dim); border: 1px solid var(--brand-border); }
+    .admin-badge { background: var(--admin-dim); border: 1px solid var(--admin-border); }
+
+    .actor-meta h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .soul-meta  h2 { color: var(--soul);  }
+    .brand-meta h2 { color: var(--brand); }
+    .admin-meta h2 { color: var(--admin); }
+
+    .actor-meta .role-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ─── SECTION LABELS ─── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .soul-label  { color: var(--soul);  }
+    .brand-label { color: var(--brand); }
+    .admin-label { color: var(--admin); }
+
+    /* ─── TIMELINE ─── */
+    .timeline-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem 1.5rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+
+    .tl-item {
+      display: grid;
+      grid-template-columns: 80px 24px 1fr;
+      gap: 0 12px;
+      align-items: stretch;
+      min-height: 56px;
+    }
+
+    .tl-time {
+      text-align: right;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'SF Mono', 'Fira Mono', 'Menlo', monospace;
+      letter-spacing: 0.04em;
+      color: var(--text-dim);
+      padding-top: 4px;
+      white-space: nowrap;
+    }
+
+    .tl-spine {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .tl-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tl-line {
+      flex: 1;
+      width: 2px;
+      background: var(--border);
+      margin-top: 2px;
+    }
+
+    .tl-item:last-child .tl-line { display: none; }
+
+    .soul-dot  { background: var(--soul);  box-shadow: 0 0 8px rgba(59,130,246,0.5); }
+    .brand-dot { background: var(--brand); box-shadow: 0 0 8px rgba(168,85,247,0.5); }
+    .admin-dot { background: var(--admin); box-shadow: 0 0 8px rgba(245,158,11,0.5); }
+
+    .tl-system-dot {
+      background: var(--bg-card);
+      border: 2px solid var(--text-dim);
+      box-shadow: none;
+    }
+
+    .tl-content {
+      padding: 2px 0 16px;
+    }
+
+    .tl-event {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .tl-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .tl-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      padding: 2px 7px;
+      margin-bottom: 4px;
+    }
+
+    .tag-system { background: rgba(100,116,139,0.15); color: var(--text-dim); }
+
+    .tag-soul  { background: var(--soul-dim);  color: var(--soul);  }
+    .tag-brand { background: var(--brand-dim); color: var(--brand); }
+    .tag-admin { background: var(--admin-dim); color: var(--admin); }
+    .tag-green { background: rgba(34,197,94,0.1); color: var(--green); }
+
+    /* ─── NARRATIVE ─── */
+    .narrative {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem 1.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .narrative p {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .narrative p:last-child { margin-bottom: 0; }
+
+    .narrative strong { color: var(--text); font-weight: 600; }
+
+    /* ─── SYSTEM EVENTS ─── */
+    .events-block {
+      background: var(--terminal-bg);
+      border: 1px solid var(--terminal-border);
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .events-titlebar {
+      background: #0d0d1a;
+      border-bottom: 1px solid var(--terminal-border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot-r { width: 10px; height: 10px; border-radius: 50%; background: #ff5f56; }
+    .dot-y { width: 10px; height: 10px; border-radius: 50%; background: #ffbd2e; }
+    .dot-g { width: 10px; height: 10px; border-radius: 50%; background: #27c93f; }
+
+    .events-filename {
+      margin-left: 8px;
+      font-size: 12px;
+      font-family: 'SF Mono', 'Fira Mono', 'Menlo', monospace;
+      color: var(--text-dim);
+    }
+
+    .events-body {
+      padding: 1.25rem 1.5rem;
+      font-family: 'SF Mono', 'Fira Mono', 'Menlo', monospace;
+      font-size: 12.5px;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+
+    .ev-line {
+      display: flex;
+      gap: 12px;
+      align-items: baseline;
+      white-space: nowrap;
+    }
+
+    .ev-ts {
+      color: var(--text-dim);
+      flex-shrink: 0;
+      font-size: 11px;
+    }
+
+    .ev-event {
+      color: #7dd3fc;
+      font-weight: 600;
+    }
+
+    .ev-arrow {
+      color: var(--text-dim);
+    }
+
+    .ev-payload {
+      color: #86efac;
+    }
+
+    .ev-note {
+      color: #64748b;
+      font-style: italic;
+    }
+
+    .ev-separator {
+      color: #1e293b;
+      margin: 4px 0;
+    }
+
+    .ev-ok  { color: #22c55e; }
+    .ev-warn { color: #f59e0b; }
+    .ev-err { color: #ef4444; }
+
+    /* ─── DATA COLUMNS ─── */
+    .data-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    @media (max-width: 600px) {
+      .data-cols { grid-template-columns: 1fr; }
+    }
+
+    .data-col {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+
+    .data-col-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .sees-title  { color: var(--green); }
+    .never-title { color: #ef4444; }
+
+    .data-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .data-col li {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.4;
+    }
+
+    .data-col li::before {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .sees-col  li::before { content: '✓'; color: var(--green); font-size: 11px; font-weight: 700; }
+    .never-col li::before { content: '✗'; color: #ef4444; font-size: 11px; font-weight: 700; }
+
+    /* ─── KEY METRICS ─── */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 600px) {
+      .metrics-row { grid-template-columns: 1fr 1fr; }
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      text-align: center;
+    }
+
+    .metric-val {
+      font-size: 1.6rem;
+      font-weight: 700;
+      font-family: 'SF Mono', 'Fira Mono', 'Menlo', monospace;
+      letter-spacing: -0.02em;
+    }
+
+    .soul-val  { color: var(--soul);  }
+    .brand-val { color: var(--brand); }
+    .admin-val { color: var(--admin); }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #1e1e2e; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-back" href="index.html">
+    <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    index.html
+  </a>
+  <div class="nav-sep"></div>
+  <span class="nav-title">A Day in the Life</span>
+  <span class="nav-audience">Audience: Architects &amp; Data Scientists</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>A Day in the Life</h1>
+  <p>How each actor experiences PersonalOS — moment by moment. What they touch, what fires in the system, and what they never see.</p>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tab-btn active" data-actor="soul" onclick="switchTab('soul')">Soul</button>
+  <button class="tab-btn" data-actor="brand" onclick="switchTab('brand')">Brand</button>
+  <button class="tab-btn" data-actor="admin" onclick="switchTab('admin')">Platform Admin</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SOUL PANEL
+════════════════════════════════════════════════ -->
+<div class="tab-panel active" id="panel-soul">
+
+  <div class="actor-header">
+    <div class="actor-badge soul-badge">👤</div>
+    <div class="actor-meta soul-meta">
+      <h2>The Soul</h2>
+      <p class="role-desc">Individual data owner. Earns USDC Yield when Brands match their Insights. Controls every Permit.</p>
+    </div>
+  </div>
+
+  <!-- Key metrics -->
+  <div class="metrics-row">
+    <div class="metric-card">
+      <div class="metric-val soul-val">$4.50</div>
+      <div class="metric-label">Yield today</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val soul-val">0.87</div>
+      <div class="metric-label">Top Insight score</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val soul-val">3</div>
+      <div class="metric-label">Active Permits</div>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <p class="section-label soul-label">Timeline</p>
+  <div class="timeline-wrap">
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-time">2:00 am</div>
+        <div class="tl-spine"><div class="tl-dot tl-system-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-system">System — while asleep</div>
+          <div class="tl-event">Harvest triggered by schedule</div>
+          <div class="tl-desc">PersonalOS calls Plaid through the active Konnection, pulls new bank Transaktions, encrypts each record E2E, and appends ciphertext to the Arweave Ledger. Ledger Depth increases.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">3:40 am</div>
+        <div class="tl-spine"><div class="tl-dot tl-system-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-system">System — on-device</div>
+          <div class="tl-event">Cultivation runs locally</div>
+          <div class="tl-desc">The iOS app wakes via background task, decrypts Transaktions on-device using the Soul's passkey-derived key, runs the ML model, and emits updated Insight scores to PersonalOS. Raw spend data never leaves the device.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">3:41 am</div>
+        <div class="tl-spine"><div class="tl-dot tl-system-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-system">System — Exchange</div>
+          <div class="tl-event">Exchange match run triggered</div>
+          <div class="tl-desc">Fresh Insight scores kick the Exchange. It compares the Soul's active Permits against all live Listings. The <code>automotive.new_vehicle_purchase</code> Insight at 0.87 matches an auto dealer Listing bidding $4.50, above the Soul's $2.00 Yield floor.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">9:00 am</div>
+        <div class="tl-spine"><div class="tl-dot soul-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-soul">Soul — iOS app</div>
+          <div class="tl-event">Push notification arrives</div>
+          <div class="tl-desc">"New Offer: $4.50 from an automotive brand." The Soul sees the bid, the Signal Type, and the personalized Offer creative. They do not see which brand or any identifying campaign data.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">9:02 am</div>
+        <div class="tl-spine"><div class="tl-dot soul-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-soul">Soul — iOS app</div>
+          <div class="tl-event">Claim accepted — USDC settles</div>
+          <div class="tl-desc">One tap. An atomic on-chain transaction on Base settles $4.50 USDC from the Brand's escrow to the Soul's Coinbase Smart Wallet. PersonalOS records the Claim, deducts from Listing Budget. The Soul's Wallet balance updates instantly.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">12:30 pm</div>
+        <div class="tl-spine"><div class="tl-dot soul-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-soul">Soul — iOS app</div>
+          <div class="tl-event">Permit settings reviewed</div>
+          <div class="tl-desc">The Soul raises the Yield floor for <code>travel.frequent_flier</code> to $3.00. Lower-bid Listings targeting that Signal Type will no longer match them. No brand is notified — the change takes effect in the next Exchange run.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">6:00 pm</div>
+        <div class="tl-spine"><div class="tl-dot soul-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-soul">Soul — iOS app</div>
+          <div class="tl-event">Wallet checked, Withdrawal initiated</div>
+          <div class="tl-desc">Wallet balance: $4.50. Soul initiates a Withdrawal. The Coinbase off-ramp converts USDC to USD and initiates an ACH deposit to the linked bank account. Estimated arrival: next business day.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- NARRATIVE -->
+  <p class="section-label soul-label">Narrative</p>
+  <div class="narrative">
+    <p>
+      Maya woke up to something she didn't expect when she first signed up for PersonalOS: a push notification with money attached. While she slept, the platform's scheduled Harvest pulled her bank Transaktions through her Plaid Konnection, encrypted every record end-to-end, and wrote the ciphertext to Arweave. Her phone then ran Cultivation in the background — decrypting and processing <strong>on-device only</strong>, computing fresh Insight scores without any raw financial data ever leaving her hands. The highest-scoring Insight, <code>automotive.new_vehicle_purchase</code> at 0.87, reflected months of car-related transactions she'd honestly forgotten about.
+    </p>
+    <p>
+      When the Exchange ran at 3:41 am, it found a live auto dealer Listing bidding $4.50 per Claim — well above Maya's self-set Yield floor of $2.00 for that Signal Type. The Offer was created and queued. By 9:00 am she had a push notification. Two taps and $4.50 USDC landed in her non-custodial Coinbase Smart Wallet on Base. The entire settlement was atomic, on-chain, and required zero trust in PersonalOS — if the escrow didn't release, the Claim didn't register. Later that afternoon she adjusted her Permit floor for <strong>travel.frequent_flier</strong> upward, quietly filtering out low-value Listings without anyone being notified.
+    </p>
+    <p>
+      By 6:00 pm she opened the Wallet tab, saw her balance, and initiated a Withdrawal to her bank account via the Coinbase off-ramp. No yield-sharing with a data broker. No behavioral profile sold. She earned because she chose to, on her terms, and she can revoke every Permit at any time with no penalty.
+    </p>
+  </div>
+
+  <!-- SYSTEM EVENTS -->
+  <p class="section-label soul-label">System Events</p>
+  <div class="events-block">
+    <div class="events-titlebar">
+      <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+      <span class="events-filename">personalos://events — soul session</span>
+    </div>
+    <div class="events-body">
+      <div class="ev-line"><span class="ev-ts">02:00:00</span><span class="ev-event">HARVEST_TRIGGERED</span><span class="ev-arrow">→</span><span class="ev-payload">konnection_id=knn_m7x2, source=plaid</span></div>
+      <div class="ev-line"><span class="ev-ts">02:00:03</span><span class="ev-event">PLAID_PULL_COMPLETE</span><span class="ev-arrow">→</span><span class="ev-payload">new_transactions=12, status=ok</span></div>
+      <div class="ev-line"><span class="ev-ts">02:00:07</span><span class="ev-event">TRANSAKTION_ENCRYPTED</span><span class="ev-arrow">→</span><span class="ev-payload">count=12, algo=aes256-gcm, key=passkey-derived</span></div>
+      <div class="ev-line"><span class="ev-ts">02:00:09</span><span class="ev-event">ARWEAVE_WRITE</span><span class="ev-arrow">→</span><span class="ev-payload">tx_ids=[ar_0a1b…, ar_2c3d…], ledger_depth=+12</span></div>
+      <div class="ev-line"><span class="ev-ts">02:00:10</span><span class="ev-event">HARVEST_COMPLETE</span><span class="ev-arrow">→</span><span class="ev-note">// ciphertext written; PersonalOS holds no plaintext</span></div>
+      <div class="ev-separator">──────────────────────────────────────────────────────────</div>
+      <div class="ev-line"><span class="ev-ts">03:40:00</span><span class="ev-event">CULTIVATION_STARTED</span><span class="ev-arrow">→</span><span class="ev-payload">device=on-device, ledger_depth=847</span></div>
+      <div class="ev-line"><span class="ev-ts">03:40:44</span><span class="ev-event">INSIGHT_COMPUTED</span><span class="ev-arrow">→</span><span class="ev-payload">signal=automotive.new_vehicle_purchase, score=0.87</span></div>
+      <div class="ev-line"><span class="ev-ts">03:40:44</span><span class="ev-event">INSIGHT_COMPUTED</span><span class="ev-arrow">→</span><span class="ev-payload">signal=travel.frequent_flier, score=0.72</span></div>
+      <div class="ev-line"><span class="ev-ts">03:40:45</span><span class="ev-event">INSIGHT_UPDATED</span><span class="ev-arrow">→</span><span class="ev-payload">soul_id=soul_m7x2, insights_count=6</span></div>
+      <div class="ev-line"><span class="ev-ts">03:40:45</span><span class="ev-event">CULTIVATION_COMPLETE</span><span class="ev-arrow">→</span><span class="ev-note">// raw Transaktions never left device</span></div>
+      <div class="ev-separator">──────────────────────────────────────────────────────────</div>
+      <div class="ev-line"><span class="ev-ts">03:41:00</span><span class="ev-event">EXCHANGE_MATCH_RUN</span><span class="ev-arrow">→</span><span class="ev-payload">trigger=cultivation_complete, soul_id=soul_m7x2</span></div>
+      <div class="ev-line"><span class="ev-ts">03:41:01</span><span class="ev-event">PERMIT_CHECK</span><span class="ev-arrow">→</span><span class="ev-payload">signal=automotive.new_vehicle_purchase, floor=$2.00, listing_bid=$4.50 <span class="ev-ok">✓ above floor</span></span></div>
+      <div class="ev-line"><span class="ev-ts">03:41:01</span><span class="ev-event">OFFER_CREATED</span><span class="ev-arrow">→</span><span class="ev-payload">offer_id=off_9q8p, listing_id=lst_au77, yield=$4.50</span></div>
+      <div class="ev-line"><span class="ev-ts">03:41:02</span><span class="ev-event">PUSH_QUEUED</span><span class="ev-arrow">→</span><span class="ev-payload">soul_id=soul_m7x2, deliver_at=09:00</span></div>
+      <div class="ev-separator">──────────────────────────────────────────────────────────</div>
+      <div class="ev-line"><span class="ev-ts">09:02:14</span><span class="ev-event">CLAIM_INITIATED</span><span class="ev-arrow">→</span><span class="ev-payload">offer_id=off_9q8p, soul_wallet=0xM7x2…</span></div>
+      <div class="ev-line"><span class="ev-ts">09:02:16</span><span class="ev-event">BASE_TX_SUBMITTED</span><span class="ev-arrow">→</span><span class="ev-payload">escrow→wallet, amount=4.50 USDC, chain=base</span></div>
+      <div class="ev-line"><span class="ev-ts">09:02:19</span><span class="ev-event">BASE_TX_CONFIRMED</span><span class="ev-arrow">→</span><span class="ev-payload">block=12847392, gas_used=21000 <span class="ev-ok">✓</span></span></div>
+      <div class="ev-line"><span class="ev-ts">09:02:19</span><span class="ev-event">CLAIM_SETTLED</span><span class="ev-arrow">→</span><span class="ev-payload">yield=$4.50, listing_budget_remaining=$445.50</span></div>
+      <div class="ev-line"><span class="ev-ts">09:02:19</span><span class="ev-event">WALLET_UPDATED</span><span class="ev-arrow">→</span><span class="ev-payload">soul_id=soul_m7x2, balance=$4.50</span></div>
+      <div class="ev-separator">──────────────────────────────────────────────────────────</div>
+      <div class="ev-line"><span class="ev-ts">18:03:44</span><span class="ev-event">WITHDRAWAL_INITIATED</span><span class="ev-arrow">→</span><span class="ev-payload">amount=$4.50, offramp=coinbase, dest=bank_ach</span></div>
+      <div class="ev-line"><span class="ev-ts">18:03:45</span><span class="ev-event">OFFRAMP_PENDING</span><span class="ev-arrow">→</span><span class="ev-payload">eta=next_business_day</span></div>
+    </div>
+  </div>
+
+  <!-- DATA COLUMNS -->
+  <p class="section-label soul-label">Data Visibility</p>
+  <div class="data-cols">
+    <div class="data-col sees-col">
+      <div class="data-col-title sees-title">Soul sees</div>
+      <ul>
+        <li>Offer bid amount ($4.50) and Signal Type category</li>
+        <li>Personalized Offer creative from the Brand</li>
+        <li>Their own Insight scores and Ledger Depth</li>
+        <li>Permit settings they configured (floor per Signal Type)</li>
+        <li>Wallet USDC balance and full transaction history</li>
+        <li>Konnection status (established / syncing / disconnected)</li>
+        <li>Harvest schedule and last-run timestamp</li>
+        <li>Withdrawal status and ACH confirmation</li>
+      </ul>
+    </div>
+    <div class="data-col never-col">
+      <div class="data-col-title never-title">Soul never sees</div>
+      <ul>
+        <li>Which specific Brand funded the Offer</li>
+        <li>How many other Souls were matched to the same Listing</li>
+        <li>Raw Transaktion ciphertext on Arweave</li>
+        <li>Other Souls' Insight scores or Permit floors</li>
+        <li>PersonalOS internal match-scoring logic</li>
+        <li>Brand's total Listing Budget or Campaign strategy</li>
+        <li>Exchange match rate or platform revenue metrics</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /panel-soul -->
+
+
+<!-- ═══════════════════════════════════════════════
+     BRAND PANEL
+════════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-brand">
+
+  <div class="actor-header">
+    <div class="actor-badge brand-badge">🏢</div>
+    <div class="actor-meta brand-meta">
+      <h2>The Brand</h2>
+      <p class="role-desc">Company that funds Listings and bids to reach high-intent Souls. Pays only on confirmed Claims. Sees zero PII.</p>
+    </div>
+  </div>
+
+  <div class="metrics-row">
+    <div class="metric-card">
+      <div class="metric-val brand-val">47</div>
+      <div class="metric-label">Claims today</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val brand-val">$94</div>
+      <div class="metric-label">Spend today</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val brand-val">$406</div>
+      <div class="metric-label">Budget remaining</div>
+    </div>
+  </div>
+
+  <p class="section-label brand-label">Timeline</p>
+  <div class="timeline-wrap">
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-time">9:00 am</div>
+        <div class="tl-spine"><div class="tl-dot brand-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-brand">Brand — dashboard</div>
+          <div class="tl-event">New Listing created</div>
+          <div class="tl-desc">Brand manager selects Signal Type <code>automotive.new_vehicle_purchase</code>, sets bid at $4.50 per Claim, writes Offer creative ("Ready to upgrade your ride?"), and sets Budget at $500 USDC. No audience list is uploaded — intent is inferred by PersonalOS from Soul Insights.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">9:30 am</div>
+        <div class="tl-spine"><div class="tl-dot brand-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-brand">Brand — dashboard</div>
+          <div class="tl-event">Listing submitted for review</div>
+          <div class="tl-desc">Brand submits. Listing status moves to <code>pending_review</code>. Brand is notified that Platform Admin will review within 24 hours. Budget is not escrowed yet.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">10:02 am</div>
+        <div class="tl-spine"><div class="tl-dot tl-system-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-system">System — Admin action</div>
+          <div class="tl-event">Listing approved by Platform Admin</div>
+          <div class="tl-desc">Admin reviewed the creative, confirmed no misleading claims, marked compliant. Listing status moves to <code>approved</code>. Brand receives email notification.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">10:05 am</div>
+        <div class="tl-spine"><div class="tl-dot brand-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-brand">Brand — dashboard</div>
+          <div class="tl-event">Budget funded — $500 USDC deposited to escrow</div>
+          <div class="tl-desc">Brand initiates USDC transfer to the PersonalOS escrow contract on Base. On-chain confirmation triggers Listing status change to <code>live</code>. Exchange begins matching immediately.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">10:05 am</div>
+        <div class="tl-spine"><div class="tl-dot tl-system-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-system">System — Exchange</div>
+          <div class="tl-event">Listing goes live — Exchange match run triggered</div>
+          <div class="tl-desc">Exchange scans all Souls with active Permits for <code>automotive.new_vehicle_purchase</code> whose Insight scores exceed the Listing threshold and whose Yield floor is at or below $4.50. Matching Offers created and queued.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">10:05 am – 5:00 pm</div>
+        <div class="tl-spine"><div class="tl-dot brand-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-brand">Brand — throughout day</div>
+          <div class="tl-event">Claims roll in (anonymous)</div>
+          <div class="tl-desc">47 Claims confirmed across the day. Brand's dashboard shows total Claims, total spend, and Budget remaining. Each Claim entry shows: timestamp, Signal Type matched, Yield paid. No Soul identity, location, or raw financial data is ever revealed.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">5:00 pm</div>
+        <div class="tl-spine"><div class="tl-dot brand-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-brand">Brand — dashboard</div>
+          <div class="tl-event">Dashboard review: 47 Claims, $94 spent, $406 remaining</div>
+          <div class="tl-desc">Brand manager reviews campaign performance. Conversion from Offer to Claim is strong. They decide to increase the bid to $5.00 to capture more matched Souls and boost reach. Budget will not auto-refund until Listing is deactivated.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="section-label brand-label">Narrative</p>
+  <div class="narrative">
+    <p>
+      The campaign manager at an auto dealership network opened the PersonalOS Brand portal at 9:00 am with a clear brief: reach people actively in the market for a new vehicle, not people who clicked a car ad once six months ago. PersonalOS doesn't sell segments — it sells Signal Types. The manager picked <code>automotive.new_vehicle_purchase</code>, set the bid at $4.50, wrote the Offer creative, and set a $500 USDC Budget. The entire setup took eleven minutes. No audience CSV to upload, no lookalike modeling, no pixel to install.
+    </p>
+    <p>
+      After a brief review queue (Platform Admin approved in 32 minutes), the manager funded the escrow on Base. The moment the USDC confirmed on-chain, the Listing was live and the Exchange ran its first match. By end of day, 47 Souls had <strong>voluntarily accepted</strong> the Offer — each one had a high Insight score for vehicle purchase intent and had explicitly set a Yield floor at or below $4.50. The Brand paid only for confirmed Claims. No impressions billed, no click fraud, no viewability ambiguity. Each Claim was an on-chain atomic settlement, verifiable on Base.
+    </p>
+    <p>
+      The dashboard showed 47 Claims, $94 in spend, and $406 remaining in escrow. Critically, the Brand saw <strong>zero PII</strong> — no names, no transaction data, no location. Just the Signal Type that triggered the match, the timestamp, and the Yield paid. High-intent reach with privacy preserved for the Soul. The manager raised the bid to $5.00 before EOD to win more matches in the next Exchange run.
+    </p>
+  </div>
+
+  <p class="section-label brand-label">System Events</p>
+  <div class="events-block">
+    <div class="events-titlebar">
+      <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+      <span class="events-filename">personalos://events — brand session</span>
+    </div>
+    <div class="events-body">
+      <div class="ev-line"><span class="ev-ts">09:00:00</span><span class="ev-event">LISTING_DRAFT_CREATED</span><span class="ev-arrow">→</span><span class="ev-payload">brand_id=brd_au01, signal=automotive.new_vehicle_purchase, bid=$4.50</span></div>
+      <div class="ev-line"><span class="ev-ts">09:28:41</span><span class="ev-event">LISTING_SUBMITTED</span><span class="ev-arrow">→</span><span class="ev-payload">listing_id=lst_au77, status=pending_review</span></div>
+      <div class="ev-line"><span class="ev-ts">09:28:42</span><span class="ev-event">REVIEW_QUEUE_PUSH</span><span class="ev-arrow">→</span><span class="ev-payload">admin_notify=true</span></div>
+      <div class="ev-separator">──────────────────────────────────────────────────────────</div>
+      <div class="ev-line"><span class="ev-ts">10:02:17</span><span class="ev-event">LISTING_APPROVED</span><span class="ev-arrow">→</span><span class="ev-payload">listing_id=lst_au77, admin_id=adm_01, status=approved</span></div>
+      <div class="ev-line"><span class="ev-ts">10:02:18</span><span class="ev-event">BRAND_NOTIFIED</span><span class="ev-arrow">→</span><span class="ev-payload">channel=email, message="Listing approved — fund to activate"</span></div>
+      <div class="ev-separator">──────────────────────────────────────────────────────────</div>
+      <div class="ev-line"><span class="ev-ts">10:05:03</span><span class="ev-event">ESCROW_DEPOSIT_INITIATED</span><span class="ev-arrow">→</span><span class="ev-payload">amount=500 USDC, chain=base, from=brand_wallet</span></div>
+      <div class="ev-line"><span class="ev-ts">10:05:07</span><span class="ev-event">ESCROW_CONFIRMED</span><span class="ev-arrow">→</span><span class="ev-payload">block=12847001, escrow_balance=$500.00 <span class="ev-ok">✓</span></span></div>
+      <div class="ev-line"><span class="ev-ts">10:05:07</span><span class="ev-event">LISTING_ACTIVATED</span><span class="ev-arrow">→</span><span class="ev-payload">listing_id=lst_au77, status=live</span></div>
+      <div class="ev-line"><span class="ev-ts">10:05:07</span><span class="ev-event">EXCHANGE_MATCH_RUN</span><span class="ev-arrow">→</span><span class="ev-payload">trigger=listing_activated, listing_id=lst_au77</span></div>
+      <div class="ev-line"><span class="ev-ts">10:05:08</span><span class="ev-event">OFFERS_CREATED</span><span class="ev-arrow">→</span><span class="ev-payload">count=8, listing_id=lst_au77 <span class="ev-note">// initial batch</span></span></div>
+      <div class="ev-separator">──────────────────────────────────────────────────────────</div>
+      <div class="ev-line"><span class="ev-ts">10:09:33</span><span class="ev-event">CLAIM_SETTLED</span><span class="ev-arrow">→</span><span class="ev-payload">yield=$4.50, escrow_remaining=$495.50, claim_count=1</span></div>
+      <div class="ev-line"><span class="ev-ts">10:23:11</span><span class="ev-event">CLAIM_SETTLED</span><span class="ev-arrow">→</span><span class="ev-payload">yield=$4.50, escrow_remaining=$491.00, claim_count=2</span></div>
+      <div class="ev-line"><span class="ev-ts">…</span><span class="ev-note">// 45 more CLAIM_SETTLED events through 4:58pm</span></div>
+      <div class="ev-separator">──────────────────────────────────────────────────────────</div>
+      <div class="ev-line"><span class="ev-ts">17:00:00</span><span class="ev-event">LISTING_STATS_SNAPSHOT</span><span class="ev-arrow">→</span><span class="ev-payload">claims=47, spend=$94.00, budget_remaining=$406.00</span></div>
+      <div class="ev-line"><span class="ev-ts">17:04:22</span><span class="ev-event">LISTING_BID_UPDATED</span><span class="ev-arrow">→</span><span class="ev-payload">listing_id=lst_au77, new_bid=$5.00</span></div>
+      <div class="ev-line"><span class="ev-ts">17:04:22</span><span class="ev-event">EXCHANGE_MATCH_RUN</span><span class="ev-arrow">→</span><span class="ev-payload">trigger=bid_change, listing_id=lst_au77 <span class="ev-note">// re-match with higher bid</span></span></div>
+    </div>
+  </div>
+
+  <p class="section-label brand-label">Data Visibility</p>
+  <div class="data-cols">
+    <div class="data-col sees-col">
+      <div class="data-col-title sees-title">Brand sees</div>
+      <ul>
+        <li>Signal Type selected and Listing parameters they set</li>
+        <li>Listing status (pending / approved / live / depleted)</li>
+        <li>Claim count, total spend, Budget remaining (real-time)</li>
+        <li>Timestamp of each Claim event</li>
+        <li>Signal Type that triggered each match</li>
+        <li>Yield amount paid per Claim</li>
+        <li>Platform review decision (approved / rejected + reason)</li>
+        <li>Escrow balance and on-chain transaction hashes</li>
+      </ul>
+    </div>
+    <div class="data-col never-col">
+      <div class="data-col-title never-title">Brand never sees</div>
+      <ul>
+        <li>Which Soul accepted any Offer (no PII, no pseudonym)</li>
+        <li>Raw financial transactions or bank data behind Insights</li>
+        <li>Individual Insight scores of any Soul</li>
+        <li>Other Brands' Listings, bids, or campaign strategies</li>
+        <li>Soul Permit settings or Yield floor values</li>
+        <li>Exchange match algorithm internals</li>
+        <li>Platform Admin review notes or decision rationale</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /panel-brand -->
+
+
+<!-- ═══════════════════════════════════════════════
+     ADMIN PANEL
+════════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-admin">
+
+  <div class="actor-header">
+    <div class="actor-badge admin-badge">🛡️</div>
+    <div class="actor-meta admin-meta">
+      <h2>Platform Admin</h2>
+      <p class="role-desc">PersonalOS team. Reviews Listings, manages Signal Types, monitors Exchange health, and handles support escalations.</p>
+    </div>
+  </div>
+
+  <div class="metrics-row">
+    <div class="metric-card">
+      <div class="metric-val admin-val">73%</div>
+      <div class="metric-label">Match rate</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val admin-val">$2,400</div>
+      <div class="metric-label">Active escrow</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val admin-val">$340</div>
+      <div class="metric-label">Claim take-rate today</div>
+    </div>
+  </div>
+
+  <p class="section-label admin-label">Timeline</p>
+  <div class="timeline-wrap">
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-time">8:00 am</div>
+        <div class="tl-spine"><div class="tl-dot admin-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-admin">Admin — review queue</div>
+          <div class="tl-event">Review queue: 3 new Listing submissions</div>
+          <div class="tl-desc">Admin console shows 3 Listings pending review: two from established Brand accounts, one from a newly onboarded Brand. Each shows Signal Type, bid, and Offer creative for evaluation.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">8:30 am</div>
+        <div class="tl-spine"><div class="tl-dot admin-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-admin">Admin — review decision</div>
+          <div class="tl-event">Approve 2, reject 1 (misleading content)</div>
+          <div class="tl-desc">Two Listings approved — creative is accurate and Signal Type usage is appropriate. Third Listing from a new Brand promised "guaranteed cash back" with no substantiation — rejected with code <code>MISLEADING_OFFER_CONTENT</code>. Brand notified with rejection reason.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">10:00 am</div>
+        <div class="tl-spine"><div class="tl-dot admin-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-admin">Admin — signal catalogue</div>
+          <div class="tl-event">Signal Type request reviewed and published</div>
+          <div class="tl-desc">A Brand submitted a request for a new Signal Type: <code>home_improvement.major_renovation</code>. Admin reviews the proposed schema, validates that Cultivation can compute a reliable score from bank data, creates version 1.0, and publishes to the catalogue. Brands can now target it.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">11:00 am</div>
+        <div class="tl-spine"><div class="tl-dot admin-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-admin">Admin — Exchange health</div>
+          <div class="tl-event">Exchange health check: 73% match rate, 12 active Listings</div>
+          <div class="tl-desc">Dashboard shows: 12 live Listings, $2,400 in active escrow across all Brands, 73% match rate (Offers created / Exchange runs), 88% Claim conversion. One Listing (<code>lst_rv99</code>) has a 22% match rate — flagged for low Soul Permit adoption in that Signal Type.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">2:00 pm</div>
+        <div class="tl-spine"><div class="tl-dot admin-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-admin">Admin — Soul support</div>
+          <div class="tl-event">Support ticket: Konnection disconnected → guide re-auth</div>
+          <div class="tl-desc">Soul reports Harvest hasn't run in 3 days. Admin checks Konnection status: <code>disconnected</code> — Plaid session expired. Admin sends re-auth deep-link to Soul's app. Soul re-authorizes through Plaid. Konnection moves back to <code>established</code>. Harvest manually triggered.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-time">4:00 pm</div>
+        <div class="tl-spine"><div class="tl-dot admin-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-tag tag-admin">Admin — revenue</div>
+          <div class="tl-event">Daily revenue review: $340 take-rate, 2 new Brand subscriptions</div>
+          <div class="tl-desc">Platform take-rate on Claims: $340 from ~226 Claims across all Listings at 15% take. Two new Brand accounts subscribed to Exchange access via Stripe. Monthly recurring revenue up. Admin notes the new Signal Type published at 10:00 am is already drawing interest from 3 Brands.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="section-label admin-label">Narrative</p>
+  <div class="narrative">
+    <p>
+      The Platform Admin's morning begins in the review queue — three Listings waiting for judgment. This is the human trust layer of PersonalOS. Two clear approvals: established Brands, Signal Types used correctly, Offer creative factual. The third is a newly onboarded auto parts Brand whose creative promised "guaranteed cash back" with no terms. <strong>Rejected with code <code>MISLEADING_OFFER_CONTENT</code></strong>. The Brand was notified within minutes with a detailed rejection reason and an invitation to resubmit with accurate language. PersonalOS's value to Souls depends entirely on Offers being trustworthy — the review queue is not a rubber stamp.
+    </p>
+    <p>
+      At 10:00 am, a new Signal Type request landed from a Brand wanting to reach homeowners planning major renovations. The Admin validated the proposed scoring schema against what Cultivation could reliably derive from bank Transaktions, confirmed internal ML team sign-off, and published <code>home_improvement.major_renovation v1.0</code> to the catalogue. Within hours, three Brands had expressed interest. At 11:00 am the Exchange health dashboard showed a strong 73% match rate across 12 live Listings with $2,400 in active escrow — one outlier flagged for low Soul Permit adoption in its Signal Type, which signals either poor awareness or low Soul interest in that category.
+    </p>
+    <p>
+      The afternoon brought a support ticket: a Soul's Plaid Konnection had silently expired, halting Harvests for three days. The Admin traced the Konnection status, triggered a re-auth deep-link, confirmed Harvest resumed, and closed the ticket in 22 minutes. By 4:00 pm the daily revenue picture was healthy: $340 in Claim take-rate, two new Brand subscriptions added via Stripe. The platform is not a data marketplace in the traditional sense — PersonalOS never reads plaintext data and never sells audiences — but the economics are strong precisely because the consent model drives higher Claim conversion than any lookalike audience ever could.
+    </p>
+  </div>
+
+  <p class="section-label admin-label">System Events</p>
+  <div class="events-block">
+    <div class="events-titlebar">
+      <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+      <span class="events-filename">personalos://events — admin session</span>
+    </div>
+    <div class="events-body">
+      <div class="ev-line"><span class="ev-ts">08:00:00</span><span class="ev-event">ADMIN_QUEUE_LOADED</span><span class="ev-arrow">→</span><span class="ev-payload">pending_listings=3</span></div>
+      <div class="ev-separator">──────────────────────────────────────────────────────────</div>
+      <div class="ev-line"><span class="ev-ts">08:12:04</span><span class="ev-event">LISTING_APPROVED</span><span class="ev-arrow">→</span><span class="ev-payload">listing_id=lst_tr22, admin_id=adm_01 <span class="ev-ok">✓</span></span></div>
+      <div class="ev-line"><span class="ev-ts">08:12:05</span><span class="ev-event">BRAND_NOTIFIED</span><span class="ev-arrow">→</span><span class="ev-payload">brand_id=brd_tr22, status=approved</span></div>
+      <div class="ev-line"><span class="ev-ts">08:24:19</span><span class="ev-event">LISTING_APPROVED</span><span class="ev-arrow">→</span><span class="ev-payload">listing_id=lst_au77, admin_id=adm_01 <span class="ev-ok">✓</span></span></div>
+      <div class="ev-line"><span class="ev-ts">08:24:20</span><span class="ev-event">BRAND_NOTIFIED</span><span class="ev-arrow">→</span><span class="ev-payload">brand_id=brd_au01, status=approved</span></div>
+      <div class="ev-line"><span class="ev-ts">08:31:55</span><span class="ev-event">LISTING_REJECTED</span><span class="ev-arrow">→</span><span class="ev-payload">listing_id=lst_ap33, reason=MISLEADING_OFFER_CONTENT <span class="ev-err">✗</span></span></div>
+      <div class="ev-line"><span class="ev-ts">08:31:56</span><span class="ev-event">BRAND_NOTIFIED</span><span class="ev-arrow">→</span><span class="ev-payload">brand_id=brd_ap33, status=rejected, resubmit_allowed=true</span></div>
+      <div class="ev-separator">──────────────────────────────────────────────────────────</div>
+      <div class="ev-line"><span class="ev-ts">10:00:00</span><span class="ev-event">SIGNAL_TYPE_REQUEST_REVIEWED</span><span class="ev-arrow">→</span><span class="ev-payload">signal=home_improvement.major_renovation</span></div>
+      <div class="ev-line"><span class="ev-ts">10:07:33</span><span class="ev-event">SIGNAL_TYPE_PUBLISHED</span><span class="ev-arrow">→</span><span class="ev-payload">signal=home_improvement.major_renovation, version=1.0 <span class="ev-ok">✓</span></span></div>
+      <div class="ev-line"><span class="ev-ts">10:07:34</span><span class="ev-event">CATALOGUE_UPDATED</span><span class="ev-arrow">→</span><span class="ev-payload">total_signal_types=14</span></div>
+      <div class="ev-separator">──────────────────────────────────────────────────────────</div>
+      <div class="ev-line"><span class="ev-ts">11:00:00</span><span class="ev-event">EXCHANGE_HEALTH_SNAPSHOT</span><span class="ev-arrow">→</span><span class="ev-payload">active_listings=12, escrow=$2400, match_rate=73%, claim_conv=88%</span></div>
+      <div class="ev-line"><span class="ev-ts">11:00:00</span><span class="ev-event">LOW_MATCH_ALERT</span><span class="ev-arrow">→</span><span class="ev-payload">listing_id=lst_rv99, match_rate=22% <span class="ev-warn">⚠</span></span></div>
+      <div class="ev-separator">──────────────────────────────────────────────────────────</div>
+      <div class="ev-line"><span class="ev-ts">14:03:12</span><span class="ev-event">SUPPORT_TICKET_OPENED</span><span class="ev-arrow">→</span><span class="ev-payload">soul_id=soul_k9p1, issue=konnection_disconnected</span></div>
+      <div class="ev-line"><span class="ev-ts">14:04:01</span><span class="ev-event">KONNECTION_STATUS_CHECKED</span><span class="ev-arrow">→</span><span class="ev-payload">konnection_id=knn_k9p1, status=disconnected, reason=plaid_session_expired</span></div>
+      <div class="ev-line"><span class="ev-ts">14:05:44</span><span class="ev-event">REAUTH_DEEPLINK_SENT</span><span class="ev-arrow">→</span><span class="ev-payload">soul_id=soul_k9p1, channel=push</span></div>
+      <div class="ev-line"><span class="ev-ts">14:19:33</span><span class="ev-event">KONNECTION_REESTABLISHED</span><span class="ev-arrow">→</span><span class="ev-payload">konnection_id=knn_k9p1, status=established <span class="ev-ok">✓</span></span></div>
+      <div class="ev-line"><span class="ev-ts">14:19:34</span><span class="ev-event">HARVEST_TRIGGERED</span><span class="ev-arrow">→</span><span class="ev-payload">konnection_id=knn_k9p1, trigger=manual_admin</span></div>
+      <div class="ev-line"><span class="ev-ts">14:25:11</span><span class="ev-event">SUPPORT_TICKET_RESOLVED</span><span class="ev-arrow">→</span><span class="ev-payload">ticket_id=tkt_881 <span class="ev-ok">✓</span></span></div>
+      <div class="ev-separator">──────────────────────────────────────────────────────────</div>
+      <div class="ev-line"><span class="ev-ts">16:00:00</span><span class="ev-event">REVENUE_SNAPSHOT</span><span class="ev-arrow">→</span><span class="ev-payload">claim_take_rate=$340, new_brand_subs=2, mrr_delta=+$198</span></div>
+    </div>
+  </div>
+
+  <p class="section-label admin-label">Data Visibility</p>
+  <div class="data-cols">
+    <div class="data-col sees-col">
+      <div class="data-col-title sees-title">Admin sees</div>
+      <ul>
+        <li>All Listing submissions: Signal Type, bid, creative, Brand identity</li>
+        <li>Konnection status per Soul (not Soul's raw financial data)</li>
+        <li>Harvest run history and error logs (metadata only)</li>
+        <li>Exchange health metrics: match rate, Claim conversion, escrow totals</li>
+        <li>Platform revenue: take-rate per Claim, Brand subscription revenue</li>
+        <li>Signal Type catalogue and version history</li>
+        <li>Support ticket context (error codes, timestamps, Konnection state)</li>
+        <li>Aggregate Claim counts per Listing (no per-Soul identity)</li>
+      </ul>
+    </div>
+    <div class="data-col never-col">
+      <div class="data-col-title never-title">Admin never sees</div>
+      <ul>
+        <li>Raw bank Transaktions or email content (always encrypted)</li>
+        <li>Individual Soul Insight scores or Permit floor values</li>
+        <li>Which Soul accepted which Offer (Claim is anonymous)</li>
+        <li>Arweave ciphertext contents — no decryption key held by platform</li>
+        <li>Soul's passkey or Wallet private key</li>
+        <li>Brand bidding strategy or internal campaign goals</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /panel-admin -->
+
+<script>
+  function switchTab(actor) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.actor === actor);
+    });
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.toggle('active', panel.id === 'panel-' + actor);
+    });
+  }
+</script>
+
+</body>
+</html>

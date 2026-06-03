@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PersonalOS — System Sequence Diagrams</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0a0a0f;
+      --surface:     #111118;
+      --surface2:    #1a1a27;
+      --border:      #2a2a3d;
+      --text:        #e2e8f0;
+      --text-muted:  #94a3b8;
+      --blue:        #3b82f6;
+      --teal:        #14b8a6;
+      --purple:      #a855f7;
+      --blue-dim:    #1d3a6e;
+      --teal-dim:    #0d4a44;
+      --purple-dim:  #4a1a6e;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav#sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 24px 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+    }
+
+    nav#sidebar .nav-brand {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+
+    nav#sidebar .nav-brand a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+      transition: color 0.15s;
+    }
+    nav#sidebar .nav-brand a:hover { color: var(--teal); }
+
+    nav#sidebar .nav-brand h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    nav#sidebar .nav-section-label {
+      padding: 0 20px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    nav#sidebar ul {
+      list-style: none;
+      padding: 0 8px;
+    }
+
+    nav#sidebar ul li a {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      line-height: 1.4;
+      transition: background 0.15s, color 0.15s;
+    }
+    nav#sidebar ul li a:hover {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    nav#sidebar ul li a .num {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    .num-blue   { background: var(--blue-dim);   color: var(--blue); }
+    .num-teal   { background: var(--teal-dim);   color: var(--teal); }
+    .num-purple { background: var(--purple-dim); color: var(--purple); }
+
+    /* ── Main content ── */
+    main {
+      margin-left: 260px;
+      flex: 1;
+      padding: 48px 40px 80px;
+      max-width: 1200px;
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .audience-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--purple-dim);
+      color: var(--purple);
+      border: 1px solid #6d28a0;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .page-header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .page-header h1 span {
+      background: linear-gradient(90deg, var(--blue), var(--teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+      font-size: 15px;
+      max-width: 680px;
+    }
+
+    /* ── Actor legend ── */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'Courier New', monospace;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* ── Flow cards ── */
+    .flow-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 40px;
+      overflow: hidden;
+    }
+
+    .flow-card-header {
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .flow-number {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      margin-top: 2px;
+    }
+
+    .flow-card-header .meta { flex: 1; }
+
+    .flow-card-header h2 {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .flow-card-header p {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .flow-card-body {
+      padding: 28px;
+      overflow-x: auto;
+      background: var(--bg);
+    }
+
+    /* ── Mermaid overrides ── */
+    .mermaid {
+      display: block;
+      font-family: 'Courier New', 'Lucida Console', monospace !important;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      nav#sidebar { display: none; }
+      main { margin-left: 0; padding: 24px 16px 60px; }
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--surface); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3a3a55; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════
+     SIDEBAR NAVIGATION
+═════════════════════════════════ -->
+<nav id="sidebar">
+  <div class="nav-brand">
+    <a href="index.html">&#8592; Back to Index</a>
+    <h2>Sequence Diagrams</h2>
+  </div>
+
+  <div class="nav-section-label">Soul Flows</div>
+  <ul>
+    <li>
+      <a href="#flow-1">
+        <span class="num num-teal">1</span>
+        Soul Onboarding
+      </a>
+    </li>
+    <li>
+      <a href="#flow-2">
+        <span class="num num-teal">2</span>
+        Harvest → Cultivation → Insight
+      </a>
+    </li>
+    <li>
+      <a href="#flow-5">
+        <span class="num num-teal">5</span>
+        Offer → Claim → Yield
+      </a>
+    </li>
+    <li>
+      <a href="#flow-6">
+        <span class="num num-teal">6</span>
+        Withdrawal
+      </a>
+    </li>
+  </ul>
+
+  <div class="nav-section-label" style="margin-top:16px;">Exchange Flows</div>
+  <ul>
+    <li>
+      <a href="#flow-3">
+        <span class="num num-blue">3</span>
+        Exchange: Listing-triggered
+      </a>
+    </li>
+    <li>
+      <a href="#flow-4">
+        <span class="num num-blue">4</span>
+        Exchange: Cultivation-triggered
+      </a>
+    </li>
+  </ul>
+
+  <div class="nav-section-label" style="margin-top:16px;">Brand Flows</div>
+  <ul>
+    <li>
+      <a href="#flow-7">
+        <span class="num num-purple">7</span>
+        Brand Onboarding
+      </a>
+    </li>
+    <li>
+      <a href="#flow-8">
+        <span class="num num-purple">8</span>
+        Listing Exhaustion
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<!-- ════════════════════════════════
+     MAIN CONTENT
+═════════════════════════════════ -->
+<main>
+
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <div class="audience-badge">Audience: Architects &amp; Data Scientists</div>
+    <h1>PersonalOS <span>System Sequences</span></h1>
+    <p>
+      End-to-end sequence diagrams for every major flow in the PersonalOS platform —
+      from Soul onboarding through Harvest, Cultivation, Exchange matching, Claim settlement,
+      and Brand lifecycle. All system boundaries, async steps, and data-store interactions are shown.
+    </p>
+
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot" style="background:#14b8a6;"></span>Soul / iOS App</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#3b82f6;"></span>PersonalOS Backend</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#a855f7;"></span>Brand</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#f59e0b;"></span>Plaid API</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#ec4899;"></span>Arweave / Irys</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#22d3ee;"></span>Base Chain</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#84cc16;"></span>Coinbase Smart Wallet</div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════
+       FLOW 1: Soul Onboarding
+  ══════════════════════════════ -->
+  <section class="flow-card" id="flow-1">
+    <div class="flow-card-header">
+      <div class="flow-number" style="background:var(--teal-dim); color:var(--teal);">1</div>
+      <div class="meta">
+        <h2>Soul Onboarding</h2>
+        <p>
+          New Soul installs the iOS app, creates a passkey-backed account, provisions a
+          non-custodial Coinbase Smart Wallet on Base, and establishes their first
+          Konnection via Plaid Link. Passkey is stored in iCloud Keychain; PersonalOS
+          never sees the private key.
+        </p>
+      </div>
+    </div>
+    <div class="flow-card-body">
+      <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Soul
+    participant App as iOS App
+    participant iCloud as iCloud Keychain
+    participant BE as PersonalOS Backend
+    participant DB as PersonalOS DB
+    participant CSW as Coinbase Smart Wallet
+    participant Base as Base Chain
+    participant Plaid as Plaid API
+
+    Soul->>App: Open app, tap "Get Started"
+    App->>App: Prompt WebAuthn passkey creation
+    App->>iCloud: Store passkey (private key never leaves device)
+    iCloud-->>App: Passkey handle confirmed
+
+    App->>BE: POST /auth/register {email, passkey_public_key}
+    BE->>DB: INSERT soul_accounts {email, pubkey, status=pending}
+    DB-->>BE: soul_id
+    BE-->>App: 201 {soul_id, session_token}
+
+    Note over App,CSW: Wallet provisioning (async, may show spinner)
+    App->>CSW: initSmartWallet({owner: passkey_public_key, chain: Base})
+    CSW->>Base: Deploy ERC-4337 Account contract (counterfactual address)
+    Base-->>CSW: wallet_address
+    CSW-->>App: {wallet_address, chain_id}
+    App->>BE: PUT /souls/{soul_id}/wallet {wallet_address}
+    BE->>DB: UPDATE soul_accounts SET wallet_address, status=active
+    DB-->>BE: OK
+    BE-->>App: 200 OK
+
+    Note over App,Plaid: Plaid Link — OAuth flow inside app WebView
+    App->>BE: POST /konnections/init {soul_id, source=plaid}
+    BE->>Plaid: POST /link/token/create {user_id, products=[transactions]}
+    Plaid-->>BE: {link_token}
+    BE-->>App: {link_token}
+
+    App->>Plaid: Open Plaid Link WebView with link_token
+    Soul->>App: Selects bank, enters credentials (handled entirely by Plaid)
+    Plaid-->>App: onSuccess callback {public_token, institution_id, accounts[]}
+
+    App->>BE: POST /konnections/complete {soul_id, public_token, institution_id, accounts}
+    BE->>Plaid: POST /item/public_token/exchange {public_token}
+    Plaid-->>BE: {access_token, item_id}
+    BE->>DB: INSERT konnections {soul_id, plaid_item_id, access_token_encrypted, status=established, accounts_json}
+    DB-->>BE: konnection_id
+    BE-->>App: 201 {konnection_id, status=established}
+    App-->>Soul: "Your Konnection is live — first Harvest scheduled"
+      </pre>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       FLOW 2: Harvest → Cultivation → Insight Update
+  ══════════════════════════════ -->
+  <section class="flow-card" id="flow-2">
+    <div class="flow-card-header">
+      <div class="flow-number" style="background:var(--teal-dim); color:var(--teal);">2</div>
+      <div class="meta">
+        <h2>Harvest → Cultivation → Insight Update</h2>
+        <p>
+          Scheduled Harvest pulls raw Transaktions from Plaid, encrypts them with the Soul's
+          passkey-derived key on-device, writes the encrypted Ledger shard to Arweave via Irys,
+          then triggers on-device Cultivation. The device decrypts locally, computes Insight
+          propensity scores, and returns only scores to the backend. Raw data never leaves the device
+          in plaintext, and PersonalOS never holds the decryption key.
+        </p>
+      </div>
+    </div>
+    <div class="flow-card-body">
+      <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Scheduler as BE Scheduler (cron)
+    participant BE as PersonalOS Backend
+    participant DB as PersonalOS DB
+    participant Plaid as Plaid API
+    participant App as iOS App (on-device)
+    participant iCloud as iCloud Keychain
+    participant Irys as Irys (Arweave gateway)
+    participant Arweave as Arweave
+
+    Note over Scheduler,DB: Triggered by cron — e.g. every 6 hours per Konnection
+    Scheduler->>BE: harvestJob({konnection_id})
+    BE->>DB: SELECT konnection WHERE id=? AND status=established
+    DB-->>BE: {soul_id, plaid_item_id, access_token_encrypted, last_harvested_at}
+
+    BE->>BE: Decrypt plaid access_token (server-side KMS key, NOT Soul's key)
+    BE->>Plaid: GET /transactions/get {access_token, start_date=last_harvested_at, end_date=now}
+    Plaid-->>BE: {transactions[], total_count, accounts[]}
+
+    BE->>BE: Normalize transactions → Transaktion[] {id, date, merchant, amount, category[]}
+    BE->>DB: UPDATE konnections SET last_harvested_at=now, status=syncing
+
+    Note over BE,App: Push raw Transaktion batch to device for encryption
+    BE->>App: APNs push: {type=harvest_ready, konnection_id, transaktion_count, batch_id}
+    App->>App: Receive background push, wake up
+    App->>BE: GET /harvests/{batch_id}/transaktions (auth: session_token)
+    BE-->>App: Transaktion[] (plaintext, in-transit TLS only)
+
+    Note over App,iCloud: On-device encryption — key never sent to server
+    App->>iCloud: Fetch passkey / derive AES-256 encryption key
+    iCloud-->>App: encryption_key (stays in Secure Enclave context)
+    App->>App: Encrypt each Transaktion → ciphertext blobs
+    App->>App: Build Ledger shard: {soul_id, konnection_id, batch_id, encrypted_transaktions[], timestamp}
+
+    Note over App,Arweave: Write encrypted Ledger shard to Arweave via Irys
+    App->>Irys: POST /upload {data: encrypted_ledger_shard, tags: [soul_id, batch_id, version]}
+    Irys->>Arweave: Propagate to Arweave network (optimistic — Irys guarantees finality)
+    Arweave-->>Irys: tx_id confirmed
+    Irys-->>App: {arweave_tx_id, irys_receipt}
+
+    App->>BE: POST /harvests/{batch_id}/ledger-written {arweave_tx_id, irys_receipt, shard_size_bytes}
+    BE->>DB: INSERT ledger_shards {soul_id, batch_id, arweave_tx_id, shard_size, written_at}
+    BE->>DB: UPDATE konnections SET status=established
+    BE->>DB: UPDATE soul_depth {soul_id, increment depth score based on shard_size}
+    DB-->>BE: OK
+    BE-->>App: 200 {depth_score_updated}
+
+    Note over App,BE: Cultivation — all computation on-device
+    App->>App: Trigger Cultivation job (background task)
+    App->>Irys: GET /arweave/{arweave_tx_id} — fetch all Ledger shards for soul
+    Irys-->>App: encrypted_ledger_shards[]
+    App->>iCloud: Fetch encryption key
+    iCloud-->>App: encryption_key
+    App->>App: Decrypt Ledger shards in memory (ephemeral — never persisted decrypted)
+    App->>App: Run Insight computation models on Transaktion[] locally
+    App->>App: Produce Insight scores: [{signal_type, score, confidence, computed_at}]
+    App->>App: Wipe decrypted data from memory
+
+    App->>BE: POST /souls/{soul_id}/insights {insights: [{signal_type, score, confidence, computed_at}]}
+    BE->>DB: UPSERT soul_insights {soul_id, signal_type, score, confidence, computed_at}
+    DB-->>BE: OK
+    BE-->>App: 200 {insights_stored: N}
+
+    Note over BE: Cultivation-triggered Exchange matching fired here (see Flow 4)
+    BE->>BE: emit CULTIVATION_COMPLETE event {soul_id, updated_signal_types[]}
+      </pre>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       FLOW 3: Exchange Matching — Listing-triggered
+  ══════════════════════════════ -->
+  <section class="flow-card" id="flow-3">
+    <div class="flow-card-header">
+      <div class="flow-number" style="background:var(--blue-dim); color:var(--blue);">3</div>
+      <div class="meta">
+        <h2>Exchange Matching: Listing-triggered</h2>
+        <p>
+          A Brand's newly-approved and funded Listing goes live. The Exchange scans all Souls
+          who have a matching Permit for the Listing's Signal Type, whose current Insight score
+          meets the Listing's targeting threshold, and whose Permit Yield floor is at or below
+          the Listing's bid. Matched Souls receive push notifications for each resulting Offer.
+        </p>
+      </div>
+    </div>
+    <div class="flow-card-body">
+      <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Brand as Brand
+    participant BE as PersonalOS Backend
+    participant DB as PersonalOS DB
+    participant Base as Base Chain
+    participant Exchange as Exchange Engine (BE subsystem)
+    participant App as iOS Apps (matched Souls)
+
+    Note over BE,DB: Listing goes live after Admin approval + escrow funded (see Flow 7)
+    BE->>DB: UPDATE listings SET status=active WHERE listing_id=?
+    DB-->>BE: OK
+
+    BE->>Exchange: emit LISTING_ACTIVATED {listing_id, signal_type, bid_usdc, min_score_threshold, budget_remaining}
+
+    Note over Exchange,DB: Fan-out match across all eligible Souls
+    Exchange->>DB: SELECT soul_id, score, wallet_address<br/>FROM soul_insights SI<br/>JOIN permits P ON SI.soul_id = P.soul_id AND SI.signal_type = P.signal_type<br/>JOIN soul_accounts SA ON SI.soul_id = SA.soul_id<br/>WHERE SI.signal_type = listing.signal_type<br/>  AND SI.score >= listing.min_score_threshold<br/>AND P.yield_floor_usdc &lt;= listing.bid_usdc<br/>  AND SA.status = 'active'<br/>  AND NOT EXISTS (SELECT 1 FROM offers WHERE soul_id=SI.soul_id AND listing_id=listing.id AND status != 'expired')
+    DB-->>Exchange: matched_souls[] (soul_id, score, wallet_address, yield_floor)
+
+    loop For each matched Soul
+        Exchange->>DB: INSERT offers {listing_id, soul_id, bid_usdc, signal_type, content_ref, status=pending, created_at, expires_at}
+        DB-->>Exchange: offer_id
+        Exchange->>App: APNs push to soul: {type=new_offer, offer_id, brand_name, bid_usdc, signal_type, expires_at}
+    end
+
+    Exchange->>DB: INSERT exchange_run_log {listing_id, trigger=listing_activated, matched_count, offers_created, ran_at}
+    DB-->>Exchange: OK
+
+    Note over Brand,BE: Brand sees Offer count in dashboard (async)
+    Brand->>BE: GET /listings/{listing_id}/stats
+    BE->>DB: SELECT offers_count, claims_count, budget_remaining FROM listing_stats
+    DB-->>BE: stats
+    BE-->>Brand: {offers_sent, claims, budget_remaining_usdc}
+      </pre>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       FLOW 4: Exchange Matching — Cultivation-triggered
+  ══════════════════════════════ -->
+  <section class="flow-card" id="flow-4">
+    <div class="flow-card-header">
+      <div class="flow-number" style="background:var(--blue-dim); color:var(--blue);">4</div>
+      <div class="meta">
+        <h2>Exchange Matching: Cultivation-triggered</h2>
+        <p>
+          When Cultivation completes for a single Soul (see Flow 2), the backend fires a
+          CULTIVATION_COMPLETE event. The Exchange matches that one Soul against all active
+          Listings whose Signal Types appear in the updated Insight set, checking Permit and
+          Yield floor eligibility. New Offers are delivered via push.
+        </p>
+      </div>
+    </div>
+    <div class="flow-card-body">
+      <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant BE as PersonalOS Backend
+    participant DB as PersonalOS DB
+    participant Exchange as Exchange Engine (BE subsystem)
+    participant App as iOS App (this Soul)
+
+    Note over BE,Exchange: Triggered at end of Flow 2
+    BE->>Exchange: CULTIVATION_COMPLETE {soul_id, updated_signal_types: [automotive.new_vehicle_purchase, ...]}
+
+    Exchange->>DB: SELECT soul_id, yield_floor_usdc, signal_type<br/>FROM permits<br/>WHERE soul_id = ? AND signal_type IN (updated_signal_types)
+    DB-->>Exchange: soul_permits[] (signal_type, yield_floor_usdc)
+
+    Exchange->>DB: SELECT listing_id, signal_type, bid_usdc, min_score_threshold, budget_remaining, content_ref, brand_name<br/>FROM listings<br/>WHERE status = 'active'<br/>  AND signal_type IN (soul_signal_types)<br/>  AND budget_remaining > 0
+    DB-->>Exchange: candidate_listings[]
+
+    loop For each candidate Listing
+        Exchange->>DB: SELECT score FROM soul_insights WHERE soul_id=? AND signal_type=listing.signal_type
+        DB-->>Exchange: current_score
+
+        alt score >= listing.min_score_threshold AND permit.yield_floor_usdc <= listing.bid_usdc
+            Exchange->>DB: SELECT 1 FROM offers WHERE soul_id=? AND listing_id=? AND status != 'expired'
+            DB-->>Exchange: existing_offer?
+
+            alt No existing active Offer
+                Exchange->>DB: INSERT offers {listing_id, soul_id, bid_usdc, signal_type, content_ref, status=pending, expires_at}
+                DB-->>Exchange: offer_id
+                Exchange->>App: APNs push: {type=new_offer, offer_id, brand_name, bid_usdc, signal_type, expires_at}
+            else Already has active Offer
+                Note over Exchange: Skip — no duplicate Offers per Listing per Soul
+            end
+        else Score or Yield floor mismatch
+            Note over Exchange: Soul not eligible — skip
+        end
+    end
+
+    Exchange->>DB: INSERT exchange_run_log {trigger=cultivation_complete, soul_id, checked_listings, new_offers_created, ran_at}
+    DB-->>Exchange: OK
+      </pre>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       FLOW 5: Offer → Claim → Yield Settlement
+  ══════════════════════════════ -->
+  <section class="flow-card" id="flow-5">
+    <div class="flow-card-header">
+      <div class="flow-number" style="background:var(--teal-dim); color:var(--teal);">5</div>
+      <div class="meta">
+        <h2>Offer → Claim → Yield Settlement</h2>
+        <p>
+          Soul receives a push, opens the Offer in-app, and Claims it. The backend generates
+          a signed Claim authorization which the iOS app submits directly to the Base Chain
+          smart contract. The contract atomically debits Brand escrow, splits USDC to the
+          PersonalOS fee address and Soul's Smart Wallet, and emits a settlement event.
+          PersonalOS backend listens on-chain to confirm and record the Claim.
+        </p>
+      </div>
+    </div>
+    <div class="flow-card-body">
+      <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Soul
+    participant App as iOS App
+    participant iCloud as iCloud Keychain
+    participant BE as PersonalOS Backend
+    participant DB as PersonalOS DB
+    participant Base as Base Chain (Smart Contract)
+    participant CSW as Coinbase Smart Wallet
+
+    Soul->>App: Tap push notification
+    App->>BE: GET /offers/{offer_id} (auth: session_token)
+    BE->>DB: SELECT offer WHERE id=? AND soul_id=? AND status=pending AND expires_at > now()
+    DB-->>BE: {offer_id, listing_id, brand_name, bid_usdc, content_ref, signal_type}
+    BE-->>App: Offer details + Brand creative content
+
+    App-->>Soul: Display Offer (brand message, bid amount, Signal Type)
+    Soul->>App: Tap "Claim — Earn {bid} USDC"
+
+    Note over App,iCloud: Passkey sign — proves Soul identity on-chain
+    App->>iCloud: Request passkey signature for Claim authorization
+    iCloud-->>App: passkey_signature (WebAuthn assertion)
+
+    App->>BE: POST /offers/{offer_id}/claim {passkey_assertion}
+    BE->>BE: Verify passkey assertion against soul's stored pubkey
+    BE->>DB: SELECT listing WHERE id=listing_id AND status=active AND budget_remaining >= bid_usdc
+    DB-->>BE: listing confirmed
+    BE->>DB: UPDATE offers SET status=claiming WHERE id=offer_id
+    DB-->>BE: OK
+
+    Note over BE,Base: Backend generates on-chain Claim authorization
+    BE->>BE: Sign claim payload: {listing_id, soul_wallet, bid_usdc, fee_usdc, nonce, expiry} with BE signing key
+    BE-->>App: {claim_tx_payload, be_signature, escrow_contract_address}
+
+    Note over App,Base: App submits UserOperation via Coinbase Smart Wallet (ERC-4337)
+    App->>CSW: prepareUserOp({to: escrow_contract, calldata: claimFunds(payload, be_signature, passkey_sig)})
+    CSW-->>App: userOperation
+    App->>iCloud: Sign userOperation with passkey
+    iCloud-->>App: userOp_signature
+    App->>CSW: submitUserOp(userOperation + userOp_signature)
+    CSW->>Base: Submit to bundler → include in block
+
+    Note over Base: Atomic on-chain settlement
+    Base->>Base: escrow_contract.claimFunds()<br/>  1. Verify BE signature + passkey signature<br/>  2. Check escrow balance >= bid_usdc<br/>  3. Debit listing escrow by bid_usdc<br/>  4. Transfer fee_usdc → PersonalOS fee wallet<br/>  5. Transfer yield_usdc → Soul Smart Wallet<br/>  6. Emit ClaimSettled(listing_id, soul, yield_usdc, fee_usdc, tx_hash)
+    Base-->>CSW: tx receipt {tx_hash, block_number, gas_used}
+    CSW-->>App: {tx_hash, status=success}
+
+    App->>BE: POST /offers/{offer_id}/claim-confirmed {tx_hash}
+    BE->>Base: eth_getTransactionReceipt({tx_hash}) — verify on-chain
+    Base-->>BE: receipt {ClaimSettled event confirmed}
+
+    BE->>DB: UPDATE offers SET status=claimed, claimed_at=now(), tx_hash
+    BE->>DB: INSERT claims {offer_id, listing_id, soul_id, yield_usdc, fee_usdc, tx_hash, settled_at}
+    BE->>DB: UPDATE listings SET budget_remaining = budget_remaining - bid_usdc, claims_count++
+    DB-->>BE: OK
+    BE-->>App: 200 {yield_usdc, tx_hash, new_wallet_balance_usdc}
+    App-->>Soul: "You earned {yield_usdc} USDC! Wallet updated."
+
+    Note over BE: Check if Budget exhausted → triggers Flow 8
+    BE->>BE: emit LISTING_CLAIM_SETTLED {listing_id, budget_remaining}
+      </pre>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       FLOW 6: Withdrawal
+  ══════════════════════════════ -->
+  <section class="flow-card" id="flow-6">
+    <div class="flow-card-header">
+      <div class="flow-number" style="background:var(--teal-dim); color:var(--teal);">6</div>
+      <div class="meta">
+        <h2>Withdrawal</h2>
+        <p>
+          Soul moves USDC from their non-custodial Coinbase Smart Wallet to fiat via the
+          Coinbase off-ramp. The off-ramp is a Coinbase-hosted flow; PersonalOS mediates
+          only the initial off-ramp session URL and records the withdrawal event after
+          on-chain confirmation.
+        </p>
+      </div>
+    </div>
+    <div class="flow-card-body">
+      <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Soul
+    participant App as iOS App
+    participant iCloud as iCloud Keychain
+    participant BE as PersonalOS Backend
+    participant DB as PersonalOS DB
+    participant CSW as Coinbase Smart Wallet
+    participant Base as Base Chain
+    participant OffRamp as Coinbase Off-Ramp
+
+    Soul->>App: Tap "Withdraw" in Wallet tab
+    App->>BE: GET /souls/{soul_id}/wallet/balance
+    BE->>CSW: eth_call balanceOf(soul_wallet_address) on USDC contract
+    CSW-->>BE: usdc_balance (on-chain)
+    BE-->>App: {usdc_balance, wallet_address}
+    App-->>Soul: Display balance, input withdrawal amount
+
+    Soul->>App: Enter amount, confirm
+    App->>BE: POST /withdrawals/init {soul_id, amount_usdc}
+    BE->>BE: Validate: amount <= usdc_balance, amount >= min_withdrawal
+    BE->>DB: INSERT withdrawals {soul_id, amount_usdc, status=initiated, created_at}
+    DB-->>BE: withdrawal_id
+    BE->>OffRamp: POST /offramp/session {wallet_address, amount_usdc, destination_currency=USD, redirect_url}
+    OffRamp-->>BE: {session_url, session_id, expires_at}
+    BE->>DB: UPDATE withdrawals SET offramp_session_id=session_id
+    BE-->>App: {session_url, withdrawal_id}
+
+    Note over App,OffRamp: Coinbase off-ramp handles KYC, bank linkage, and USDC pull
+    App->>OffRamp: Open session_url in SFSafariViewController
+    Soul->>OffRamp: Complete Coinbase off-ramp flow (KYC, select bank, confirm)
+
+    Note over OffRamp,Base: Coinbase initiates on-chain USDC pull from Soul wallet
+    OffRamp->>Base: Request approval / transfer USDC from soul_wallet_address
+    App->>iCloud: Passkey sign transaction approval
+    iCloud-->>App: passkey_signature
+    App->>CSW: Sign and submit USDC transfer UserOperation
+    CSW->>Base: Transfer USDC: soul_wallet → Coinbase custody address
+    Base-->>CSW: tx_hash
+
+    Note over OffRamp,Soul: Coinbase initiates ACH / wire bank transfer (T+1 to T+3)
+    OffRamp->>OffRamp: Initiate ACH transfer to Soul's linked bank
+
+    OffRamp->>BE: Webhook POST /webhooks/offramp {session_id, status=usdc_received, tx_hash}
+    BE->>DB: UPDATE withdrawals SET status=processing, onchain_tx_hash=tx_hash
+    DB-->>BE: OK
+
+    OffRamp->>BE: Webhook POST /webhooks/offramp {session_id, status=fiat_sent, bank_reference}
+    BE->>DB: UPDATE withdrawals SET status=completed, fiat_sent_at=now(), bank_reference
+    DB-->>BE: OK
+    BE->>App: Push notification: "Withdrawal of ${amount} complete — funds arriving in 1-3 days"
+    App-->>Soul: Withdrawal confirmed
+      </pre>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       FLOW 7: Brand Onboarding
+  ══════════════════════════════ -->
+  <section class="flow-card" id="flow-7">
+    <div class="flow-card-header">
+      <div class="flow-number" style="background:var(--purple-dim); color:var(--purple);">7</div>
+      <div class="meta">
+        <h2>Brand Onboarding</h2>
+        <p>
+          A Brand signs up, subscribes to the platform, creates a Listing targeting a Signal
+          Type, submits it for Admin review, and once approved funds the USDC escrow on Base.
+          Only after escrow is confirmed on-chain does the Listing go live and trigger Exchange
+          matching (Flow 3).
+        </p>
+      </div>
+    </div>
+    <div class="flow-card-body">
+      <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Brand
+    participant BE as PersonalOS Backend
+    participant DB as PersonalOS DB
+    participant Admin as Platform Admin
+    participant Base as Base Chain
+    participant Exchange as Exchange Engine
+
+    Brand->>BE: POST /auth/brand/register {company_name, email, password}
+    BE->>DB: INSERT brand_accounts {company_name, email, password_hash, status=pending_subscription}
+    DB-->>BE: brand_id
+    BE-->>Brand: 201 {brand_id, session_token}
+
+    Note over Brand,BE: Subscription — platform access fee (fiat, via Stripe or similar)
+    Brand->>BE: POST /brands/{brand_id}/subscribe {plan, payment_method_token}
+    BE->>BE: Process subscription payment
+    BE->>DB: UPDATE brand_accounts SET status=active, subscription_plan, subscribed_at
+    DB-->>BE: OK
+    BE-->>Brand: 200 {subscription_confirmed}
+
+    Note over Brand,DB: Brand creates a Listing
+    Brand->>BE: POST /listings {signal_type, bid_usdc, min_score_threshold, content: {headline, body, cta_url}, budget_usdc, target_audience_notes}
+    BE->>BE: Validate: signal_type in allowed set, bid_usdc >= platform_minimum, budget_usdc >= bid_usdc * 10
+    BE->>DB: INSERT listings {brand_id, signal_type, bid_usdc, min_score_threshold, content_json, budget_usdc, budget_remaining=budget_usdc, status=pending_review, created_at}
+    DB-->>BE: listing_id
+    BE-->>Brand: 201 {listing_id, status=pending_review}
+
+    Note over BE,Admin: Admin review queue
+    BE->>Admin: Notify: new Listing pending review {listing_id, brand_name, signal_type, content_summary}
+    Admin->>BE: GET /admin/listings/{listing_id}
+    BE->>DB: SELECT listing + brand details
+    DB-->>BE: listing_full
+    BE-->>Admin: Listing for review
+
+    alt Admin approves
+        Admin->>BE: POST /admin/listings/{listing_id}/approve {reviewer_notes}
+        BE->>DB: UPDATE listings SET status=approved_pending_funding, approved_at, reviewer_id
+        DB-->>BE: OK
+        BE-->>Brand: Email + webhook: "Listing approved — please fund escrow to go live"
+
+        Note over Brand,Base: Brand funds escrow on Base Chain
+        Brand->>BE: POST /listings/{listing_id}/fund-escrow
+        BE->>Base: Call escrow_contract.depositBudget(listing_id, budget_usdc) — expect Brand to send tx
+        BE-->>Brand: {escrow_contract_address, listing_id, amount_usdc, deposit_calldata}
+
+        Brand->>Base: Submit USDC approval + depositBudget transaction from Brand wallet
+        Base->>Base: Transfer budget_usdc USDC from Brand → escrow contract<br/>Lock funds under listing_id<br/>Emit BudgetDeposited(listing_id, brand, amount_usdc)
+
+        Base->>BE: On-chain event listener: BudgetDeposited {listing_id, amount_usdc, tx_hash}
+        BE->>DB: UPDATE listings SET status=active, escrow_tx_hash=tx_hash, activated_at=now()
+        DB-->>BE: OK
+        BE-->>Brand: "Listing is LIVE — Exchange matching begins now"
+
+        BE->>Exchange: emit LISTING_ACTIVATED {listing_id} → triggers Flow 3
+
+    else Admin rejects
+        Admin->>BE: POST /admin/listings/{listing_id}/reject {reason}
+        BE->>DB: UPDATE listings SET status=rejected, rejection_reason, reviewed_at
+        DB-->>BE: OK
+        BE-->>Brand: Email: "Listing rejected — reason: {reason}. You may revise and resubmit."
+    end
+      </pre>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       FLOW 8: Brand Listing Exhaustion
+  ══════════════════════════════ -->
+  <section class="flow-card" id="flow-8">
+    <div class="flow-card-header">
+      <div class="flow-number" style="background:var(--purple-dim); color:var(--purple);">8</div>
+      <div class="meta">
+        <h2>Brand Listing Exhaustion</h2>
+        <p>
+          Each Claim deducts the bid from the Listing's on-chain escrow balance. When the
+          remaining Budget falls below the bid amount, the smart contract can no longer pay
+          future Claims. The contract emits a BudgetExhausted event, the Exchange Engine
+          deactivates the Listing, pending Offers are expired, and the Brand is notified.
+          Any dust (remaining USDC too small to cover a full Claim) is returned to the Brand.
+        </p>
+      </div>
+    </div>
+    <div class="flow-card-body">
+      <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Base as Base Chain (Smart Contract)
+    participant BE as PersonalOS Backend
+    participant DB as PersonalOS DB
+    participant Exchange as Exchange Engine
+    participant App as iOS Apps (pending-offer Souls)
+    actor Brand
+
+    Note over Base,BE: Each successful Claim (Flow 5) reduces escrow. Final Claim may exhaust budget.
+    Base->>Base: claimFunds() executes<br/>budget_remaining = budget_remaining - bid_usdc<br/>IF budget_remaining &lt; bid_usdc:<br/>  emit BudgetExhausted(listing_id, dust_usdc)<br/>  Set listing status = exhausted in contract
+
+    Base->>BE: On-chain event: BudgetExhausted {listing_id, dust_usdc, block_number, tx_hash}
+
+    BE->>DB: UPDATE listings SET status=exhausted, exhausted_at=now(), final_budget_remaining=dust_usdc
+    DB-->>BE: OK
+
+    Note over BE,Exchange: Stop the Exchange from creating new Offers for this Listing
+    BE->>Exchange: emit LISTING_EXHAUSTED {listing_id}
+    Exchange->>Exchange: Remove listing_id from active Listings index
+
+    Note over BE,DB: Expire all pending Offers for this Listing
+    BE->>DB: UPDATE offers SET status=expired, expired_at=now()<br/>WHERE listing_id=? AND status=pending
+    DB-->>BE: expired_offers_count
+
+    Note over App: Notify Souls whose pending Offer just expired
+    BE->>DB: SELECT soul_id FROM offers WHERE listing_id=? AND status=expired AND expired_at=now()
+    DB-->>BE: affected_souls[]
+    loop For each affected Soul
+        BE->>App: APNs push: {type=offer_expired, offer_id, reason="Brand budget exhausted"}
+    end
+
+    Note over Base,Brand: Return dust USDC to Brand wallet
+    alt dust_usdc > 0
+        Base->>Base: Transfer dust_usdc → brand_wallet_address<br/>Emit DustReturned(listing_id, brand_wallet, dust_usdc)
+        Base->>BE: On-chain event: DustReturned {listing_id, amount_usdc, tx_hash}
+        BE->>DB: INSERT brand_refunds {brand_id, listing_id, amount_usdc, tx_hash, refunded_at}
+        DB-->>BE: OK
+    end
+
+    BE->>Brand: Email notification:<br/>"Your Listing [{listing_id}] has exhausted its budget.<br/>{total_claims} Claims settled. {dust_usdc} USDC returned.<br/>Create a new Listing or top up to continue reaching Souls."
+
+    Note over Brand,BE: Brand may choose to create a new Listing or top up
+    Brand->>BE: POST /listings/{listing_id}/top-up {additional_budget_usdc}
+    BE->>DB: SELECT listing WHERE id=? AND brand_id=? AND status=exhausted
+    DB-->>BE: listing
+    BE-->>Brand: {escrow_contract_address, top_up_calldata}
+    Brand->>Base: Submit USDC depositBudget transaction
+    Base->>Base: Add USDC to escrow<br/>Reset listing status = active<br/>Emit BudgetDeposited(listing_id, additional_usdc)
+    Base->>BE: On-chain event: BudgetDeposited {listing_id, amount_usdc}
+    BE->>DB: UPDATE listings SET status=active, budget_remaining=budget_remaining+additional_usdc
+    DB-->>BE: OK
+    BE->>Exchange: emit LISTING_ACTIVATED {listing_id} → resumes Exchange matching (Flow 3)
+    BE-->>Brand: "Listing reactivated — Exchange matching resumed"
+      </pre>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      background: '#0a0a0f',
+      primaryColor: '#1a1a27',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#3b82f6',
+      lineColor: '#94a3b8',
+      secondaryColor: '#111118',
+      tertiaryColor: '#1a1a27',
+      noteBkgColor: '#1a1a27',
+      noteTextColor: '#e2e8f0',
+      noteBorderColor: '#3b82f6',
+      activationBkgColor: '#1d3a6e',
+      activationBorderColor: '#3b82f6',
+      actorBkg: '#111118',
+      actorBorder: '#3b82f6',
+      actorTextColor: '#e2e8f0',
+      actorLineColor: '#94a3b8',
+      labelBoxBkgColor: '#1a1a27',
+      labelBoxBorderColor: '#2a2a3d',
+      labelTextColor: '#e2e8f0',
+      loopTextColor: '#e2e8f0',
+      signalColor: '#94a3b8',
+      signalTextColor: '#e2e8f0',
+      sequenceNumberColor: '#0a0a0f',
+    },
+    sequence: {
+      diagramMarginX: 20,
+      diagramMarginY: 20,
+      actorMargin: 60,
+      width: 160,
+      height: 60,
+      boxMargin: 10,
+      boxTextMargin: 5,
+      noteMargin: 10,
+      messageMargin: 40,
+      mirrorActors: true,
+      useMaxWidth: true,
+      rightAngles: false,
+      showSequenceNumbers: true,
+    },
+    fontFamily: "'Courier New', 'Lucida Console', monospace",
+    fontSize: 13,
+  });
+</script>
+</body>
+</html>
