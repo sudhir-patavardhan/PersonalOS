@@ -326,7 +326,7 @@ erDiagram
     INSIGHT {
         uuid id PK
         uuid soul_id FK
-        uuid signal_type_id FK
+        uuid category_id FK
         float score
         string algorithm_version
         boolean is_stale
@@ -335,7 +335,7 @@ erDiagram
     CONVICTION {
         uuid id PK
         uuid soul_id FK
-        uuid signal_type_id FK
+        uuid category_id FK
         float score
         timestamp last_purchase_at
         timestamp decay_reset_at
@@ -349,7 +349,7 @@ erDiagram
     PERMIT {
         uuid id PK
         uuid soul_id FK
-        uuid signal_type_id FK
+        uuid category_id FK
         decimal yield_floor_usdc
         int notification_max_per_day
         string notification_quiet_hours
@@ -369,7 +369,7 @@ erDiagram
     LISTING {
         uuid id PK
         uuid brand_id FK
-        uuid signal_type_id FK
+        uuid category_id FK
         decimal bid_per_claim_usdc
         text content
         string voucher_delivery_webhook
@@ -505,7 +505,7 @@ erDiagram
       <!-- SIGNAL_TYPES -->
       <div class="card">
         <div class="card-header">
-          <span class="card-table-name" style="color:var(--blue)">signal_types</span>
+          <span class="card-table-name" style="color:var(--blue)">categories</span>
           <span class="store-badge store-db">PersonalOS DB</span>
         </div>
         <div class="card-body">
@@ -515,7 +515,7 @@ erDiagram
             <li><span class="field-name">version</span>    <span class="field-type">text (semver)</span></li>
           </ul>
           <div class="card-note info">
-            Owned and versioned by PersonalOS. Brands target a Signal Type when creating a Listing; Souls grant Consents per Signal Type.
+            Owned and versioned by PersonalOS. Brands target a Category when creating a Listing; Souls grant Consents per Category.
           </div>
         </div>
       </div>
@@ -530,7 +530,7 @@ erDiagram
           <ul class="field-list">
             <li><span class="field-name pk">id</span>               <span class="field-type">uuid PK</span></li>
             <li><span class="field-name fk">soul_id</span>          <span class="field-type">uuid FK → souls</span></li>
-            <li><span class="field-name fk">signal_type_id</span>   <span class="field-type">uuid FK → signal_types</span></li>
+            <li><span class="field-name fk">category_id</span>   <span class="field-type">uuid FK → categories</span></li>
             <li><span class="field-name">score</span>               <span class="field-type">numeric(5,4)</span></li>
             <li><span class="field-name">algorithm_version</span>   <span class="field-type">text (semver)</span></li>
             <li><span class="field-name">is_stale</span>            <span class="field-type">boolean</span></li>
@@ -552,7 +552,7 @@ erDiagram
           <ul class="field-list">
             <li><span class="field-name pk">id</span>                  <span class="field-type">uuid PK</span></li>
             <li><span class="field-name fk">soul_id</span>             <span class="field-type">uuid FK → souls</span></li>
-            <li><span class="field-name fk">signal_type_id</span>      <span class="field-type">uuid FK → signal_types</span></li>
+            <li><span class="field-name fk">category_id</span>      <span class="field-type">uuid FK → categories</span></li>
             <li><span class="field-name">score</span>                  <span class="field-type">numeric(5,4)</span></li>
             <li><span class="field-name">last_purchase_at</span>       <span class="field-type">timestamptz NULLABLE</span></li>
             <li><span class="field-name">decay_reset_at</span>         <span class="field-type">timestamptz</span></li>
@@ -562,7 +562,7 @@ erDiagram
             Per-Signal-Type real-buyer track record. Computed on-device during Scoring — only the score reaches the server. Used in Exchange ranking: <code>bid × Conviction × recency_weight</code>.
           </div>
           <div class="card-note teal">
-            Score decays by 50% every 6 months of inactivity (no matching purchase detected in the Signal Type's conversion window). Never decays to zero. <strong>decay_reset_at</strong> is updated when a matching purchase Transaktion is detected in a Harvest. Conversion windows are per-Signal-Type and published in the open Scoring algorithm.
+            Score decays by 50% every 6 months of inactivity (no matching purchase detected in the Category's conversion window). Never decays to zero. <strong>decay_reset_at</strong> is updated when a matching purchase Transaktion is detected in a Harvest. Conversion windows are per-Signal-Type and published in the open Scoring algorithm.
           </div>
         </div>
       </div>
@@ -577,7 +577,7 @@ erDiagram
           <ul class="field-list">
             <li><span class="field-name pk">id</span>               <span class="field-type">uuid PK</span></li>
             <li><span class="field-name fk">soul_id</span>          <span class="field-type">uuid FK → souls</span></li>
-            <li><span class="field-name fk">signal_type_id</span>   <span class="field-type">uuid FK → signal_types</span></li>
+            <li><span class="field-name fk">category_id</span>   <span class="field-type">uuid FK → categories</span></li>
             <li><span class="field-name">yield_floor_usdc</span>           <span class="field-type">numeric(12,6)</span></li>
             <li><span class="field-name">notification_max_per_day</span>   <span class="field-type">int (default 1)</span></li>
             <li><span class="field-name">notification_quiet_hours</span>   <span class="field-type">text (e.g. "22:00-07:00")</span></li>
@@ -619,7 +619,7 @@ erDiagram
           <ul class="field-list">
             <li><span class="field-name pk">id</span>                       <span class="field-type">uuid PK</span></li>
             <li><span class="field-name fk">brand_id</span>                 <span class="field-type">uuid FK → brands</span></li>
-            <li><span class="field-name fk">signal_type_id</span>           <span class="field-type">uuid FK → signal_types</span></li>
+            <li><span class="field-name fk">category_id</span>           <span class="field-type">uuid FK → categories</span></li>
             <li><span class="field-name">bid_per_claim_usdc</span>          <span class="field-type">numeric(12,6)</span></li>
             <li><span class="field-name">content</span>                     <span class="field-type">jsonb (creative)</span></li>
             <li><span class="field-name">voucher_delivery_webhook</span>    <span class="field-type">text NULLABLE</span></li>
@@ -742,7 +742,7 @@ flowchart TB
         K[(konnections)]
         I[(insights)]
         CV[(convictions)]
-        ST[(signal_types)]
+        ST[(categories)]
         P[(consents)]
         L[(listings)]
         O[(offers)]

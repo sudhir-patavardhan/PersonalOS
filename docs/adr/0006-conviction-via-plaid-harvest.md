@@ -7,19 +7,19 @@ Accepted (amended: per-Signal-Type conversion windows, time-based decay, Voucher
 After a Soul Claims an Offer, there is no guaranteed connection between that Claim and an actual purchase. Brands care about real buyers, not just attention. The platform needed a mechanism to surface Souls who act on Claims — without requiring Brand-reported attribution, without unique per-Soul coupon tracking, and without breaking the anonymity model.
 
 ## Decision
-Conviction is scored per-Signal-Type using Plaid Harvest data. After a Claim in a given Signal Type, Scoring monitors subsequent Harvests for matching purchase Transaktions in that category. If a matching purchase is detected within the Signal Type's conversion window, the Soul's Conviction for that Signal Type increases. There is no direct attribution between a specific Claim and a specific purchase — the category-level purchase signal is sufficient.
+Conviction is scored per-Signal-Type using Plaid Harvest data. After a Claim in a given Category, Scoring monitors subsequent Harvests for matching purchase Transaktions in that category. If a matching purchase is detected within the Category's conversion window, the Soul's Conviction for that Category increases. There is no direct attribution between a specific Claim and a specific purchase — the category-level purchase signal is sufficient.
 
 ### Conversion Windows
-Conversion windows are defined per Signal Type by PersonalOS and published as part of the open Scoring algorithm (ADR-0003). They are not Soul-configurable. Example windows:
+Conversion windows are defined per Category by PersonalOS and published as part of the open Scoring algorithm (ADR-0003). They are not Soul-configurable. Example windows:
 - `financial.discretionary_spend` — 30 days
 - `automotive.new_vehicle_purchase` — 90 days
 - `travel.flight_intent` — 14 days
 
-Souls can see the conversion window for each Signal Type in their Consent settings.
+Souls can see the conversion window for each Category in their Consent settings.
 
 ### Conviction Decay
 Conviction decays over time to reflect current behaviour rather than historical peaks:
-- Halves every 6 months of inactivity in a Signal Type (no matching purchase detected)
+- Halves every 6 months of inactivity in a Category (no matching purchase detected)
 - Never decays to zero — prior track record retains permanent signal value
 - A new matching purchase Transaktion resets the decay clock
 - Decay is computed on-device during Scoring, consistent with the privacy model (ADR-0003)
@@ -36,7 +36,7 @@ Non-webhook Vouchers remain non-unique per Soul — Brands accept this limitatio
 - **Unique per-Claim coupon codes** — enables precise redemption tracking but creates a de-anonymization risk: the Brand's checkout system can join the coupon code to their customer record, bridging from anonymous to identifiable. Contradicts the privacy model.
 - **Soul self-reporting** — "Did you make a purchase?" prompt in-app. Gameable — Souls have Yield incentive to misreport. Unreliable as a signal.
 - **Strict last-touch attribution** — holding a Claim responsible only if the purchase occurs within a tight window (e.g. 24 hours). Too brittle; most considered purchases take days to weeks.
-- **Fixed conversion window across all Signal Types** — rejected. Purchase consideration time varies too widely by category to use a single window without systematically over- or under-counting Conviction in high and low-velocity categories.
+- **Fixed conversion window across all Categories** — rejected. Purchase consideration time varies too widely by category to use a single window without systematically over- or under-counting Conviction in high and low-velocity categories.
 - **Soul-configurable Conviction decay** — rejected. Conviction is a signal for Brands, not a setting for Souls. Allowing Souls to slow decay would create an incentive to inflate their own scores.
 
 ## Consequences

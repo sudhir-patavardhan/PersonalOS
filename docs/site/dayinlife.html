@@ -620,7 +620,7 @@
         <div class="tl-content">
           <div class="tl-tag tag-soul">Soul — iOS app</div>
           <div class="tl-event">Push notification arrives</div>
-          <div class="tl-desc">"New Offer: $4.50 from an automotive brand." The Soul sees the bid, the Signal Type, and the personalized Offer creative. They do not see which brand or any identifying campaign data.</div>
+          <div class="tl-desc">"New Offer: $4.50 from an automotive brand." The Soul sees the bid, the Category, and the personalized Offer creative. They do not see which brand or any identifying campaign data.</div>
         </div>
       </div>
 
@@ -640,7 +640,7 @@
         <div class="tl-content">
           <div class="tl-tag tag-soul">Soul — iOS app</div>
           <div class="tl-event">Consent settings reviewed</div>
-          <div class="tl-desc">The Soul raises the Yield floor for <code>travel.frequent_flier</code> to $3.00. Lower-bid Listings targeting that Signal Type will no longer match them. No brand is notified — the change takes effect in the next Exchange run.</div>
+          <div class="tl-desc">The Soul raises the Yield floor for <code>travel.frequent_flier</code> to $3.00. Lower-bid Listings targeting that Category will no longer match them. No brand is notified — the change takes effect in the next Exchange run.</div>
         </div>
       </div>
 
@@ -664,7 +664,7 @@
       Maya woke up to something she didn't expect when she first signed up for PersonalOS: a push notification with money attached. While she slept, the platform's scheduled Harvest pulled her bank Transaktions through her Plaid Konnection, encrypted every record end-to-end, and wrote the ciphertext to Arweave. Her phone then ran Scoring in the background — decrypting and processing <strong>on-device only</strong>, computing fresh Insight scores without any raw financial data ever leaving her hands. The highest-scoring Insight, <code>automotive.new_vehicle_purchase</code> at 0.87, reflected months of car-related transactions she'd honestly forgotten about.
     </p>
     <p>
-      When the Exchange ran at 3:41 am, it found a live auto dealer Listing bidding $4.50 per Claim — well above Maya's self-set Yield floor of $2.00 for that Signal Type. The Offer was created and queued. By 9:00 am she had a push notification. Two taps and $4.50 USDC landed in her non-custodial Coinbase Smart Wallet on Base. The entire settlement was atomic, on-chain, and required zero trust in PersonalOS — if the escrow didn't release, the Claim didn't register. Later that afternoon she adjusted her Consent floor for <strong>travel.frequent_flier</strong> upward, quietly filtering out low-value Listings without anyone being notified.
+      When the Exchange ran at 3:41 am, it found a live auto dealer Listing bidding $4.50 per Claim — well above Maya's self-set Yield floor of $2.00 for that Category. The Offer was created and queued. By 9:00 am she had a push notification. Two taps and $4.50 USDC landed in her non-custodial Coinbase Smart Wallet on Base. The entire settlement was atomic, on-chain, and required zero trust in PersonalOS — if the escrow didn't release, the Claim didn't register. Later that afternoon she adjusted her Consent floor for <strong>travel.frequent_flier</strong> upward, quietly filtering out low-value Listings without anyone being notified.
     </p>
     <p>
       By 6:00 pm she opened the Wallet tab, saw her balance, and initiated a Withdrawal to her bank account via the Coinbase off-ramp. No yield-sharing with a data broker. No behavioral profile sold. She earned because she chose to, on her terms, and she can revoke every Consent at any time with no penalty.
@@ -713,10 +713,10 @@
     <div class="data-col sees-col">
       <div class="data-col-title sees-title">Soul sees</div>
       <ul>
-        <li>Offer bid amount ($4.50) and Signal Type category</li>
+        <li>Offer bid amount ($4.50) and Category category</li>
         <li>Personalized Offer creative from the Brand</li>
         <li>Their own Insight scores and Ledger Depth</li>
-        <li>Consent settings they configured (floor per Signal Type)</li>
+        <li>Consent settings they configured (floor per Category)</li>
         <li>Wallet USDC balance and full transaction history</li>
         <li>Konnection status (established / syncing / disconnected)</li>
         <li>Harvest schedule and last-run timestamp</li>
@@ -778,7 +778,7 @@
         <div class="tl-content">
           <div class="tl-tag tag-brand">Brand — dashboard</div>
           <div class="tl-event">New Listing created</div>
-          <div class="tl-desc">Brand manager selects Signal Type <code>automotive.new_vehicle_purchase</code>, sets bid at $4.50 per Claim, writes Offer creative ("Ready to upgrade your ride?"), and sets Budget at $500 USDC. No audience list is uploaded — intent is inferred by PersonalOS from Soul Insights.</div>
+          <div class="tl-desc">Brand manager selects Category <code>automotive.new_vehicle_purchase</code>, sets bid at $4.50 per Claim, writes Offer creative ("Ready to upgrade your ride?"), and sets Budget at $500 USDC. No audience list is uploaded — intent is inferred by PersonalOS from Soul Insights.</div>
         </div>
       </div>
 
@@ -828,7 +828,7 @@
         <div class="tl-content">
           <div class="tl-tag tag-brand">Brand — throughout day</div>
           <div class="tl-event">Claims roll in (anonymous)</div>
-          <div class="tl-desc">47 Claims confirmed across the day. Brand's dashboard shows total Claims, total spend, and Budget remaining. Each Claim entry shows: timestamp, Signal Type matched, Yield paid. No Soul identity, location, or raw financial data is ever revealed.</div>
+          <div class="tl-desc">47 Claims confirmed across the day. Brand's dashboard shows total Claims, total spend, and Budget remaining. Each Claim entry shows: timestamp, Category matched, Yield paid. No Soul identity, location, or raw financial data is ever revealed.</div>
         </div>
       </div>
 
@@ -848,13 +848,13 @@
   <p class="section-label brand-label">Narrative</p>
   <div class="narrative">
     <p>
-      The campaign manager at an auto dealership network opened the PersonalOS Brand portal at 9:00 am with a clear brief: reach people actively in the market for a new vehicle, not people who clicked a car ad once six months ago. PersonalOS doesn't sell segments — it sells Signal Types. The manager picked <code>automotive.new_vehicle_purchase</code>, set the bid at $4.50, wrote the Offer creative, and set a $500 USDC Budget. The entire setup took eleven minutes. No audience CSV to upload, no lookalike modeling, no pixel to install.
+      The campaign manager at an auto dealership network opened the PersonalOS Brand portal at 9:00 am with a clear brief: reach people actively in the market for a new vehicle, not people who clicked a car ad once six months ago. PersonalOS doesn't sell segments — it sells Categories. The manager picked <code>automotive.new_vehicle_purchase</code>, set the bid at $4.50, wrote the Offer creative, and set a $500 USDC Budget. The entire setup took eleven minutes. No audience CSV to upload, no lookalike modeling, no pixel to install.
     </p>
     <p>
       After a brief review queue (Platform Admin approved in 32 minutes), the manager funded the escrow on Base. The moment the USDC confirmed on-chain, the Listing was live and the Exchange ran its first match. By end of day, 47 Souls had <strong>voluntarily accepted</strong> the Offer — each one had a high Insight score for vehicle purchase intent and had explicitly set a Yield floor at or below $4.50. The Brand paid only for confirmed Claims. No impressions billed, no click fraud, no viewability ambiguity. Each Claim was an on-chain atomic settlement, verifiable on Base.
     </p>
     <p>
-      The dashboard showed 47 Claims, $94 in spend, and $406 remaining in escrow. Critically, the Brand saw <strong>zero PII</strong> — no names, no transaction data, no location. Just the Signal Type that triggered the match, the timestamp, and the Yield paid. High-intent reach with privacy preserved for the Soul. The manager raised the bid to $5.00 before EOD to win more matches in the next Exchange run.
+      The dashboard showed 47 Claims, $94 in spend, and $406 remaining in escrow. Critically, the Brand saw <strong>zero PII</strong> — no names, no transaction data, no location. Just the Category that triggered the match, the timestamp, and the Yield paid. High-intent reach with privacy preserved for the Soul. The manager raised the bid to $5.00 before EOD to win more matches in the next Exchange run.
     </p>
   </div>
 
@@ -893,11 +893,11 @@
     <div class="data-col sees-col">
       <div class="data-col-title sees-title">Brand sees</div>
       <ul>
-        <li>Signal Type selected and Listing parameters they set</li>
+        <li>Category selected and Listing parameters they set</li>
         <li>Listing status (pending / approved / live / depleted)</li>
         <li>Claim count, total spend, Budget remaining (real-time)</li>
         <li>Timestamp of each Claim event</li>
-        <li>Signal Type that triggered each match</li>
+        <li>Category that triggered each match</li>
         <li>Yield amount paid per Claim</li>
         <li>Platform review decision (approved / rejected + reason)</li>
         <li>Escrow balance and on-chain transaction hashes</li>
@@ -929,7 +929,7 @@
     <div class="actor-badge admin-badge">🛡️</div>
     <div class="actor-meta admin-meta">
       <h2>Platform Admin</h2>
-      <p class="role-desc">PersonalOS team. Reviews Listings, manages Signal Types, monitors Exchange health, and handles support escalations.</p>
+      <p class="role-desc">PersonalOS team. Reviews Listings, manages Categories, monitors Exchange health, and handles support escalations.</p>
     </div>
   </div>
 
@@ -958,7 +958,7 @@
         <div class="tl-content">
           <div class="tl-tag tag-admin">Admin — review queue</div>
           <div class="tl-event">Review queue: 3 new Listing submissions</div>
-          <div class="tl-desc">Admin console shows 3 Listings pending review: two from established Brand accounts, one from a newly onboarded Brand. Each shows Signal Type, bid, and Offer creative for evaluation.</div>
+          <div class="tl-desc">Admin console shows 3 Listings pending review: two from established Brand accounts, one from a newly onboarded Brand. Each shows Category, bid, and Offer creative for evaluation.</div>
         </div>
       </div>
 
@@ -968,7 +968,7 @@
         <div class="tl-content">
           <div class="tl-tag tag-admin">Admin — review decision</div>
           <div class="tl-event">Approve 2, reject 1 (misleading content)</div>
-          <div class="tl-desc">Two Listings approved — creative is accurate and Signal Type usage is appropriate. Third Listing from a new Brand promised "guaranteed cash back" with no substantiation — rejected with code <code>MISLEADING_OFFER_CONTENT</code>. Brand notified with rejection reason.</div>
+          <div class="tl-desc">Two Listings approved — creative is accurate and Category usage is appropriate. Third Listing from a new Brand promised "guaranteed cash back" with no substantiation — rejected with code <code>MISLEADING_OFFER_CONTENT</code>. Brand notified with rejection reason.</div>
         </div>
       </div>
 
@@ -977,8 +977,8 @@
         <div class="tl-spine"><div class="tl-dot admin-dot"></div><div class="tl-line"></div></div>
         <div class="tl-content">
           <div class="tl-tag tag-admin">Admin — signal catalogue</div>
-          <div class="tl-event">Signal Type request reviewed and published</div>
-          <div class="tl-desc">A Brand submitted a request for a new Signal Type: <code>home_improvement.major_renovation</code>. Admin reviews the proposed schema, validates that Scoring can compute a reliable score from bank data, creates version 1.0, and publishes to the catalogue. Brands can now target it.</div>
+          <div class="tl-event">Category request reviewed and published</div>
+          <div class="tl-desc">A Brand submitted a request for a new Category: <code>home_improvement.major_renovation</code>. Admin reviews the proposed schema, validates that Scoring can compute a reliable score from bank data, creates version 1.0, and publishes to the catalogue. Brands can now target it.</div>
         </div>
       </div>
 
@@ -988,7 +988,7 @@
         <div class="tl-content">
           <div class="tl-tag tag-admin">Admin — Exchange health</div>
           <div class="tl-event">Exchange health check: 73% match rate, 12 active Listings</div>
-          <div class="tl-desc">Dashboard shows: 12 live Listings, $2,400 in active escrow across all Brands, 73% match rate (Offers created / Exchange runs), 88% Claim conversion. One Listing (<code>lst_rv99</code>) has a 22% match rate — flagged for low Soul Consent adoption in that Signal Type.</div>
+          <div class="tl-desc">Dashboard shows: 12 live Listings, $2,400 in active escrow across all Brands, 73% match rate (Offers created / Exchange runs), 88% Claim conversion. One Listing (<code>lst_rv99</code>) has a 22% match rate — flagged for low Soul Consent adoption in that Category.</div>
         </div>
       </div>
 
@@ -1008,7 +1008,7 @@
         <div class="tl-content">
           <div class="tl-tag tag-admin">Admin — revenue</div>
           <div class="tl-event">Daily revenue review: $340 take-rate, 2 new Brand subscriptions</div>
-          <div class="tl-desc">Platform take-rate on Claims: $340 from ~226 Claims across all Listings at 15% take. Two new Brand accounts subscribed to Exchange access via Stripe. Monthly recurring revenue up. Admin notes the new Signal Type published at 10:00 am is already drawing interest from 3 Brands.</div>
+          <div class="tl-desc">Platform take-rate on Claims: $340 from ~226 Claims across all Listings at 15% take. Two new Brand accounts subscribed to Exchange access via Stripe. Monthly recurring revenue up. Admin notes the new Category published at 10:00 am is already drawing interest from 3 Brands.</div>
         </div>
       </div>
 
@@ -1018,10 +1018,10 @@
   <p class="section-label admin-label">Narrative</p>
   <div class="narrative">
     <p>
-      The Platform Admin's morning begins in the review queue — three Listings waiting for judgment. This is the human trust layer of PersonalOS. Two clear approvals: established Brands, Signal Types used correctly, Offer creative factual. The third is a newly onboarded auto parts Brand whose creative promised "guaranteed cash back" with no terms. <strong>Rejected with code <code>MISLEADING_OFFER_CONTENT</code></strong>. The Brand was notified within minutes with a detailed rejection reason and an invitation to resubmit with accurate language. PersonalOS's value to Souls depends entirely on Offers being trustworthy — the review queue is not a rubber stamp.
+      The Platform Admin's morning begins in the review queue — three Listings waiting for judgment. This is the human trust layer of PersonalOS. Two clear approvals: established Brands, Categories used correctly, Offer creative factual. The third is a newly onboarded auto parts Brand whose creative promised "guaranteed cash back" with no terms. <strong>Rejected with code <code>MISLEADING_OFFER_CONTENT</code></strong>. The Brand was notified within minutes with a detailed rejection reason and an invitation to resubmit with accurate language. PersonalOS's value to Souls depends entirely on Offers being trustworthy — the review queue is not a rubber stamp.
     </p>
     <p>
-      At 10:00 am, a new Signal Type request landed from a Brand wanting to reach homeowners planning major renovations. The Admin validated the proposed scoring schema against what Scoring could reliably derive from bank Transaktions, confirmed internal ML team sign-off, and published <code>home_improvement.major_renovation v1.0</code> to the catalogue. Within hours, three Brands had expressed interest. At 11:00 am the Exchange health dashboard showed a strong 73% match rate across 12 live Listings with $2,400 in active escrow — one outlier flagged for low Soul Consent adoption in its Signal Type, which signals either poor awareness or low Soul interest in that category.
+      At 10:00 am, a new Category request landed from a Brand wanting to reach homeowners planning major renovations. The Admin validated the proposed scoring schema against what Scoring could reliably derive from bank Transaktions, confirmed internal ML team sign-off, and published <code>home_improvement.major_renovation v1.0</code> to the catalogue. Within hours, three Brands had expressed interest. At 11:00 am the Exchange health dashboard showed a strong 73% match rate across 12 live Listings with $2,400 in active escrow — one outlier flagged for low Soul Consent adoption in its Category, which signals either poor awareness or low Soul interest in that category.
     </p>
     <p>
       The afternoon brought a support ticket: a Soul's Plaid Konnection had silently expired, halting Harvests for three days. The Admin traced the Konnection status, triggered a re-auth deep-link, confirmed Harvest resumed, and closed the ticket in 22 minutes. By 4:00 pm the daily revenue picture was healthy: $340 in Claim take-rate, two new Brand subscriptions added via Stripe. The platform is not a data marketplace in the traditional sense — PersonalOS never reads plaintext data and never sells audiences — but the economics are strong precisely because the consent model drives higher Claim conversion than any lookalike audience ever could.
@@ -1046,7 +1046,7 @@
       <div class="ev-separator">──────────────────────────────────────────────────────────</div>
       <div class="ev-line"><span class="ev-ts">10:00:00</span><span class="ev-event">SIGNAL_TYPE_REQUEST_REVIEWED</span><span class="ev-arrow">→</span><span class="ev-payload">signal=home_improvement.major_renovation</span></div>
       <div class="ev-line"><span class="ev-ts">10:07:33</span><span class="ev-event">SIGNAL_TYPE_PUBLISHED</span><span class="ev-arrow">→</span><span class="ev-payload">signal=home_improvement.major_renovation, version=1.0 <span class="ev-ok">✓</span></span></div>
-      <div class="ev-line"><span class="ev-ts">10:07:34</span><span class="ev-event">CATALOGUE_UPDATED</span><span class="ev-arrow">→</span><span class="ev-payload">total_signal_types=14</span></div>
+      <div class="ev-line"><span class="ev-ts">10:07:34</span><span class="ev-event">CATALOGUE_UPDATED</span><span class="ev-arrow">→</span><span class="ev-payload">total_categories=14</span></div>
       <div class="ev-separator">──────────────────────────────────────────────────────────</div>
       <div class="ev-line"><span class="ev-ts">11:00:00</span><span class="ev-event">EXCHANGE_HEALTH_SNAPSHOT</span><span class="ev-arrow">→</span><span class="ev-payload">active_listings=12, escrow=$2400, match_rate=73%, claim_conv=88%</span></div>
       <div class="ev-line"><span class="ev-ts">11:00:00</span><span class="ev-event">LOW_MATCH_ALERT</span><span class="ev-arrow">→</span><span class="ev-payload">listing_id=lst_rv99, match_rate=22% <span class="ev-warn">⚠</span></span></div>
@@ -1067,12 +1067,12 @@
     <div class="data-col sees-col">
       <div class="data-col-title sees-title">Admin sees</div>
       <ul>
-        <li>All Listing submissions: Signal Type, bid, creative, Brand identity</li>
+        <li>All Listing submissions: Category, bid, creative, Brand identity</li>
         <li>Konnection status per Soul (not Soul's raw financial data)</li>
         <li>Harvest run history and error logs (metadata only)</li>
         <li>Exchange health metrics: match rate, Claim conversion, escrow totals</li>
         <li>Platform revenue: take-rate per Claim, Brand subscription revenue</li>
-        <li>Signal Type catalogue and version history</li>
+        <li>Category catalogue and version history</li>
         <li>Support ticket context (error codes, timestamps, Konnection state)</li>
         <li>Aggregate Claim counts per Listing (no per-Soul identity)</li>
       </ul>

@@ -17,11 +17,11 @@ The Exchange acts as a personal assistant to the Soul — it curates Offers inte
 Matched Offers are ranked by a composite score: `bid × Conviction × recency_weight`, where:
 - `bid` is the Listing's USDC bid per Claim
 - `Conviction` is the Soul's per-Signal-Type track record as a real buyer (ADR-0006)
-- `recency_weight` decays if the Soul has had no relevant Transaktions in that Signal Type recently
+- `recency_weight` decays if the Soul has had no relevant Transaktions in that Category recently
 
-The Yield floor on a Soul's Consent is a hard pre-ranking gate — applied before composite scoring. The Exchange will not rank or deliver any Offer whose bid falls below the Soul's floor for that Signal Type. The floor is adjustable only via Consent settings, not overridden per-Offer.
+The Yield floor on a Soul's Consent is a hard pre-ranking gate — applied before composite scoring. The Exchange will not rank or deliver any Offer whose bid falls below the Soul's floor for that Category. The floor is adjustable only via Consent settings, not overridden per-Offer.
 
-Dismiss history acts as a suppression filter: 3+ dismissals in a Signal Type category within 30 days temporarily suppresses further Offers in that category and prompts the Soul to raise their Yield floor.
+Dismiss history acts as a suppression filter: 3+ dismissals in a Category category within 30 days temporarily suppresses further Offers in that category and prompts the Soul to raise their Yield floor.
 
 ### Notification Control
 Notification frequency is Soul-configurable per Consent: maximum Offers per day, quiet hours. The Exchange respects these as hard caps before delivery. Default on signup is 1 push notification per day to prevent cold-start spam.

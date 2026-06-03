@@ -22,12 +22,12 @@ Key concepts at a glance:
 | **Ledger** | A Soul's secure, append-only store of all Transaktions |
 | **Scoring** | Recomputing a Soul's Insights from their Ledger |
 | **Insight** | A derived propensity signal — the only thing that ever leaves the Ledger |
-| **Signal Type** | A named Insight category defined by PersonalOS (e.g. `automotive.new_vehicle_purchase`) |
-| **Consent** | A Soul's opt-in consent for a Signal Type, with a minimum Yield floor |
+| **Category** | A named Insight category defined by PersonalOS (e.g. `automotive.new_vehicle_purchase`) |
+| **Consent** | A Soul's opt-in consent for a Category, with a minimum Yield floor |
 | **Depth** | A measure of how rich and complete a Soul's Ledger is |
 | **Exchange** | The real-time marketplace that matches Listings to Souls |
 | **Brand** | A company that bids to reach Souls on the Exchange |
-| **Listing** | What a Brand posts on the Exchange (target Signal Type + bid price + content) |
+| **Listing** | What a Brand posts on the Exchange (target Category + bid price + content) |
 | **Offer** | What a Soul receives when their Insights match a Listing |
 | **Claim** | A Soul accepting an Offer — the billable event |
 | **Yield** | Payment deposited into a Soul's Wallet after a Claim |
@@ -37,7 +37,7 @@ Key concepts at a glance:
 
 1. **Konnections** — Soul signup + Plaid integration. A Soul connects their bank via Plaid; Transaktions Harvest into the Ledger.
 2. **Ledger** — Secure storage and display of a Soul's Transaktions.
-3. **Scoring** — Compute Insights from Ledger data. Start with financial Signal Types.
+3. **Scoring** — Compute Insights from Ledger data. Start with financial Categories.
 4. **Exchange (v1)** — Brand Listings, Consent-gated matching, Offer delivery.
 5. **Claims + Wallet** — Claim flow, Yield deposit, Wallet balance display.
 
@@ -47,7 +47,7 @@ The domain model is being developed via grilling sessions (`/grill-with-docs`). 
 
 - Core data flow: Soul → Konnection → Harvest → Transaktion → Ledger → Scoring → Insight
 - Exchange mechanics: Listing → matching → Offer → Claim → Yield → Wallet
-- Consent model: Consent per Signal Type with Yield floor
+- Consent model: Consent per Category with Yield floor
 - Revenue model: take rate on Claims + Brand subscription
 - Exchange matching: continuous real-time (triggered on new Listing and on Scoring)
 

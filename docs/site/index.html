@@ -317,7 +317,7 @@ flowchart LR
     end
 
     subgraph BRAND ["Brand"]
-        B(["Brand"]) --> LS["Create Listing\nbid + Signal Type"]
+        B(["Brand"]) --> LS["Create Listing\nbid + Category"]
         LS -->|"USDC via\nCoinbase Commerce"| ESC[("Base Chain\nEscrow")]
     end
 
@@ -421,11 +421,11 @@ flowchart LR
       <div class="legend-item"><strong>Scoring</strong><span>on-device Insight computation</span></div>
       <div class="legend-item"><strong>Insight</strong><span>derived propensity score</span></div>
       <div class="legend-item"><strong>Conviction</strong><span>per-Signal-Type real-buyer track record; decays over time</span></div>
-      <div class="legend-item"><strong>Signal Type</strong><span>named Insight category</span></div>
-      <div class="legend-item"><strong>Consent</strong><span>consent per Signal Type + Yield floor + notification settings</span></div>
+      <div class="legend-item"><strong>Category</strong><span>named Insight category</span></div>
+      <div class="legend-item"><strong>Consent</strong><span>consent per Category + Yield floor + notification settings</span></div>
       <div class="legend-item"><strong>Depth</strong><span>measure of Ledger richness</span></div>
       <div class="legend-item"><strong>Exchange</strong><span>continuous real-time matching engine</span></div>
-      <div class="legend-item"><strong>Listing</strong><span>Brand's entry: Signal Type + bid + Budget</span></div>
+      <div class="legend-item"><strong>Listing</strong><span>Brand's entry: Category + bid + Budget</span></div>
       <div class="legend-item"><strong>Budget</strong><span>USDC escrow on Base per Listing</span></div>
       <div class="legend-item"><strong>Offer</strong><span>matched Listing → specific Soul, ranked by composite score</span></div>
       <div class="legend-item"><strong>Claim</strong><span>Soul accepts Offer — billable event</span></div>
