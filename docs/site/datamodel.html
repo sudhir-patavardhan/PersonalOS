@@ -545,7 +545,7 @@ erDiagram
       <!-- CONVICTION -->
       <div class="card">
         <div class="card-header">
-          <span class="card-table-name" style="color:var(--blue)">convictions</span>
+          <span class="card-table-name" style="color:var(--blue)">reputations</span>
           <span class="store-badge store-db">PersonalOS DB</span>
         </div>
         <div class="card-body">
@@ -559,7 +559,7 @@ erDiagram
             <li><span class="field-name">updated_at</span>             <span class="field-type">timestamptz</span></li>
           </ul>
           <div class="card-note info">
-            Per-Signal-Type real-buyer track record. Computed on-device during Scoring — only the score reaches the server. Used in Exchange ranking: <code>bid × Conviction × recency_weight</code>.
+            Per-Signal-Type real-buyer track record. Computed on-device during Scoring — only the score reaches the server. Used in Exchange ranking: <code>bid × Reputation × recency_weight</code>.
           </div>
           <div class="card-note teal">
             Score decays by 50% every 6 months of inactivity (no matching purchase detected in the Category's conversion window). Never decays to zero. <strong>decay_reset_at</strong> is updated when a matching purchase Transaktion is detected in a Harvest. Conversion windows are per-Category and published in the open Scoring algorithm.
@@ -658,7 +658,7 @@ erDiagram
             <li><span class="field-name">delivered_at</span>    <span class="field-type">timestamptz NULLABLE</span></li>
           </ul>
           <div class="card-note info">
-            Status lifecycle: <code>pending</code> → <code>delivered</code> → <code>seen</code> → <code>claimed</code> | <code>dismissed</code> | <code>expired</code>. Created by the Exchange (event-driven, no persistent Exchange entity). <strong>ranking_score</strong> = <code>bid × Conviction × recency_weight</code> at match time.
+            Status lifecycle: <code>pending</code> → <code>delivered</code> → <code>seen</code> → <code>claimed</code> | <code>dismissed</code> | <code>expired</code>. Created by the Exchange (event-driven, no persistent Exchange entity). <strong>ranking_score</strong> = <code>bid × Reputation × recency_weight</code> at match time.
           </div>
           <div class="card-note teal">
             <strong>expiry_at</strong> is computed dynamically: 72h from <code>push_sent_at</code> if a push was sent; otherwise 72h from <code>first_seen_at</code>. Silent queued Offers (behind notification cap) do not start expiring until they surface to the Soul.
@@ -741,7 +741,7 @@ flowchart TB
         S[(souls)]
         K[(konnections)]
         I[(insights)]
-        CV[(convictions)]
+        CV[(reputations)]
         ST[(categories)]
         P[(consents)]
         L[(listings)]

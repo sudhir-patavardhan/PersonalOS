@@ -50,11 +50,11 @@ The payment deposited into a Soul's Wallet when they make a Claim. Yield is the 
 
 ## Claim
 
-The act of a Soul accepting an Offer. A Claim is the billable event — it is what the Brand pays for. One Offer can produce at most one Claim. A Claim triggers atomic USDC settlement on Base: the Brand's Budget escrow splits into a PersonalOS platform fee and Yield deposited into the Soul's Wallet. Settlement confirms within ~2 seconds; the app displays success optimistically on tap and resolves to a confirmed state on-chain. The Soul receives a receipt showing the Yield earned, their updated Wallet balance, and the Voucher if one was included — the Category category is shown, not the Brand name. All Claims appear in the Soul's Claim history with date, Category, Yield amount, and running Wallet balance. After a Claim, Scoring monitors subsequent Harvests for matching purchases in the same Category category — if detected, the Soul's Conviction for that Category increases. There is no direct attribution between a Claim and a downstream purchase; the purchase signal alone is sufficient.
+The act of a Soul accepting an Offer. A Claim is the billable event — it is what the Brand pays for. One Offer can produce at most one Claim. A Claim triggers atomic USDC settlement on Base: the Brand's Budget escrow splits into a PersonalOS platform fee and Yield deposited into the Soul's Wallet. Settlement confirms within ~2 seconds; the app displays success optimistically on tap and resolves to a confirmed state on-chain. The Soul receives a receipt showing the Yield earned, their updated Wallet balance, and the Voucher if one was included — the Category category is shown, not the Brand name. All Claims appear in the Soul's Claim history with date, Category, Yield amount, and running Wallet balance. After a Claim, Scoring monitors subsequent Harvests for matching purchases in the same Category category — if detected, the Soul's Reputation for that Category increases. There is no direct attribution between a Claim and a downstream purchase; the purchase signal alone is sufficient.
 
-## Conviction
+## Reputation
 
-A per-Signal-Type measure of a Soul's track record as a real buyer in that category. Conviction increases when a Harvest detects a matching purchase Transaktion after a Claim in the same Category — regardless of whether that purchase was caused by the specific Listing. Conviction is a directional category-level signal, not strict attribution. Higher Conviction commands higher recommended Yield floors on the Exchange, making high-Conviction Souls more valuable to Brands bidding in that category. Conviction is computed during Scoring alongside Insights.
+A per-Signal-Type measure of a Soul's track record as a real buyer in that category. Reputation increases when a Harvest detects a matching purchase Transaktion after a Claim in the same Category — regardless of whether that purchase was caused by the specific Listing. Reputation is a directional category-level signal, not strict attribution. Higher Reputation commands higher recommended Yield floors on the Exchange, making high-Reputation Souls more valuable to Brands bidding in that category. Reputation is computed during Scoring alongside Insights.
 
 ## Offer
 
@@ -62,7 +62,7 @@ What a Soul receives when their Insights match an active Listing. An Offer is sp
 
 ## Voucher
 
-An optional discount, promo code, or access offer included by a Brand in a Listing's content. When a Soul Claims an Offer, they receive the Voucher alongside their Yield. A Voucher is a marketing asset — it gives the Soul tangible value beyond Yield and incentivises a real purchase. Voucher codes are non-unique per Soul; PersonalOS does not track Voucher redemption. Whether the Soul redeems the Voucher is irrelevant to Conviction — only the downstream purchase Transaktion detected via Harvest matters.
+An optional discount, promo code, or access offer included by a Brand in a Listing's content. When a Soul Claims an Offer, they receive the Voucher alongside their Yield. A Voucher is a marketing asset — it gives the Soul tangible value beyond Yield and incentivises a real purchase. Voucher codes are non-unique per Soul; PersonalOS does not track Voucher redemption. Whether the Soul redeems the Voucher is irrelevant to Reputation — only the downstream purchase Transaktion detected via Harvest matters.
 
 ## Brand
 
@@ -74,7 +74,7 @@ A derived signal computed from a Soul's Ledger during a Scoring. An Insight repr
 
 ## Scoring
 
-The process of recomputing a Soul's Insights and Conviction scores from their Ledger. A Scoring is triggered when a Harvest adds enough new Transaktions to meaningfully change the Soul's Depth. One Scoring updates all Insights and all per-Signal-Type Conviction scores for that Soul. Scoring turns harvested raw data into actionable signals — only the resulting scores leave the device.
+The process of recomputing a Soul's Insights and Reputation scores from their Ledger. A Scoring is triggered when a Harvest adds enough new Transaktions to meaningfully change the Soul's Depth. One Scoring updates all Insights and all per-Signal-Type Reputation scores for that Soul. Scoring turns harvested raw data into actionable signals — only the resulting scores leave the device.
 
 ## Ledger
 

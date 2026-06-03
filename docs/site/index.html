@@ -297,7 +297,7 @@
     <p class="hero-narrative">
       Souls connect their financial accounts — transactions <strong>encrypt on-device</strong> and write permanently to <strong>Arweave</strong>, where only the Soul holds the key.
       A personal AI running entirely on iOS computes propensity Insights from the encrypted data; <strong>only scores ever leave the device</strong>.
-      The Exchange continuously matches Insights to Brand bids — ranked by <strong>bid × Conviction × recency</strong> — and when a Soul claims an Offer,
+      The Exchange continuously matches Insights to Brand bids — ranked by <strong>bid × Reputation × recency</strong> — and when a Soul claims an Offer,
       <strong>USDC Yield settles atomically on Base chain</strong> in seconds via an immutable smart contract.
     </p>
   </div>
@@ -314,7 +314,8 @@ flowchart LR
         HV -->|"encrypted batch"| AR[("Arweave\nLedger")]
         AR -->|"decrypt on device"| SCOR["Scoring
 iOS only"]
-        SCOR -->|"scores only"| IN[("Insights +\nConviction")]
+        SCOR -->|"scores only"| IN[("Insights +
+Reputation")]
     end
 
     subgraph BRAND ["Brand"]
@@ -323,7 +324,7 @@ iOS only"]
     end
 
     subgraph EXCHANGE ["Exchange — continuous matching"]
-        IN --> MX{"Match\nbid × Conviction\n× recency"}
+        IN --> MX{"Match\nbid × Reputation\n× recency"}
         ESC --> MX
         MX -->|"ranked Offer\n+ push notification"| OF["Offer"]
         OF --> CL["Claim"]
@@ -344,7 +345,7 @@ iOS only"]
       <div class="actor-pill">
         <span class="dot" style="background:var(--teal)"></span>
         <strong>Exchange</strong>
-        <span>ranks Offers by bid × Conviction × recency · delivers intelligently — never floods</span>
+        <span>ranks Offers by bid × Reputation × recency · delivers intelligently — never floods</span>
       </div>
       <div class="actor-pill">
         <span class="dot" style="background:var(--purple)"></span>
@@ -404,7 +405,7 @@ iOS only"]
   <div class="stores">
     <div class="stores-title">Data Stores</div>
     <div class="store-row">
-      <div class="store-pill"><span class="dot blue"></span><strong>PersonalOS DB</strong><span>accounts, Insights, Conviction, Offers, Claims, Listings</span></div>
+      <div class="store-pill"><span class="dot blue"></span><strong>PersonalOS DB</strong><span>accounts, Insights, Reputation, Offers, Claims, Listings</span></div>
       <div class="store-pill"><span class="dot teal"></span><strong>Arweave via Irys</strong><span>E2E encrypted Ledger — shared (default) or Soul-owned wallet (opt-in)</span></div>
       <div class="store-pill"><span class="dot" style="background:var(--amber)"></span><strong>Base Chain</strong><span>Budget escrow, Claim settlement, Soul Wallet balances</span></div>
       <div class="store-pill"><span class="dot purple"></span><strong>iOS / iCloud Keychain</strong><span>Ephemeral decrypted Ledger, passkey — never leaves device</span></div>
@@ -421,7 +422,7 @@ iOS only"]
       <div class="legend-item"><strong>Ledger</strong><span>encrypted append-only store on Arweave</span></div>
       <div class="legend-item"><strong>Scoring</strong><span>on-device Insight computation</span></div>
       <div class="legend-item"><strong>Insight</strong><span>derived propensity score</span></div>
-      <div class="legend-item"><strong>Conviction</strong><span>per-Category real-buyer track record; decays over time</span></div>
+      <div class="legend-item"><strong>Reputation</strong><span>per-Category real-buyer track record; decays over time</span></div>
       <div class="legend-item"><strong>Category</strong><span>named, versioned type of consumer intent (e.g. <code>automotive.new_vehicle_purchase</code>); Souls grant Consents per Category, Brands target Listings at a Category</span></div>
       <div class="legend-item"><strong>Consent</strong><span>consent per Category + Yield floor + notification settings</span></div>
       <div class="legend-item"><strong>Depth</strong><span>measure of Ledger richness</span></div>

@@ -14,9 +14,9 @@ The Exchange runs continuous real-time matching. Two events trigger a match pass
 The Exchange acts as a personal assistant to the Soul — it curates Offers intelligently rather than delivering everything that technically matches.
 
 ### Offer Ranking
-Matched Offers are ranked by a composite score: `bid × Conviction × recency_weight`, where:
+Matched Offers are ranked by a composite score: `bid × Reputation × recency_weight`, where:
 - `bid` is the Listing's USDC bid per Claim
-- `Conviction` is the Soul's per-Signal-Type track record as a real buyer (ADR-0006)
+- `Reputation` is the Soul's per-Signal-Type track record as a real buyer (ADR-0006)
 - `recency_weight` decays if the Soul has had no relevant Transaktions in that Category recently
 
 The Yield floor on a Soul's Consent is a hard pre-ranking gate — applied before composite scoring. The Exchange will not rank or deliver any Offer whose bid falls below the Soul's floor for that Category. The floor is adjustable only via Consent settings, not overridden per-Offer.
@@ -43,6 +43,6 @@ This ensures no Offer expires without the Soul having had a fair opportunity to 
 - Requires an event-driven matching service that reacts to both Listing and Scoring events.
 - Higher infrastructure complexity than batch matching.
 - Ensures Offers always reflect the freshest Insights and Listings are filled as fast as possible.
-- Composite ranking requires Conviction and recency signals to be available at match time — these must be stored server-side as outputs of Scoring (scores only, not raw data).
+- Composite ranking requires Reputation and recency signals to be available at match time — these must be stored server-side as outputs of Scoring (scores only, not raw data).
 - Soul-configurable notification caps require the Exchange to track per-Soul notification state and queue depth.
 - Expiry clock management is more complex with two start-time rules — implementation must track notification delivery status per Offer.
