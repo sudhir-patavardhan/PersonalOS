@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PersonalOS — Bill of Materials</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0f;
+      --surface:   #111118;
+      --surface2:  #1a1a28;
+      --border:    #2a2a40;
+      --text:      #e2e8f0;
+      --muted:     #94a3b8;
+      --blue:      #3b82f6;
+      --teal:      #14b8a6;
+      --purple:    #a855f7;
+      --amber:     #f59e0b;
+      --green:     #22c55e;
+      --red:       #ef4444;
+      --orange:    #f97316;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    nav a { color: var(--muted); text-decoration: none; font-size: 13px; transition: color 0.15s; }
+    nav a:hover { color: var(--text); }
+    .nav-brand { color: var(--text) !important; font-weight: 600; font-size: 14px; }
+    .nav-sep { color: var(--border); font-size: 13px; }
+    .nav-current { color: var(--green); font-weight: 500; font-size: 13px; }
+    .nav-badge {
+      margin-left: auto;
+      font-size: 0.7rem;
+      font-family: monospace;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* ── HERO ── */
+    header {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 4rem 2rem 3rem;
+    }
+    .eyebrow {
+      font-size: 0.72rem;
+      font-family: monospace;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 1.25rem;
+    }
+    h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    h1 span { color: var(--green); }
+    .hero-body {
+      max-width: 700px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 0.95rem;
+    }
+    .hero-body a { color: var(--teal); text-decoration: none; }
+    .hero-body a:hover { text-decoration: underline; }
+    .hero-body strong { color: var(--text); }
+
+    /* ── SECTIONS ── */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+    .section-label {
+      font-size: 0.72rem;
+      font-family: monospace;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── AT-A-GLANCE CARDS ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .summary-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .summary-card.orange::before { background: var(--orange); }
+    .summary-card.blue::before   { background: var(--blue); }
+    .summary-card.teal::before   { background: var(--teal); }
+    .summary-card.purple::before { background: var(--purple); }
+
+    .sc-label {
+      font-size: 0.7rem;
+      font-family: monospace;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .summary-card.orange .sc-label { color: var(--orange); }
+    .summary-card.blue   .sc-label { color: var(--blue); }
+    .summary-card.teal   .sc-label { color: var(--teal); }
+    .summary-card.purple .sc-label { color: var(--purple); }
+
+    .sc-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .sc-desc  { font-size: 0.8rem; color: var(--muted); line-height: 1.5; margin-bottom: 1rem; }
+    .sc-stat  {
+      font-family: monospace;
+      font-size: 0.78rem;
+      color: var(--text);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.5rem 0.75rem;
+      display: inline-block;
+    }
+
+    /* ── CALCULATOR ── */
+    #calculator {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      #calculator { grid-template-columns: 1fr; }
+    }
+
+    .assumptions-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      position: sticky;
+      top: 68px;
+    }
+    .panel-title {
+      font-size: 0.72rem;
+      font-family: monospace;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .slider-group {
+      margin-bottom: 1.25rem;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.4rem;
+    }
+    .slider-header label {
+      font-size: 0.83rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .slider-header .slider-val {
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--green);
+      font-weight: 700;
+    }
+    .slider-group input[type="range"] {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      outline: none;
+      cursor: pointer;
+    }
+    .slider-group input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--green);
+      cursor: pointer;
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 0 1px var(--green);
+    }
+    .slider-group input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--green);
+      cursor: pointer;
+      border: 2px solid var(--bg);
+    }
+    .slider-hints {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: var(--muted);
+      font-family: monospace;
+      margin-top: 0.25rem;
+    }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
+    .reset-btn {
+      width: 100%;
+      padding: 0.6rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .reset-btn:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    /* ── RESULTS PANEL ── */
+    .results-panel { display: flex; flex-direction: column; gap: 1rem; }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 600px) {
+      .metrics-row { grid-template-columns: 1fr 1fr; }
+    }
+
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+    }
+    .metric-card.highlight-green { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.05); }
+    .metric-card.highlight-red   { border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.05); }
+    .metric-card.highlight-amber { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.05); }
+
+    .metric-label { font-size: 0.72rem; color: var(--muted); font-family: monospace; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
+    .metric-value { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+    .metric-sub   { font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; }
+
+    .metric-value.green { color: var(--green); }
+    .metric-value.red   { color: var(--red); }
+    .metric-value.amber { color: var(--amber); }
+    .metric-value.teal  { color: var(--teal); }
+
+    /* ── BREAKDOWN CHART ── */
+    .breakdown-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+    .breakdown-title {
+      font-size: 0.72rem;
+      font-family: monospace;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 160px 1fr 80px 60px;
+      gap: 0.75rem;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .bar-label { font-size: 0.82rem; color: var(--text); white-space: nowrap; }
+    .bar-track { background: var(--surface2); border-radius: 3px; height: 8px; overflow: hidden; }
+    .bar-fill  { height: 100%; border-radius: 3px; transition: width 0.4s ease; min-width: 2px; }
+    .bar-dollar { font-family: monospace; font-size: 0.8rem; color: var(--text); text-align: right; }
+    .bar-pct    { font-family: monospace; font-size: 0.72rem; color: var(--muted); text-align: right; }
+
+    .bar-fill.orange { background: var(--orange); }
+    .bar-fill.blue   { background: var(--blue); }
+    .bar-fill.teal   { background: var(--teal); }
+    .bar-fill.purple { background: var(--purple); }
+    .bar-fill.red    { background: var(--red); }
+
+    .chart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+      margin-top: 0.25rem;
+    }
+    .chart-total-label { font-size: 0.83rem; font-weight: 600; color: var(--text); }
+    .chart-total-value { font-family: monospace; font-size: 0.9rem; font-weight: 700; color: var(--text); }
+
+    /* ── ECONOMICS ROW ── */
+    .economics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 600px) {
+      .economics-row { grid-template-columns: 1fr; }
+    }
+
+    .econ-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+    }
+    .econ-actor {
+      font-size: 0.68rem;
+      font-family: monospace;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+    .econ-card.soul   .econ-actor { color: var(--blue);   background: rgba(59,130,246,0.1);  }
+    .econ-card.brand  .econ-actor { color: var(--purple); background: rgba(168,85,247,0.1); }
+    .econ-card.platform .econ-actor { color: var(--green); background: rgba(34,197,94,0.1);  }
+    .econ-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .econ-row-label { font-size: 0.8rem; color: var(--muted); }
+    .econ-row-val   { font-family: monospace; font-size: 0.85rem; font-weight: 600; }
+    .econ-row.total { border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.5rem; }
+    .econ-row.total .econ-row-label { color: var(--text); font-weight: 600; }
+    .econ-row.total .econ-row-val   { font-size: 1rem; }
+
+    /* ── BREAKEVEN BANNER ── */
+    .breakeven-banner {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .breakeven-icon {
+      width: 40px; height: 40px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; flex-shrink: 0;
+    }
+    .breakeven-icon.green  { background: rgba(34,197,94,0.12); }
+    .breakeven-icon.red    { background: rgba(239,68,68,0.12); }
+    .breakeven-body { flex: 1; }
+    .breakeven-body strong { font-size: 0.9rem; }
+    .breakeven-body p      { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+    .breakeven-num { font-family: monospace; font-size: 1.4rem; font-weight: 800; }
+    .breakeven-num.green { color: var(--green); }
+    .breakeven-num.red   { color: var(--red); }
+
+    /* ── SCALE TABLE ── */
+    .table-wrapper { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    thead {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      padding: 0.85rem 1.1rem;
+      text-align: right;
+      font-size: 0.7rem;
+      font-family: monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    th:first-child { text-align: left; }
+    td {
+      padding: 0.85rem 1.1rem;
+      border-top: 1px solid var(--border);
+      text-align: right;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+    td:first-child { text-align: left; font-family: inherit; font-size: 0.85rem; font-weight: 600; color: var(--text); }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    td.positive { color: var(--green); }
+    td.negative { color: var(--red); }
+    td.muted    { color: var(--muted); }
+    td.amber    { color: var(--amber); }
+    .scale-badge {
+      font-size: 0.68rem;
+      font-family: monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 3px;
+      margin-left: 0.5rem;
+      font-weight: 500;
+    }
+    .scale-badge.current { background: rgba(34,197,94,0.12); color: var(--green); }
+
+    /* ── BOM REFERENCE TABLE ── */
+    .bom-section { margin-bottom: 2rem; }
+    .bom-section-header {
+      padding: 0.6rem 1rem;
+      background: var(--surface2);
+      font-size: 0.72rem;
+      font-family: monospace;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .bom-section-header .dot {
+      width: 7px; height: 7px; border-radius: 50%; display: inline-block;
+    }
+    .bom-row {
+      display: grid;
+      grid-template-columns: 180px 1fr 160px 140px 120px;
+      gap: 0;
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 900px) {
+      .bom-row { grid-template-columns: 140px 1fr 120px; }
+      .bom-row .bom-col.hide-mobile { display: none; }
+    }
+    .bom-col {
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+    }
+    .bom-col:not(:last-child) { border-right: 1px solid var(--border); }
+    .bom-col.name { font-weight: 600; color: var(--text); font-family: monospace; font-size: 0.8rem; }
+    .bom-col.desc { color: var(--muted); line-height: 1.45; }
+    .bom-col.model { color: var(--muted); font-family: monospace; font-size: 0.75rem; }
+    .bom-col.cost  { text-align: right; font-family: monospace; font-size: 0.8rem; }
+    .bom-col.scale { text-align: right; font-family: monospace; font-size: 0.75rem; color: var(--muted); }
+    .tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-family: monospace;
+      padding: 1px 6px;
+      border-radius: 3px;
+      margin-top: 3px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .tag.variable { background: rgba(249,115,22,0.12); color: var(--orange); }
+    .tag.fixed    { background: rgba(59,130,246,0.12);  color: var(--blue); }
+    .tag.tiered   { background: rgba(20,184,166,0.12);  color: var(--teal); }
+    .tag.onetime  { background: rgba(168,85,247,0.12);  color: var(--purple); }
+    .tag.free     { background: rgba(34,197,94,0.12);   color: var(--green); }
+
+    .bom-table-header {
+      display: grid;
+      grid-template-columns: 180px 1fr 160px 140px 120px;
+      gap: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+    }
+    .bom-table-header .bom-col {
+      font-size: 0.68rem;
+      font-family: monospace;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .bom-table-header .bom-col.cost,
+    .bom-table-header .bom-col.scale { color: var(--muted); }
+    @media (max-width: 900px) {
+      .bom-table-header { grid-template-columns: 140px 1fr 120px; }
+      .bom-table-header .bom-col.hide-mobile { display: none; }
+    }
+    .bom-table-body {
+      border: 1px solid var(--border);
+      border-radius: 0 0 10px 10px;
+      overflow: hidden;
+    }
+    .bom-section-header:first-child { border-top: none; }
+    .bom-section-header { border-top: 1px solid var(--border); }
+
+    /* ── ONE-TIME COSTS ── */
+    .onetime-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .onetime-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      border-left: 3px solid var(--purple);
+    }
+    .onetime-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.35rem; }
+    .onetime-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; margin-bottom: 0.75rem; }
+    .onetime-cost {
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--purple);
+      background: rgba(168,85,247,0.08);
+      padding: 0.35rem 0.75rem;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    /* ── INSIGHT BOX ── */
+    .insight-box {
+      background: rgba(34,197,94,0.06);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .insight-box p { font-size: 0.88rem; color: var(--text); line-height: 1.7; }
+    .insight-box strong { color: var(--green); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.75rem;
+      font-family: monospace;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">PersonalOS</a>
+  <span class="nav-sep">/</span>
+  <span class="nav-current">Bill of Materials</span>
+  <span class="nav-badge">Platform Economics</span>
+</nav>
+
+<!-- ── HERO ── -->
+<header>
+  <div class="eyebrow">Platform Economics</div>
+  <h1>Bill of <span>Materials</span></h1>
+  <p class="hero-body">
+    Complete cost model for running PersonalOS at scale — every infrastructure component, third-party integration, and on-chain cost, grounded in 2025 market pricing and the platform's <a href="contracts.html">architectural decisions</a>.
+    The <strong>live calculator below</strong> explores unit economics from first Soul to 500,000 — adjust any assumption and see costs, revenue, and margin update in real time.
+  </p>
+</header>
+
+<!-- ── AT A GLANCE ── -->
+<section class="section">
+  <div class="section-label">Cost Categories</div>
+  <div class="summary-grid">
+
+    <div class="summary-card orange">
+      <div class="sc-label">Data Provider</div>
+      <div class="sc-title">Plaid</div>
+      <div class="sc-desc">Financial Transaktion ingestion via Konnections. Charged per connected item (bank account) per month. <strong>Dominant cost at every scale</strong> — typically 80–90% of total platform cost.</div>
+      <div class="sc-stat">~$0.10–$0.50 / item / month</div>
+    </div>
+
+    <div class="summary-card blue">
+      <div class="sc-label">Infrastructure</div>
+      <div class="sc-title">Compute, DB, Redis, Workers</div>
+      <div class="sc-desc">App servers (Exchange matching, Harvest scheduler, API), PostgreSQL, Redis cache and queues. Scales step-wise — amortizes well beyond 5k Souls.</div>
+      <div class="sc-stat">$230 → $27,600 / month (tiered)</div>
+    </div>
+
+    <div class="summary-card teal">
+      <div class="sc-label">On-Chain</div>
+      <div class="sc-title">Arweave · Base Gas · RPC</div>
+      <div class="sc-desc">Permanent Ledger writes via Irys (~$0.001/Soul/month, shared model), Claim settlement gas on Base L2 (~$0.005/Claim), and Alchemy/QuickNode for Base chain RPC.</div>
+      <div class="sc-stat">~$0.005 / Claim + $49–$800 / month RPC</div>
+    </div>
+
+    <div class="summary-card purple">
+      <div class="sc-label">Platform</div>
+      <div class="sc-title">Monitoring · APNs · Email · Apple</div>
+      <div class="sc-desc">Sentry + Datadog for observability, Apple Developer Program ($99/year), APNs push notifications (free), and transactional email. Mostly fixed overhead.</div>
+      <div class="sc-stat">~$350–$1,100 / month (fixed + tiered)</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── CALCULATOR ── -->
+<section class="section" id="calculator-section">
+  <div class="section-label">Interactive Cost Calculator</div>
+
+  <div id="calculator">
+
+    <!-- LEFT: ASSUMPTIONS -->
+    <div class="assumptions-panel">
+      <div class="panel-title">Assumptions</div>
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <label for="s-souls">Active Souls</label>
+          <span class="slider-val" id="v-souls">10,000</span>
+        </div>
+        <input type="range" id="s-souls" min="500" max="500000" step="500" value="10000">
+        <div class="slider-hints"><span>500</span><span>500k</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <label for="s-konn">Konnections per Soul</label>
+          <span class="slider-val" id="v-konn">1.5</span>
+        </div>
+        <input type="range" id="s-konn" min="1" max="5" step="0.5" value="1.5">
+        <div class="slider-hints"><span>1 account</span><span>5 accounts</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <label for="s-offers">Offers / Soul / Month</label>
+          <span class="slider-val" id="v-offers">5</span>
+        </div>
+        <input type="range" id="s-offers" min="1" max="30" step="1" value="5">
+        <div class="slider-hints"><span>1</span><span>30</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <label for="s-claimrate">Claim Rate</label>
+          <span class="slider-val" id="v-claimrate">25%</span>
+        </div>
+        <input type="range" id="s-claimrate" min="5" max="60" step="1" value="25">
+        <div class="slider-hints"><span>5%</span><span>60%</span></div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <label for="s-bid">Avg Brand Bid / Claim</label>
+          <span class="slider-val" id="v-bid">$12</span>
+        </div>
+        <input type="range" id="s-bid" min="2" max="50" step="1" value="12">
+        <div class="slider-hints"><span>$2</span><span>$50</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <label for="s-take">Platform Take Rate</label>
+          <span class="slider-val" id="v-take">20%</span>
+        </div>
+        <input type="range" id="s-take" min="10" max="35" step="1" value="20">
+        <div class="slider-hints"><span>10%</span><span>35%</span></div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <label for="s-plaid">Plaid Rate / Item / Month</label>
+          <span class="slider-val" id="v-plaid">$0.35</span>
+        </div>
+        <input type="range" id="s-plaid" min="0.10" max="0.60" step="0.01" value="0.35">
+        <div class="slider-hints"><span>$0.10 (enterprise)</span><span>$0.60 (list)</span></div>
+      </div>
+
+      <button class="reset-btn" id="reset-btn">Reset to defaults</button>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div class="results-panel">
+
+      <!-- Headline metrics -->
+      <div class="metrics-row">
+        <div class="metric-card highlight-green">
+          <div class="metric-label">Monthly Revenue</div>
+          <div class="metric-value green" id="r-revenue">—</div>
+          <div class="metric-sub" id="r-rev-sub">PersonalOS platform fee</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Monthly Cost</div>
+          <div class="metric-value amber" id="r-cost">—</div>
+          <div class="metric-sub" id="r-cost-sub">All-in operating cost</div>
+        </div>
+        <div class="metric-card" id="profit-card">
+          <div class="metric-label">Gross Profit</div>
+          <div class="metric-value" id="r-profit">—</div>
+          <div class="metric-sub" id="r-margin">—</div>
+        </div>
+      </div>
+
+      <!-- Cost breakdown chart -->
+      <div class="breakdown-card">
+        <div class="breakdown-title">Monthly Cost Breakdown</div>
+
+        <div class="bar-row">
+          <div class="bar-label">Data Provider (Plaid)</div>
+          <div class="bar-track"><div class="bar-fill orange" id="b-plaid" style="width:0%"></div></div>
+          <div class="bar-dollar" id="bd-plaid">—</div>
+          <div class="bar-pct"   id="bp-plaid">—</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Infrastructure</div>
+          <div class="bar-track"><div class="bar-fill blue" id="b-infra" style="width:0%"></div></div>
+          <div class="bar-dollar" id="bd-infra">—</div>
+          <div class="bar-pct"   id="bp-infra">—</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">On-Chain</div>
+          <div class="bar-track"><div class="bar-fill teal" id="b-chain" style="width:0%"></div></div>
+          <div class="bar-dollar" id="bd-chain">—</div>
+          <div class="bar-pct"   id="bp-chain">—</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Platform &amp; Tooling</div>
+          <div class="bar-track"><div class="bar-fill purple" id="b-platform" style="width:0%"></div></div>
+          <div class="bar-dollar" id="bd-platform">—</div>
+          <div class="bar-pct"   id="bp-platform">—</div>
+        </div>
+
+        <div class="chart-total">
+          <span class="chart-total-label">Total Monthly Cost</span>
+          <span class="chart-total-value" id="chart-total">—</span>
+        </div>
+      </div>
+
+      <!-- Per-actor unit economics -->
+      <div class="economics-row">
+
+        <div class="econ-card soul">
+          <div class="econ-actor">Soul</div>
+          <div class="econ-row">
+            <span class="econ-row-label">Offers / month</span>
+            <span class="econ-row-val" id="eu-offers">—</span>
+          </div>
+          <div class="econ-row">
+            <span class="econ-row-label">Claims / month</span>
+            <span class="econ-row-val" id="eu-claims">—</span>
+          </div>
+          <div class="econ-row">
+            <span class="econ-row-label">Yield / Claim</span>
+            <span class="econ-row-val" id="eu-yield-claim" style="color:var(--blue)">—</span>
+          </div>
+          <div class="econ-row total">
+            <span class="econ-row-label">Yield / month</span>
+            <span class="econ-row-val" id="eu-yield-month" style="color:var(--blue)">—</span>
+          </div>
+        </div>
+
+        <div class="econ-card brand">
+          <div class="econ-actor">Brand</div>
+          <div class="econ-row">
+            <span class="econ-row-label">Pays / Claim</span>
+            <span class="econ-row-val" id="eu-brand-per-claim">—</span>
+          </div>
+          <div class="econ-row">
+            <span class="econ-row-label">Soul gets</span>
+            <span class="econ-row-val" id="eu-brand-soul-gets">—</span>
+          </div>
+          <div class="econ-row">
+            <span class="econ-row-label">Platform fee</span>
+            <span class="econ-row-val" id="eu-brand-fee">—</span>
+          </div>
+          <div class="econ-row total">
+            <span class="econ-row-label">Total Claims / month</span>
+            <span class="econ-row-val" id="eu-total-claims">—</span>
+          </div>
+        </div>
+
+        <div class="econ-card platform">
+          <div class="econ-actor">PersonalOS</div>
+          <div class="econ-row">
+            <span class="econ-row-label">Revenue / Soul</span>
+            <span class="econ-row-val" id="eu-plat-rev-soul">—</span>
+          </div>
+          <div class="econ-row">
+            <span class="econ-row-label">Cost / Soul</span>
+            <span class="econ-row-val" id="eu-plat-cost-soul">—</span>
+          </div>
+          <div class="econ-row">
+            <span class="econ-row-label">Plaid cost / Soul</span>
+            <span class="econ-row-val" id="eu-plaid-soul">—</span>
+          </div>
+          <div class="econ-row total">
+            <span class="econ-row-label">Margin / Soul</span>
+            <span class="econ-row-val" id="eu-margin-soul">—</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Break-even banner -->
+      <div class="breakeven-banner" id="breakeven-banner">
+        <div class="breakeven-icon green" id="be-icon">💰</div>
+        <div class="breakeven-body">
+          <strong id="be-title">—</strong>
+          <p id="be-desc">—</p>
+        </div>
+        <div class="breakeven-num green" id="be-num">—</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── SCALE TABLE ── -->
+<section class="section">
+  <div class="section-label">Cost at Scale — with current assumptions</div>
+
+  <div class="insight-box">
+    <p>
+      <strong>Key insight:</strong> Plaid is the dominant cost driver at every scale — typically 82–88% of total operating cost.
+      Infrastructure amortizes well (margin improves ~20pp from 1k to 500k Souls), but the structural lever is
+      <strong>negotiating Plaid volume pricing</strong>. At enterprise rates (~$0.10–0.15/item), gross margin exceeds 90%.
+      Slide the Plaid rate to see the impact.
+    </p>
+  </div>
+
+  <div class="table-wrapper">
+    <table id="scale-table">
+      <thead>
+        <tr>
+          <th>Scale</th>
+          <th>Souls</th>
+          <th>Revenue / mo</th>
+          <th>Total Cost / mo</th>
+          <th>Gross Profit / mo</th>
+          <th>Gross Margin</th>
+          <th>Cost / Soul</th>
+          <th>Rev / Soul</th>
+          <th>Plaid % of Cost</th>
+        </tr>
+      </thead>
+      <tbody id="scale-tbody">
+        <!-- filled by JS -->
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── FULL BOM REFERENCE ── -->
+<section class="section">
+  <div class="section-label">Complete Bill of Materials — Reference</div>
+
+  <!-- Header row -->
+  <div class="bom-table-header">
+    <div class="bom-col">Component</div>
+    <div class="bom-col">Purpose &amp; Notes</div>
+    <div class="bom-col hide-mobile">Pricing Model</div>
+    <div class="bom-col cost hide-mobile">Est. Cost</div>
+    <div class="bom-col scale">Type</div>
+  </div>
+
+  <div class="bom-table-body">
+
+    <!-- DATA PROVIDERS -->
+    <div class="bom-section-header">
+      <span class="dot" style="background:var(--orange)"></span>
+      DATA PROVIDERS
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Plaid<br>Transactions</div>
+      <div class="bom-col desc">Financial Transaktion ingestion. Each connected bank account = one Plaid item. Volume discounts negotiated at enterprise; list price ~$0.50/item, typical contract ~$0.30–0.35. The single largest operating cost.</div>
+      <div class="bom-col model hide-mobile">Per item per month<br>Volume tiers</div>
+      <div class="bom-col cost hide-mobile">$0.10–$0.50 / item / mo</div>
+      <div class="bom-col scale"><span class="tag variable">Variable</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Plaid Link<br>(Connect)</div>
+      <div class="bom-col desc">Frontend SDK used during Konnection setup so Souls authenticate with their bank. No additional charge beyond the item fee once item is established.</div>
+      <div class="bom-col model hide-mobile">Included with item</div>
+      <div class="bom-col cost hide-mobile">$0 (included)</div>
+      <div class="bom-col scale"><span class="tag free">Free</span></div>
+    </div>
+
+    <!-- INFRASTRUCTURE -->
+    <div class="bom-section-header">
+      <span class="dot" style="background:var(--blue)"></span>
+      INFRASTRUCTURE
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">App Servers<br>(Compute)</div>
+      <div class="bom-col desc">API layer, Exchange matching engine, Harvest scheduler, notification dispatch. AWS ECS / Railway / Fly.io. Autoscales horizontally; step-cost model. Includes load balancer at 10k+ Souls.</div>
+      <div class="bom-col model hide-mobile">Tiered by Soul count</div>
+      <div class="bom-col cost hide-mobile">$150 → $18,000 / mo</div>
+      <div class="bom-col scale"><span class="tag tiered">Tiered</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">PostgreSQL<br>(Database)</div>
+      <div class="bom-col desc">Primary datastore: accounts, Insights, Reputation scores, Offers, Claims, Listings, Consents. AWS RDS or Supabase. Read replica added at 50k+ Souls. Schema defined in <a href="datamodel.html" style="color:var(--teal)">Data Model</a>.</div>
+      <div class="bom-col model hide-mobile">Tiered by Soul count</div>
+      <div class="bom-col cost hide-mobile">$50 → $5,000 / mo</div>
+      <div class="bom-col scale"><span class="tag tiered">Tiered</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Redis<br>(Cache + Queues)</div>
+      <div class="bom-col desc">Session state, Exchange match queue, Harvest scheduling queue, notification rate-limit state (ADR-0001 notification caps). Upstash or Redis Cloud. Elasticache at scale.</div>
+      <div class="bom-col model hide-mobile">Tiered by Soul count</div>
+      <div class="bom-col cost hide-mobile">$30 → $600 / mo</div>
+      <div class="bom-col scale"><span class="tag tiered">Tiered</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Background<br>Workers</div>
+      <div class="bom-col desc">Dedicated processes for continuous Exchange matching (triggered by new Listings + completed Scorings per ADR-0001), Harvest scheduling, Claim settlement monitoring, Reputation decay computation.</div>
+      <div class="bom-col model hide-mobile">Tiered, included until 5k Souls</div>
+      <div class="bom-col cost hide-mobile">$0 → $4,000 / mo</div>
+      <div class="bom-col scale"><span class="tag tiered">Tiered</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">CDN<br>(Cloudflare)</div>
+      <div class="bom-col desc">Static asset delivery, DDoS protection, DNS. Free tier sufficient through 100k+ Souls for this traffic profile.</div>
+      <div class="bom-col model hide-mobile">Free tier</div>
+      <div class="bom-col cost hide-mobile">$0 – $20 / mo</div>
+      <div class="bom-col scale"><span class="tag free">Free</span></div>
+    </div>
+
+    <!-- ON-CHAIN -->
+    <div class="bom-section-header">
+      <span class="dot" style="background:var(--teal)"></span>
+      ON-CHAIN (Base L2 / Arweave)
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Arweave via Irys<br>(Ledger Storage)</div>
+      <div class="bom-col desc">Permanent storage of E2E encrypted Transaktion batches per Harvest. Shared model default: Irys batches many Souls' writes into single Arweave transactions — amortizes cost to ~$0.001/Soul/month. Soul-owned accounts: ~$0.003/Soul/month (ADR-0004).</div>
+      <div class="bom-col model hide-mobile">Per byte; Irys batching</div>
+      <div class="bom-col cost hide-mobile">~$0.001 / Soul / mo</div>
+      <div class="bom-col scale"><span class="tag variable">Variable</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Base Chain Gas<br>(Claim Settlement)</div>
+      <div class="bom-col desc">Each Claim triggers one `settle()` call on the BudgetEscrow smart contract — atomically splits USDC between platform fee and Soul Wallet. Base L2 gas: ~50k gas per tx at ~0.001 gwei. PersonalOS backend owns retry logic (ADR-0005).</div>
+      <div class="bom-col model hide-mobile">Per Claim transaction</div>
+      <div class="bom-col cost hide-mobile">~$0.005 / Claim</div>
+      <div class="bom-col scale"><span class="tag variable">Variable</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Base Chain Gas<br>(Listing Deposit)</div>
+      <div class="bom-col desc">Each Brand Listing creation triggers a `deposit()` call to lock USDC Budget into escrow. One-time per Listing, paid by Brand (or absorbed into listing fee). ~$0.005–0.01 per deposit transaction.</div>
+      <div class="bom-col model hide-mobile">Per Listing; Brand-side</div>
+      <div class="bom-col cost hide-mobile">~$0.005 / Listing</div>
+      <div class="bom-col scale"><span class="tag variable">Variable</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Alchemy / QuickNode<br>(Base RPC)</div>
+      <div class="bom-col desc">Base chain RPC for transaction submission, Claim confirmation monitoring, wallet balance checks, and event listening. Growth plan sufficient to 25k Souls; enterprise beyond 100k.</div>
+      <div class="bom-col model hide-mobile">Tiered compute units</div>
+      <div class="bom-col cost hide-mobile">$49 → $800 / mo</div>
+      <div class="bom-col scale"><span class="tag tiered">Tiered</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Coinbase Commerce<br>(Brand Funding)</div>
+      <div class="bom-col desc">Fiat-to-USDC conversion for Brands who fund Listings via card or bank transfer (ADR-0002). 1% fee on the converted amount — typically passed through to the Brand or absorbed into listing platform fee. ~$10 per $1k Brand deposit.</div>
+      <div class="bom-col model hide-mobile">1% of deposit; Brand-side</div>
+      <div class="bom-col cost hide-mobile">1% of Brand deposits</div>
+      <div class="bom-col scale"><span class="tag variable">Variable</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Coinbase Smart Wallet<br>(Gas Sponsorship)</div>
+      <div class="bom-col desc">Soul wallets are ERC-4337 smart contract accounts (ADR-0005). PersonalOS can sponsor gas for wallet setup and first Yield receipt to remove friction. Optional — Souls can self-fund gas. ~$0.10–0.50 per new Soul wallet if sponsored.</div>
+      <div class="bom-col model hide-mobile">Per new Soul; optional</div>
+      <div class="bom-col cost hide-mobile">$0 – $0.50 / new Soul</div>
+      <div class="bom-col scale"><span class="tag variable">Variable</span></div>
+    </div>
+
+    <!-- PLATFORM -->
+    <div class="bom-section-header">
+      <span class="dot" style="background:var(--purple)"></span>
+      PLATFORM &amp; TOOLING
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Apple Developer<br>Program</div>
+      <div class="bom-col desc">Required for App Store distribution, TestFlight beta, and APNs push notification certificates. iOS-only at launch (ADR-0005 is iOS-native). $99/year.</div>
+      <div class="bom-col model hide-mobile">Annual flat fee</div>
+      <div class="bom-col cost hide-mobile">$8.25 / mo ($99/yr)</div>
+      <div class="bom-col scale"><span class="tag fixed">Fixed</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">APNs<br>(Push Notifications)</div>
+      <div class="bom-col desc">Apple Push Notification Service — delivers Offer push notifications to Soul devices. Rate-limited by Soul Consent settings (max per day, quiet hours per ADR-0001). Free — included in Apple Developer Program.</div>
+      <div class="bom-col model hide-mobile">Free (Apple-provided)</div>
+      <div class="bom-col cost hide-mobile">$0</div>
+      <div class="bom-col scale"><span class="tag free">Free</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Error Monitoring<br>(Sentry)</div>
+      <div class="bom-col desc">Crash reporting and error tracking for iOS app and backend. Team plan at $26/month covers MVP. Scales to $80–150/month at 100k Souls with higher event volume.</div>
+      <div class="bom-col model hide-mobile">Tiered by event volume</div>
+      <div class="bom-col cost hide-mobile">$26 → $150 / mo</div>
+      <div class="bom-col scale"><span class="tag tiered">Tiered</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Infra Monitoring<br>(Datadog / Grafana)</div>
+      <div class="bom-col desc">Server metrics, database performance, Exchange latency, Harvest job queues. Grafana Cloud free tier viable early; Datadog at scale for richer APM. Exchange SLA monitoring is critical — real-money settlement delays need alerting.</div>
+      <div class="bom-col model hide-mobile">Tiered by host count</div>
+      <div class="bom-col cost hide-mobile">$0 → $300 / mo</div>
+      <div class="bom-col scale"><span class="tag tiered">Tiered</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Transactional Email<br>(Resend / SendGrid)</div>
+      <div class="bom-col desc">Account registration, Offer delivery (email fallback if push fails), Claim receipts, Withdrawal confirmations. Low volume early; scales with Offer volume.</div>
+      <div class="bom-col model hide-mobile">Tiered by email volume</div>
+      <div class="bom-col cost hide-mobile">$30 → $300 / mo</div>
+      <div class="bom-col scale"><span class="tag tiered">Tiered</span></div>
+    </div>
+
+    <div class="bom-row">
+      <div class="bom-col name">Misc<br>(Support · Legal buffer)</div>
+      <div class="bom-col desc">Customer support tooling (Intercom/Linear), legal compliance buffer, domain/SSL, miscellaneous SaaS. Conservative estimate; actual legal costs vary significantly by jurisdiction.</div>
+      <div class="bom-col model hide-mobile">Flat estimate</div>
+      <div class="bom-col cost hide-mobile">~$150 / mo</div>
+      <div class="bom-col scale"><span class="tag fixed">Fixed</span></div>
+    </div>
+
+  </div>
+
+  <!-- ONE-TIME COSTS -->
+  <div style="margin-top: 2.5rem;">
+    <div class="section-label" style="margin-bottom:1.25rem">One-Time Costs (not in monthly BOM)</div>
+    <div class="onetime-grid">
+
+      <div class="onetime-card">
+        <div class="onetime-name">Smart Contract Security Audit</div>
+        <div class="onetime-desc">BudgetEscrow.sol handles real USDC escrowed from Brands and settlement to Souls — a production audit is non-negotiable before mainnet deploy. Typical scope: 3–5 day engagement from a reputable firm (Trail of Bits, OpenZeppelin, Spearbit).</div>
+        <span class="onetime-cost">$20,000 – $80,000</span>
+      </div>
+
+      <div class="onetime-card">
+        <div class="onetime-name">Smart Contract Deployment Gas</div>
+        <div class="onetime-desc">One-time gas cost to deploy BudgetEscrow.sol and SoulWallet (ERC-4337) contracts on Base mainnet. Base L2 fees are very low — total deployment cost is negligible compared to audit.</div>
+        <span class="onetime-cost">$50 – $200</span>
+      </div>
+
+      <div class="onetime-card">
+        <div class="onetime-name">iOS App Review &amp; Notarization</div>
+        <div class="onetime-desc">Apple App Store review typically takes 1–3 days. No fee beyond the $99/year Developer Program. Expedited review available for critical bug fixes (free, on request).</div>
+        <span class="onetime-cost">$0 (included in Dev Program)</span>
+      </div>
+
+      <div class="onetime-card">
+        <div class="onetime-name">SOC 2 / Privacy Compliance</div>
+        <div class="onetime-desc">As a platform handling financial data, SOC 2 Type II certification will be required for enterprise Brand contracts. Readiness assessment + audit. Not required for MVP but budgeted for Series A stage.</div>
+        <span class="onetime-cost">$30,000 – $100,000</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  PersonalOS — Bill of Materials · Pricing based on 2025 market rates · Numbers are estimates; negotiate Plaid at volume
+</footer>
+
+<script>
+(function () {
+  /* ── COST MODEL ── */
+
+  const DEFAULTS = {
+    souls: 10000,
+    konn: 1.5,
+    offers: 5,
+    claimRate: 25,
+    bid: 12,
+    take: 20,
+    plaid: 0.35,
+  };
+
+  function infraStep(souls) {
+    const table = [
+      { max: 1000,   compute: 150,  db: 50,   redis: 30,  workers: 0    },
+      { max: 5000,   compute: 350,  db: 100,  redis: 30,  workers: 0    },
+      { max: 10000,  compute: 600,  db: 200,  redis: 80,  workers: 150  },
+      { max: 25000,  compute: 1200, db: 400,  redis: 80,  workers: 250  },
+      { max: 50000,  compute: 2500, db: 700,  redis: 200, workers: 500  },
+      { max: 100000, compute: 4500, db: 1200, redis: 200, workers: 800  },
+      { max: 250000, compute: 9000, db: 2500, redis: 600, workers: 2000 },
+      { max: 500000, compute: 18000,db: 5000, redis: 600, workers: 4000 },
+    ];
+    for (const row of table) if (souls <= row.max) return row;
+    return { compute: 35000, db: 10000, redis: 1200, workers: 8000 };
+  }
+
+  function rpcCost(souls) {
+    if (souls <= 5000)   return 49;
+    if (souls <= 25000)  return 100;
+    if (souls <= 100000) return 300;
+    if (souls <= 500000) return 800;
+    return 1500;
+  }
+
+  function monitoringCost(souls) {
+    if (souls <= 5000)   return 150;
+    if (souls <= 25000)  return 200;
+    if (souls <= 100000) return 350;
+    if (souls <= 500000) return 600;
+    return 1000;
+  }
+
+  function emailCost(totalOffers) {
+    if (totalOffers <= 10000)  return 30;
+    if (totalOffers <= 50000)  return 80;
+    if (totalOffers <= 200000) return 150;
+    return 300;
+  }
+
+  function calc(p) {
+    const { souls, konn, offers, claimRate, bid, take, plaid } = p;
+    const cr = claimRate / 100;
+    const tr = take / 100;
+
+    const claimsPerSoul  = offers * cr;
+    const totalClaims    = Math.round(souls * claimsPerSoul);
+    const totalOffers    = Math.round(souls * offers);
+
+    const revPerClaim    = bid * tr;
+    const yieldPerClaim  = bid * (1 - tr);
+    const revPerSoul     = claimsPerSoul * revPerClaim;
+    const totalRev       = souls * revPerSoul;
+
+    const inf = infraStep(souls);
+
+    const costs = {
+      plaid:    souls * konn * plaid,
+      compute:  inf.compute,
+      database: inf.db,
+      redis:    inf.redis,
+      workers:  inf.workers,
+      arweave:  souls * 0.001,
+      gas:      totalClaims * 0.005,
+      rpc:      rpcCost(souls),
+      monitor:  monitoringCost(souls),
+      apple:    8.25,
+      email:    emailCost(totalOffers),
+      misc:     150,
+    };
+
+    const infraTotal   = costs.compute + costs.database + costs.redis + costs.workers;
+    const chainTotal   = costs.arweave + costs.gas + costs.rpc;
+    const platTotal    = costs.monitor + costs.apple + costs.email + costs.misc;
+    const totalCost    = costs.plaid + infraTotal + chainTotal + platTotal;
+
+    const grossProfit  = totalRev - totalCost;
+    const grossMargin  = totalRev > 0 ? (grossProfit / totalRev) * 100 : null;
+    const costPerSoul  = totalCost / souls;
+
+    // Break-even: find n where revenue(n) = cost(n)
+    const varPerSoul = konn * plaid + claimsPerSoul * 0.005 + 0.001;
+    const marginPerSoul = revPerSoul - varPerSoul;
+    let breakEven = null;
+    if (marginPerSoul > 0) {
+      for (let n = 100; n <= 1000000; n += 50) {
+        const r = n * revPerSoul;
+        const c = calcTotalCostAt(n, p);
+        if (r >= c) { breakEven = n; break; }
+      }
+    }
+
+    return {
+      souls, claimsPerSoul, totalClaims, totalOffers,
+      revPerClaim, yieldPerClaim, revPerSoul, totalRev,
+      costs, infraTotal, chainTotal, platTotal,
+      totalCost, grossProfit,
+      grossMargin, costPerSoul,
+      yieldPerMonth: claimsPerSoul * yieldPerClaim,
+      breakEven,
+    };
+  }
+
+  function calcTotalCostAt(souls, p) {
+    const { konn, offers, claimRate, plaid } = p;
+    const cr = claimRate / 100;
+    const claimsPerSoul = offers * cr;
+    const inf = infraStep(souls);
+    return (
+      souls * konn * plaid +
+      inf.compute + inf.db + inf.redis + inf.workers +
+      souls * 0.001 +
+      Math.round(souls * claimsPerSoul) * 0.005 +
+      rpcCost(souls) +
+      monitoringCost(souls) +
+      8.25 +
+      emailCost(Math.round(souls * offers)) +
+      150
+    );
+  }
+
+  /* ── FORMATTERS ── */
+  function $$(n, d = 0) {
+    if (Math.abs(n) >= 1000000) return '$' + (n / 1000000).toFixed(1) + 'M';
+    if (Math.abs(n) >= 1000)    return '$' + (n / 1000).toFixed(1) + 'k';
+    return '$' + n.toFixed(d);
+  }
+  function pct(n) { return n.toFixed(1) + '%'; }
+  function num(n) { return n.toLocaleString(undefined, { maximumFractionDigits: 1 }); }
+
+  /* ── DOM REFS ── */
+  const sliders = {
+    souls:      document.getElementById('s-souls'),
+    konn:       document.getElementById('s-konn'),
+    offers:     document.getElementById('s-offers'),
+    claimRate:  document.getElementById('s-claimrate'),
+    bid:        document.getElementById('s-bid'),
+    take:       document.getElementById('s-take'),
+    plaid:      document.getElementById('s-plaid'),
+  };
+  const vals = {
+    souls:     document.getElementById('v-souls'),
+    konn:      document.getElementById('v-konn'),
+    offers:    document.getElementById('v-offers'),
+    claimRate: document.getElementById('v-claimrate'),
+    bid:       document.getElementById('v-bid'),
+    take:      document.getElementById('v-take'),
+    plaid:     document.getElementById('v-plaid'),
+  };
+
+  function getParams() {
+    return {
+      souls:     parseFloat(sliders.souls.value),
+      konn:      parseFloat(sliders.konn.value),
+      offers:    parseFloat(sliders.offers.value),
+      claimRate: parseFloat(sliders.claimRate.value),
+      bid:       parseFloat(sliders.bid.value),
+      take:      parseFloat(sliders.take.value),
+      plaid:     parseFloat(sliders.plaid.value),
+    };
+  }
+
+  function updateLabels(p) {
+    vals.souls.textContent     = Number(p.souls).toLocaleString();
+    vals.konn.textContent      = p.konn.toFixed(1);
+    vals.offers.textContent    = p.offers;
+    vals.claimRate.textContent = p.claimRate + '%';
+    vals.bid.textContent       = '$' + p.bid;
+    vals.take.textContent      = p.take + '%';
+    vals.plaid.textContent     = '$' + p.plaid.toFixed(2);
+  }
+
+  function setEl(id, text, cls) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = text;
+    if (cls) {
+      el.className = el.className.replace(/\b(green|red|amber|teal)\b/g, '');
+      el.classList.add(cls);
+    }
+  }
+
+  function setBar(prefix, frac, dollar, percent) {
+    const fill = document.getElementById('b-' + prefix);
+    if (fill) fill.style.width = Math.max(0, Math.min(100, frac * 100)).toFixed(1) + '%';
+    setEl('bd-' + prefix, dollar);
+    setEl('bp-' + prefix, percent);
+  }
+
+  const SCALE_POINTS = [
+    { label: 'Micro',      souls: 1000 },
+    { label: 'Early',      souls: 5000 },
+    { label: 'Growing',    souls: 10000 },
+    { label: 'Mid-market', souls: 25000 },
+    { label: 'Scale',      souls: 100000 },
+    { label: 'Hyper',      souls: 500000 },
+  ];
+
+  function renderScaleTable(p) {
+    const tbody = document.getElementById('scale-tbody');
+    const currentSouls = p.souls;
+    tbody.innerHTML = SCALE_POINTS.map(({ label, souls }) => {
+      const sp = { ...p, souls };
+      const r  = calc(sp);
+      const isCurrent = Math.abs(souls - currentSouls) <= 2000 &&
+                        SCALE_POINTS.some(pt => pt.souls === souls && Math.abs(pt.souls - currentSouls) < 1000);
+      const badge = souls === 10000 && Math.abs(currentSouls - 10000) < 5001 ? '' : '';
+
+      const profitCls = r.grossProfit >= 0 ? 'positive' : 'negative';
+      const marginCls = (r.grossMargin ?? 0) >= 50 ? 'positive' : (r.grossMargin ?? 0) >= 20 ? 'amber' : 'negative';
+      const plaidPct  = (r.costs.plaid / r.totalCost * 100).toFixed(0) + '%';
+
+      return `<tr>
+        <td>${label}</td>
+        <td class="muted">${Number(souls).toLocaleString()}</td>
+        <td class="positive">${$$(r.totalRev)}</td>
+        <td class="amber">${$$(r.totalCost)}</td>
+        <td class="${profitCls}">${$$(r.grossProfit)}</td>
+        <td class="${marginCls}">${r.grossMargin != null ? pct(r.grossMargin) : 'n/a'}</td>
+        <td class="muted">$${r.costPerSoul.toFixed(2)}</td>
+        <td class="muted">$${r.revPerSoul.toFixed(2)}</td>
+        <td class="amber">${plaidPct}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function update() {
+    const p = getParams();
+    updateLabels(p);
+    const r = calc(p);
+
+    /* Headline metrics */
+    setEl('r-revenue', $$(r.totalRev), 'green');
+    setEl('r-rev-sub', `$${r.revPerSoul.toFixed(2)} / Soul / month`);
+    setEl('r-cost',    $$(r.totalCost), 'amber');
+    setEl('r-cost-sub', `$${r.costPerSoul.toFixed(2)} / Soul / month`);
+
+    const profitColor = r.grossProfit >= 0 ? 'green' : 'red';
+    setEl('r-profit', $$(r.grossProfit), profitColor);
+    setEl('r-margin', r.grossMargin != null ? `${pct(r.grossMargin)} gross margin` : 'Unprofitable');
+
+    const pc = document.getElementById('profit-card');
+    if (pc) {
+      pc.className = 'metric-card ' + (r.grossProfit >= 0 ? 'highlight-green' : 'highlight-red');
+    }
+
+    /* Cost breakdown bars */
+    const max = r.totalCost;
+    setBar('plaid',    r.costs.plaid / max,       $$(r.costs.plaid),    pct(r.costs.plaid / max * 100));
+    setBar('infra',    r.infraTotal / max,         $$(r.infraTotal),     pct(r.infraTotal / max * 100));
+    setBar('chain',    r.chainTotal / max,         $$(r.chainTotal),     pct(r.chainTotal / max * 100));
+    setBar('platform', r.platTotal / max,          $$(r.platTotal),      pct(r.platTotal / max * 100));
+    setEl('chart-total', $$(r.totalCost));
+
+    /* Soul unit economics */
+    setEl('eu-offers',       num(p.offers));
+    setEl('eu-claims',       r.claimsPerSoul.toFixed(2));
+    setEl('eu-yield-claim',  '$' + r.yieldPerClaim.toFixed(2) + ' USDC');
+    setEl('eu-yield-month',  '$' + r.yieldPerMonth.toFixed(2) + ' USDC');
+
+    /* Brand unit economics */
+    setEl('eu-brand-per-claim',  '$' + p.bid.toFixed(2) + ' USDC');
+    setEl('eu-brand-soul-gets',  '$' + r.yieldPerClaim.toFixed(2) + ' (' + (100 - p.take) + '%)');
+    setEl('eu-brand-fee',        '$' + r.revPerClaim.toFixed(2) + ' (' + p.take + '%)');
+    setEl('eu-total-claims',     Number(r.totalClaims).toLocaleString() + ' / mo');
+
+    /* Platform unit economics */
+    setEl('eu-plat-rev-soul',   '$' + r.revPerSoul.toFixed(2) + ' / mo');
+    setEl('eu-plat-cost-soul',  '$' + r.costPerSoul.toFixed(2) + ' / mo');
+    setEl('eu-plaid-soul',      '$' + (p.konn * p.plaid).toFixed(2) + ' / mo');
+    const marginPerSoul = r.revPerSoul - r.costPerSoul;
+    const ms = document.getElementById('eu-margin-soul');
+    if (ms) {
+      ms.textContent = '$' + marginPerSoul.toFixed(2) + ' / mo';
+      ms.style.color = marginPerSoul >= 0 ? 'var(--green)' : 'var(--red)';
+    }
+
+    /* Break-even banner */
+    const beIcon  = document.getElementById('be-icon');
+    const beTitle = document.getElementById('be-title');
+    const beDesc  = document.getElementById('be-desc');
+    const beNum   = document.getElementById('be-num');
+    const beBanner = document.getElementById('breakeven-banner');
+
+    if (r.breakEven !== null) {
+      if (beIcon) { beIcon.className = 'breakeven-icon green'; beIcon.textContent = '💰'; }
+      if (beTitle) beTitle.textContent = 'Break-even point';
+      if (beDesc) beDesc.textContent = `Platform covers all costs — then ${$$(r.totalRev - r.totalCost)} profit at ${Number(p.souls).toLocaleString()} Souls`;
+      if (beNum) { beNum.textContent = Number(r.breakEven).toLocaleString() + ' Souls'; beNum.className = 'breakeven-num green'; }
+    } else {
+      if (beIcon) { beIcon.className = 'breakeven-icon red'; beIcon.textContent = '⚠️'; }
+      if (beTitle) beTitle.textContent = 'No break-even in range';
+      if (beDesc) beDesc.textContent = 'Revenue per Soul is lower than variable cost per Soul — raise bid, take rate, or reduce konnections';
+      if (beNum) { beNum.textContent = '—'; beNum.className = 'breakeven-num red'; }
+    }
+
+    /* Highlight current scale row */
+    renderScaleTable(p);
+  }
+
+  /* ── EVENT LISTENERS ── */
+  Object.values(sliders).forEach(s => s.addEventListener('input', update));
+
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    sliders.souls.value     = DEFAULTS.souls;
+    sliders.konn.value      = DEFAULTS.konn;
+    sliders.offers.value    = DEFAULTS.offers;
+    sliders.claimRate.value = DEFAULTS.claimRate;
+    sliders.bid.value       = DEFAULTS.bid;
+    sliders.take.value      = DEFAULTS.take;
+    sliders.plaid.value     = DEFAULTS.plaid;
+    update();
+  });
+
+  /* ── INIT ── */
+  update();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PersonalOS — Smart Contracts</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'dark', flowchart: { curve: 'basis' } });</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0f;
+      --surface:   #111118;
+      --surface2:  #1a1a28;
+      --border:    #2a2a40;
+      --text:      #e2e8f0;
+      --muted:     #94a3b8;
+      --blue:      #3b82f6;
+      --teal:      #14b8a6;
+      --purple:    #a855f7;
+      --amber:     #f59e0b;
+      --green:     #22c55e;
+      --red:       #ef4444;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    nav a { color: var(--muted); text-decoration: none; font-size: 13px; transition: color 0.15s; }
+    nav a:hover { color: var(--text); }
+    nav .brand { color: var(--text); font-weight: 600; font-size: 14px; }
+    nav .sep   { color: var(--border); }
+    nav .current { color: var(--amber); font-weight: 500; }
+
+    /* ── HERO ── */
+    header {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 4rem 2rem 3rem;
+    }
+    .eyebrow {
+      font-size: 0.72rem;
+      font-family: monospace;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1.25rem;
+    }
+    h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    h1 span { color: var(--amber); }
+    .hero-body {
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+    .hero-body strong { color: var(--text); font-weight: 600; }
+
+    /* ── MAIN ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+    }
+
+    section { margin-bottom: 5rem; }
+
+    h2 {
+      font-size: 0.75rem;
+      font-family: monospace;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    h2::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── PHILOSOPHY STRIP ── */
+    .philosophy {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 5rem;
+    }
+    .phil-item {
+      background: var(--surface);
+      padding: 2rem;
+    }
+    .phil-icon {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .phil-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .phil-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── CONTRACT CARDS ── */
+    .contracts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .contract-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .contract-card.escrow  { border-top: 3px solid var(--amber);  }
+    .contract-card.wallet  { border-top: 3px solid var(--teal);   }
+    .contract-card.consent { border-top: 3px solid var(--purple); }
+
+    .contract-header {
+      padding: 1.5rem 1.5rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .contract-name {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    .contract-card.escrow  .contract-name { color: var(--amber);  }
+    .contract-card.wallet  .contract-name { color: var(--teal);   }
+    .contract-card.consent .contract-name { color: var(--purple); }
+
+    .contract-tagline {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .contract-meta {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .meta-pill {
+      font-size: 0.68rem;
+      font-family: monospace;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .meta-pill.immutable { color: var(--green); border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.08); }
+    .meta-pill.chain     { color: var(--amber); border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.08); }
+    .meta-pill.per-soul  { color: var(--teal);  border-color: rgba(20,184,166,0.3); background: rgba(20,184,166,0.08); }
+
+    .contract-body { padding: 1.25rem 1.5rem; }
+
+    .guarantee {
+      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.03);
+      border-left: 3px solid var(--border);
+    }
+    .contract-card.escrow  .guarantee { border-left-color: var(--amber);  }
+    .contract-card.wallet  .guarantee { border-left-color: var(--teal);   }
+    .contract-card.consent .guarantee { border-left-color: var(--purple); }
+
+    .fn-list { list-style: none; }
+    .fn-list li {
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(42,42,64,0.5);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.75rem;
+    }
+    .fn-list li:last-child { border-bottom: none; }
+    .fn-name   { color: var(--blue); }
+    .fn-params { color: var(--muted); }
+    .fn-label  {
+      font-size: 0.65rem;
+      font-family: monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      margin-top: 0.25rem;
+      display: block;
+    }
+
+    /* ── TRUST MODEL ── */
+    .trust-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 680px) { .trust-grid { grid-template-columns: 1fr; } }
+
+    .trust-col {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .trust-header {
+      padding: 1rem 1.5rem;
+      font-size: 0.72rem;
+      font-family: monospace;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+    }
+    .trust-col.cannot .trust-header { color: var(--red);   background: rgba(239,68,68,0.06); }
+    .trust-col.can    .trust-header { color: var(--green); background: rgba(34,197,94,0.06); }
+
+    .trust-list { list-style: none; padding: 0.75rem 0; }
+    .trust-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.6rem 1.5rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .trust-list li::before {
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-size: 0.7rem;
+    }
+    .trust-col.cannot .trust-list li::before { content: "✕"; color: var(--red); }
+    .trust-col.can    .trust-list li::before { content: "✓"; color: var(--green); }
+    .trust-list strong { color: var(--text); }
+
+    /* ── FLOW DIAGRAM ── */
+    .diagram-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      overflow-x: auto;
+    }
+    .diagram-wrap .mermaid { min-width: 700px; }
+
+    /* ── DOMAIN LEGEND ── */
+    .legend {
+      margin: 0 0 5rem;
+    }
+    .legend-title {
+      font-size: 0.72rem;
+      font-family: monospace;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .legend-title::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.5rem;
+    }
+    .legend-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .legend-item strong { font-family: monospace; color: var(--text); white-space: nowrap; }
+    .legend-item span   { color: var(--muted); line-height: 1.4; }
+
+    /* ── QUOTE ── */
+    .pull-quote {
+      border-left: 3px solid var(--amber);
+      padding: 1.25rem 1.5rem;
+      margin: 0 0 5rem;
+      background: rgba(245,158,11,0.05);
+      border-radius: 0 8px 8px 0;
+    }
+    .pull-quote p {
+      font-size: 1.05rem;
+      color: var(--text);
+      line-height: 1.75;
+      font-style: italic;
+    }
+    .pull-quote p strong { color: var(--amber); font-style: normal; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.75rem;
+      font-family: monospace;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="brand">PersonalOS</a>
+    <span class="sep">/</span>
+    <a href="index.html">Docs</a>
+    <span class="sep">/</span>
+    <span class="current">Smart Contracts</span>
+  </nav>
+
+  <header>
+    <div class="eyebrow">Trust Architecture</div>
+    <h1>From promise<br/><span>to proof.</span></h1>
+    <p class="hero-body">
+      Every other platform asks you to trust its intentions. PersonalOS replaces that trust requirement
+      with <strong>code deployed on Base</strong> that neither PersonalOS nor anyone else can override after launch.
+      <br/><br/>
+      The fee split is <strong>not a policy PersonalOS can change tomorrow</strong> — it is a constant frozen at deploy time.
+      The Budget escrow is <strong>not a promise to hold funds safely</strong> — it is a constraint the contract enforces structurally.
+      The Yield deposit is <strong>not a transfer request PersonalOS initiates</strong> — it is an atomic settlement
+      the contract executes directly to the Soul's Wallet the moment a Claim is made.
+      <br/><br/>
+      PersonalOS cannot redirect it, withhold it, or change the split.
+      The rules are in the code, the code is on a public chain, and anyone can audit it.
+      <strong>This is what data sovereignty looks like at the infrastructure level.</strong>
+    </p>
+  </header>
+
+  <main>
+
+    <!-- ── PHILOSOPHY ── -->
+    <div class="philosophy">
+      <div class="phil-item">
+        <div class="phil-icon">⛓</div>
+        <div class="phil-title">Immutable by design</div>
+        <div class="phil-desc">Core contracts are deployed once and never upgraded. The fee rate, settlement logic, and escrow rules are frozen at deploy time — PersonalOS cannot change them unilaterally. Brands and Souls can verify this on-chain.</div>
+      </div>
+      <div class="phil-item">
+        <div class="phil-icon">⚡</div>
+        <div class="phil-title">Atomic settlement</div>
+        <div class="phil-desc">A Claim either settles completely — fee to PersonalOS, Yield to the Soul's wallet — or it doesn't happen at all. There is no partial settlement, no processing lag, no credit risk. The smart contract is the payment processor.</div>
+      </div>
+      <div class="phil-item">
+        <div class="phil-icon">🔍</div>
+        <div class="phil-title">Publicly auditable</div>
+        <div class="phil-desc">Every Budget deposit, every Claim settlement, every Yield payment is a transaction on Base chain. Anyone can read the contract ABI, verify the fee split, and trace every USDC movement. No black box.</div>
+      </div>
+      <div class="phil-item">
+        <div class="phil-icon">🔐</div>
+        <div class="phil-title">Non-custodial by default</div>
+        <div class="phil-desc">PersonalOS cannot access a Soul's Wallet. The Soul's passkey controls the Smart Wallet — PersonalOS can only deposit Yield into it via the settlement contract. Funds flow in, but PersonalOS has no outbound access.</div>
+      </div>
+    </div>
+
+    <!-- ── CONTRACTS ── -->
+    <section id="contracts">
+      <h2>The Contracts</h2>
+      <div class="contracts-grid">
+
+        <!-- BudgetEscrow -->
+        <div class="contract-card escrow">
+          <div class="contract-header">
+            <div class="contract-name">BudgetEscrow.sol</div>
+            <div class="contract-tagline">Holds Brand USDC from Listing creation through Claim settlement</div>
+            <div class="contract-meta">
+              <span class="meta-pill chain">Base mainnet</span>
+              <span class="meta-pill immutable">Immutable</span>
+              <span class="meta-pill">USDC ERC-20</span>
+            </div>
+          </div>
+          <div class="contract-body">
+            <div class="guarantee">
+              Brand's Budget is locked from the moment of deposit. PersonalOS cannot withdraw it. It only moves in two ways: atomically to a Soul + PersonalOS on a valid Claim, or back to the Brand when a Listing expires with remaining Budget.
+            </div>
+            <span class="fn-label">Key functions</span>
+            <ul class="fn-list">
+              <li><span class="fn-name">deposit</span><span class="fn-params">(listing_id, amount_usdc)</span></li>
+              <li><span class="fn-name">settle</span><span class="fn-params">(claim_id, soul_address, gross_usdc)</span></li>
+              <li><span class="fn-name">refund</span><span class="fn-params">(listing_id)</span></li>
+              <li><span class="fn-name">feeRate</span><span class="fn-params">() → uint256 // immutable</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- SoulWallet -->
+        <div class="contract-card wallet">
+          <div class="contract-header">
+            <div class="contract-name">SoulWallet</div>
+            <div class="contract-tagline">Coinbase Smart Wallet — one per Soul, passkey-controlled</div>
+            <div class="contract-meta">
+              <span class="meta-pill chain">Base mainnet</span>
+              <span class="meta-pill per-soul">Per Soul</span>
+              <span class="meta-pill">ERC-4337</span>
+            </div>
+          </div>
+          <div class="contract-body">
+            <div class="guarantee">
+              PersonalOS can only deposit into this wallet via BudgetEscrow.settle(). It cannot initiate withdrawals, freeze funds, or redirect Yield. The Soul's passkey — backed by iCloud Keychain — is the only key that controls outbound transfers.
+            </div>
+            <span class="fn-label">Key functions</span>
+            <ul class="fn-list">
+              <li><span class="fn-name">receive</span><span class="fn-params">() // accepts USDC from settlement</span></li>
+              <li><span class="fn-name">execute</span><span class="fn-params">(dest, value, data) // Soul-initiated only</span></li>
+              <li><span class="fn-name">validateUserOp</span><span class="fn-params">(op, hash, missingFunds)</span></li>
+              <li><span class="fn-name">exportOwnership</span><span class="fn-params">() // Soul portability</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ConsentRegistry (future) -->
+        <div class="contract-card consent">
+          <div class="contract-header">
+            <div class="contract-name">ConsentRegistry.sol</div>
+            <div class="contract-tagline">On-chain record of Soul Consents per Category — roadmap</div>
+            <div class="contract-meta">
+              <span class="meta-pill chain">Base mainnet</span>
+              <span class="meta-pill" style="color:var(--purple);border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.08)">Roadmap</span>
+            </div>
+          </div>
+          <div class="contract-body">
+            <div class="guarantee">
+              Today, Consents live in the PersonalOS database. The roadmap moves them on-chain: a Soul's opt-in, Yield floor, and revocation are recorded on Base, making PersonalOS's matching engine provably Consent-gated — auditable by Brands, regulators, and Souls alike.
+            </div>
+            <span class="fn-label">Planned functions</span>
+            <ul class="fn-list">
+              <li><span class="fn-name">grantConsent</span><span class="fn-params">(category, yield_floor_usdc)</span></li>
+              <li><span class="fn-name">revokeConsent</span><span class="fn-params">(category)</span></li>
+              <li><span class="fn-name">getConsent</span><span class="fn-params">(soul, category) → ConsentRecord</span></li>
+              <li><span class="fn-name">hasActiveConsent</span><span class="fn-params">(soul, category) → bool</span></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── DOMAIN LEGEND ── -->
+    <div class="legend">
+      <div class="legend-title">Domain Glossary</div>
+      <div class="legend-grid">
+        <div class="legend-item"><strong>Smart Contract</strong><span>self-executing on-chain code on Base that holds Budget escrow and atomically splits a Claim into Yield + platform fee — enforced by code, not PersonalOS</span></div>
+        <div class="legend-item"><strong>Budget</strong><span>USDC deposited by a Brand into BudgetEscrow before a Listing goes live</span></div>
+        <div class="legend-item"><strong>Claim</strong><span>Soul accepts an Offer — the billable event that triggers smart contract settlement</span></div>
+        <div class="legend-item"><strong>Yield</strong><span>USDC deposited into the Soul's Wallet as payment for a Claim</span></div>
+        <div class="legend-item"><strong>Wallet</strong><span>Coinbase Smart Wallet (ERC-4337) on Base — passkey-controlled, one per Soul</span></div>
+        <div class="legend-item"><strong>Consent</strong><span>Soul's opt-in per Category with a minimum Yield floor</span></div>
+      </div>
+    </div>
+
+    <!-- ── PULL QUOTE ── -->
+    <div class="pull-quote">
+      <p>
+        "The fee split is <strong>not a policy PersonalOS can change tomorrow</strong>. It is a constant
+        in a deployed contract. A Brand auditing their spend and a Soul auditing their earnings
+        are both reading from the same immutable source of truth: the Base chain."
+      </p>
+    </div>
+
+    <!-- ── TRUST MODEL ── -->
+    <section id="trust-model">
+      <h2>What the contracts enforce</h2>
+      <div class="trust-grid">
+
+        <div class="trust-col cannot">
+          <div class="trust-header">PersonalOS cannot</div>
+          <ul class="trust-list">
+            <li><strong>Change the fee rate</strong> after a contract is deployed — it is a compile-time constant</li>
+            <li><strong>Access Soul Wallet funds</strong> — the settlement contract can only deposit, never withdraw</li>
+            <li><strong>Redirect Yield</strong> away from the Soul's wallet address on a valid Claim</li>
+            <li><strong>Double-charge a Claim</strong> — claim_id idempotency key prevents re-execution</li>
+            <li><strong>Freeze a Brand's Budget</strong> without a valid Claim or Listing expiry</li>
+            <li><strong>Settle without a matching Claim</strong> — the Exchange backend must call settle() with a valid claim_id</li>
+          </ul>
+        </div>
+
+        <div class="trust-col can">
+          <div class="trust-header">PersonalOS can</div>
+          <ul class="trust-list">
+            <li><strong>Call settle()</strong> on each valid Claim — this is the only write PersonalOS makes to the escrow contract</li>
+            <li><strong>Review Listing content</strong> before activation — off-chain moderation, on-chain Budget is unaffected</li>
+            <li><strong>Deploy new contract versions</strong> with updated fee rates — new Listings use the new contract, existing Listings honour the original</li>
+            <li><strong>Publish the contract address and ABI</strong> — this is a commitment, not a courtesy</li>
+            <li><strong>Call refund()</strong> when a Listing expires with remaining Budget — returns funds to the Brand</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── CONTRACT FLOW ── -->
+    <section id="contract-flow">
+      <h2>How contracts drive the Claim flow</h2>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#1a1a2e', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#334155', 'lineColor': '#475569', 'clusterBkg': '#0f0f1a', 'clusterBorder': '#2a2a3d', 'edgeLabelBackground': '#0a0a0f'}}}%%
+sequenceDiagram
+    autonumber
+    participant Brand
+    participant BudgetEscrow as BudgetEscrow.sol
+    participant PersonalOS as PersonalOS Backend
+    participant SoulWallet as SoulWallet (ERC-4337)
+    participant Soul
+
+    Brand->>BudgetEscrow: deposit(listing_id, 1000 USDC)
+    Note over BudgetEscrow: Budget locked — PersonalOS<br/>cannot access these funds
+
+    PersonalOS->>PersonalOS: Exchange matches Soul → Listing
+    PersonalOS->>Soul: push notification — Offer delivered
+
+    Soul->>PersonalOS: Claim tap (optimistic UI)
+    PersonalOS->>BudgetEscrow: settle(claim_id, soul_address, 10 USDC)
+    Note over BudgetEscrow: Atomic split — cannot be<br/>partially executed
+    BudgetEscrow->>PersonalOS: 2 USDC (platform fee)
+    BudgetEscrow->>SoulWallet: 8 USDC (Yield)
+    Note over SoulWallet: PersonalOS cannot<br/>move these funds back out
+
+    BudgetEscrow-->>PersonalOS: settlement confirmed
+    PersonalOS-->>Soul: Yield confirmed on-chain
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VERIFICATION ── -->
+    <section id="verify">
+      <h2>Verify it yourself</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;">
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;">
+          <div style="font-size:0.72rem;font-family:monospace;letter-spacing:0.12em;text-transform:uppercase;color:var(--amber);margin-bottom:0.75rem;">Contract address</div>
+          <div style="font-family:monospace;font-size:0.8rem;color:var(--muted);word-break:break-all;">Published at launch on Base mainnet. Any Base block explorer can verify the bytecode, ABI, and all historical transactions.</div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;">
+          <div style="font-size:0.72rem;font-family:monospace;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);margin-bottom:0.75rem;">Fee rate verification</div>
+          <div style="font-family:monospace;font-size:0.8rem;color:var(--muted);">Call <span style="color:var(--blue)">BudgetEscrow.feeRate()</span> at any time. The returned value is the immutable fee split. It cannot differ from what was set at deploy time.</div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;">
+          <div style="font-size:0.72rem;font-family:monospace;letter-spacing:0.12em;text-transform:uppercase;color:var(--purple);margin-bottom:0.75rem;">Claim audit trail</div>
+          <div style="font-family:monospace;font-size:0.8rem;color:var(--muted);">Every <span style="color:var(--blue)">settle()</span> call emits a <span style="color:var(--blue)">ClaimSettled</span> event on-chain. Filter by Soul wallet address to see every Yield payment ever made, independently of PersonalOS.</div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    PersonalOS Platform Architecture — Trust Architecture / Smart Contracts
+  </footer>
+
+</body>
+</html>

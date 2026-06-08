@@ -197,9 +197,11 @@
     .card.blue   { border-top: 3px solid var(--blue);   }
     .card.teal   { border-top: 3px solid var(--teal);   }
     .card.purple { border-top: 3px solid var(--purple); }
+    .card.amber  { border-top: 3px solid var(--amber);  }
     .card:hover.blue   { border-color: var(--blue);   }
     .card:hover.teal   { border-color: var(--teal);   }
     .card:hover.purple { border-color: var(--purple); }
+    .card:hover.amber  { border-color: var(--amber);  }
     .card-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
     .card-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
     .card-desc  { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.25rem; }
@@ -213,6 +215,7 @@
     .dot.blue   { background: var(--blue);   }
     .dot.teal   { background: var(--teal);   }
     .dot.purple { background: var(--purple); }
+    .dot.amber  { background: var(--amber);  }
     .card-cta {
       display: inline-flex; align-items: center; gap: 6px;
       font-size: 0.8rem; font-weight: 600; margin-top: 1rem;
@@ -220,6 +223,7 @@
     .card.blue   .card-cta { color: var(--blue);   }
     .card.teal   .card-cta { color: var(--teal);   }
     .card.purple .card-cta { color: var(--purple); }
+    .card.amber  .card-cta { color: var(--amber);  }
 
     /* ── STORE PILLS ── */
     .stores {
@@ -394,9 +398,35 @@ Reputation")]
         <div class="card-meta">
           <span><span class="dot blue"></span>Soul — earns Yield while they sleep</span>
           <span><span class="dot purple"></span>Brand — funds Listings, watches Claims roll in</span>
-          <span><span class="dot" style="background:var(--amber)"></span>Platform Admin — reviews, monitors, supports</span>
+          <span><span class="dot amber"></span>Platform Admin — reviews, monitors, supports</span>
         </div>
         <div class="card-cta">Open narratives →</div>
+      </a>
+
+      <a href="contracts.html" class="card amber">
+        <span class="card-icon">⛓</span>
+        <div class="card-title">Smart Contracts</div>
+        <div class="card-desc">What separates "trust us" from "verify it." The contracts on Base mean PersonalOS structurally cannot betray Souls — the fee split, escrow, and Yield deposit are in immutable code anyone can audit.</div>
+        <div class="card-meta">
+          <span><span class="dot amber"></span>BudgetEscrow.sol — escrow + settlement</span>
+          <span><span class="dot amber"></span>SoulWallet (ERC-4337) — non-custodial Yield</span>
+          <span><span class="dot amber"></span>ConsentRegistry.sol — roadmap</span>
+          <span><span class="dot amber"></span>What PersonalOS cannot do</span>
+        </div>
+        <div class="card-cta">Open contracts →</div>
+      </a>
+
+      <a href="bom.html" class="card" style="border-top:3px solid #22c55e;">
+        <span class="card-icon">$</span>
+        <div class="card-title">Bill of Materials</div>
+        <div class="card-desc">Complete cost model with a live calculator — every infra component, third-party integration, and on-chain cost. Explore unit economics from 500 to 500,000 Souls with interactive assumption sliders.</div>
+        <div class="card-meta">
+          <span><span class="dot" style="background:#22c55e"></span>Plaid · Arweave · Base gas · RPC</span>
+          <span><span class="dot" style="background:#22c55e"></span>Compute · DB · Redis · Workers</span>
+          <span><span class="dot" style="background:#22c55e"></span>Live calculator — 7 assumption sliders</span>
+          <span><span class="dot" style="background:#22c55e"></span>Scale table: 1k → 500k Souls</span>
+        </div>
+        <div class="card-cta" style="color:#22c55e">Open BOM →</div>
       </a>
 
     </div>
@@ -429,6 +459,7 @@ Reputation")]
       <div class="legend-item"><strong>Exchange</strong><span>continuous real-time matching engine</span></div>
       <div class="legend-item"><strong>Listing</strong><span>Brand's entry: Category + bid + Budget</span></div>
       <div class="legend-item"><strong>Budget</strong><span>USDC escrow on Base per Listing</span></div>
+      <div class="legend-item"><strong>Smart Contract</strong><span>converts data sovereignty from promise to proof — the fee split and Yield deposit are in immutable code, not policy</span></div>
       <div class="legend-item"><strong>Offer</strong><span>matched Listing → specific Soul, ranked by composite score</span></div>
       <div class="legend-item"><strong>Claim</strong><span>Soul accepts Offer — billable event</span></div>
       <div class="legend-item"><strong>Yield</strong><span>USDC deposited to Soul's Wallet</span></div>
