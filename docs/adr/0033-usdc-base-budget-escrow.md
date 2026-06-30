@@ -1,13 +1,23 @@
-# ADR-0002: Base Chain + USDC as Primary Payment Rail
+# ADR-33: USDC on Base chain as Yield settlement currency; `BudgetEscrow.sol`
 
-## Status
-Accepted (amended: crypto-native positioning, Brand payment flow, smart contract model)
+**Status:** Accepted · Supersedes: fiat cashback / coupon model · **Source:** site
 
-## Context
-Claims trigger Yield payments from Brands to Souls. We needed a payment rail for these micro-payments. Options included fiat (Stripe, UPI) and crypto.
+**Decision.** All Yield settlement uses USDC on Base chain. Brands fund Listings by depositing USDC into `BudgetEscrow.sol` on Base. On Claim, the contract atomically:
+1. Verifies PersonalOS Backend signature + Soul passkey signature.
+2. Checks escrow balance ≥ `bid_per_claim_usdc`.
+3. Transfers `platform_fee_usdc` → PersonalOS fee wallet.
+4. Transfers `yield_usdc` → Soul Smart Wallet.
+5. Emits `ClaimSettled(listing_id, soul_wallet, yield_usdc, fee_usdc, tx_hash)`.
 
-## Decision
-USDC stablecoin on Base (Coinbase L2) is the primary Payment Rail. When a Claim is made, USDC moves atomically from the Brand's Budget escrow to PersonalOS (fee) and the Soul's Wallet via smart contract.
+The smart contract makes the fee split and Yield deposit immutable and publicly auditable. PersonalOS structurally cannot alter the fee split or redirect Yield without deploying a new contract.
+
+**Consequences.** Regulatory exposure: USDC settlement may trigger FinCEN money-services-business classification, state money-transmitter licensing requirements, and MiCA obligations in the EU. Legal review required before launch in each jurisdiction. Coinbase Smart Wallet's passkey-based signing model removes the need for Souls to understand private keys or seed phrases.
+
+---
+
+## Implementation Detail
+
+*Merged from the original USDC Payment Rail ADR (pre-unified numbering). Contains crypto-native positioning, Brand payment flow, and smart contract model specifics.*
 
 ### Crypto-Native Positioning
 PersonalOS is openly crypto-native — this is a feature, not a footnote. Brands see they are funding in USDC on Base. Souls see a USDC wallet and their Base chain address. The crypto identity is front and centre for both sides of the marketplace. The competitive advantage of atomic, transparent, auditable settlement is part of the platform narrative.
@@ -33,14 +43,24 @@ The contract is immutable once deployed. The fee rate is set at deploy time and 
 
 Fee split percentage is deferred to a commercial decision.
 
-## Alternatives Considered
+### Smart Contract Model
+Claim settlement uses an immutable OpenZeppelin escrow pattern deployed on Base:
+- `deposit(listing_id, amount)` — Brand locks USDC into the contract
+- `settle(soul_address, claim_amount)` — PersonalOS backend calls on each Claim; contract splits atomically into platform fee and Soul Yield
+- Contract balance exhausted → Listing deactivates automatically
+
+The contract is immutable once deployed. The fee rate is set at deploy time and published openly — it is a public, auditable commitment, not a terms-of-service promise. If the fee rate changes, a new contract version is deployed; existing Listings honour the rate at which they were funded. Contract address and ABI are published openly on Base chain.
+
+Fee split percentage is deferred to a commercial decision.
+
+### Alternatives Considered (original ADR)
 - **Stripe-first** — simpler to start, familiar, but requires separate solutions for India (UPI), creates credit risk, and doesn't align with the data sovereignty narrative.
 - **Bitcoin** — too volatile for micro-payments, high transaction fees, slow settlement. Wrong tool for $2–20 Claim payments.
 - **Ethereum mainnet** — $1–10 gas fees per transaction make micro-payments economically unviable.
 - **Solana** — cheapest and fastest, but different dev stack (Rust/Anchor) and weaker fiat on/off-ramp story.
 - **Upgradeable contract** — rejected because PersonalOS could change the fee split unilaterally, undermining the trustless narrative.
 
-## Consequences
+### Consequences (original ADR)
 - Atomic Claim settlement via smart contract eliminates payment processing lag and credit risk.
 - Coinbase Commerce abstracts fiat-to-USDC conversion for Brands — no crypto knowledge required to fund a Listing.
 - Coinbase's built-in on/off-ramp solves fiat Withdrawal for Souls without PersonalOS building payment infrastructure.

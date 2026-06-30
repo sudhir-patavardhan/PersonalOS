@@ -1,13 +1,18 @@
-# ADR-0005: Coinbase Smart Wallet for Soul Wallets
+# ADR-32: Coinbase Smart Wallet (ERC-4337) for Yield receipt
 
-## Status
-Accepted (amended: settlement retry, wallet export semantics, iOS-only scope)
+**Status:** Accepted · Supersedes: fiat coupon/cashback model · **Source:** site + ADR blended
 
-## Context
-Each Soul needs a Wallet to receive USDC Yield. The question was whether PersonalOS holds custody of Soul funds or Souls hold their own keys.
+**Decision.** Each Soul is provisioned a non-custodial Coinbase Smart Wallet on Base chain (ERC-4337 account abstraction) during onboarding. The wallet address is stored on the `souls` row. USDC Yield from Claim settlement is deposited directly to this wallet by the `BudgetEscrow.sol` smart contract atomically on Claim. PersonalOS never custodies Soul funds — the smart contract transfers directly from Brand escrow to the Soul's wallet.
 
-## Decision
-Each Soul's Wallet is provisioned via Coinbase Smart Wallet on Soul signup. Keys are custodied via passkey/biometrics (iCloud Keychain on iOS) — no seed phrase required. Yield is deposited directly on-chain to the Soul's address. PersonalOS cannot access Wallet funds.
+The passkey (ADR-31) signs ERC-4337 UserOperations for Claim transactions — no separate crypto wallet seed phrase is required. The Soul's existing Apple ecosystem identity (Face ID / Touch ID backed passkey) is the key for both identity and wallet.
+
+**Consequences.** Non-custodial: PersonalOS cannot access or freeze Soul wallets. Fiat off-ramp via Coinbase off-ramp flow (Coinbase-hosted; PersonalOS mediates only the session URL). Soul onboarding adds Smart Wallet provisioning as an async step after passkey creation. Gas fees for UserOperation submission are abstracted via a paymaster — PersonalOS sponsors gas for Claim transactions, recovering the cost from the platform fee.
+
+---
+
+## Implementation Detail
+
+*Merged from the original Coinbase Smart Wallet ADR (pre-unified numbering). Contains settlement retry mechanics, wallet export semantics, and iOS-only scope.*
 
 ### Platform Scope
 PersonalOS is iOS-only at launch. Android is not on the current roadmap. The passkey/iCloud Keychain model is iOS-native and not designed for cross-platform use at this stage.
@@ -26,12 +31,18 @@ Coinbase Smart Wallet is a smart contract account — there is no seed phrase to
 - The Soul can access the same address directly via the Coinbase Wallet app
 - App copy is explicit: "your wallet address is yours forever, accessible via Coinbase Wallet" — not "export private key"
 
-## Alternatives Considered
+### Wallet Export and Portability
+Coinbase Smart Wallet is a smart contract account — there is no seed phrase to export. "Export" means portability to any Coinbase Smart Wallet-compatible app:
+- The Soul's wallet address is permanently theirs on-chain, regardless of PersonalOS
+- The Soul can access the same address directly via the Coinbase Wallet app
+- App copy is explicit: "your wallet address is yours forever, accessible via Coinbase Wallet" — not "export private key"
+
+### Alternatives Considered (original ADR)
 - **PersonalOS custodial Wallet** — simplest UX, but PersonalOS controls Soul funds. A freeze, breach, or regulatory action could block Soul access to their Yield. Directly contradicts the platform's data and financial sovereignty promise.
 - **Fully non-custodial (seed phrase)** — Soul holds keys entirely, maximum sovereignty. But seed phrase onboarding has high drop-off and irreversible loss risk. Not viable as a default for a consumer app.
 - **Other embedded wallet providers (Privy, Dynamic)** — viable alternatives, but Coinbase Smart Wallet is native to Base chain, has the strongest fiat on/off-ramp story via Coinbase, and aligns with the rest of the Base/USDC stack.
 
-## Consequences
+### Consequences (original ADR)
 - No seed phrases in the onboarding flow — Soul signs in with passkey/biometrics.
 - iCloud Keychain backs up the passkey, making key recovery accessible to iOS users without extra friction.
 - PersonalOS is technically and legally unable to freeze or access Soul Wallet funds.

@@ -1,17 +1,20 @@
-# ADR-0001: Continuous Real-Time Exchange Matching
+# ADR-25: Listing matching: Consent + Yield floor + SoulMind score; semantic v2 on-device
 
-## Status
-Accepted (amended: Offer ranking, notification control, expiry model)
+**Status:** Accepted · Supersedes: `offer_match.skill` · **Source:** ADR log + site Exchange model
 
-## Context
-The Exchange must match Brand Listings to Souls based on their Insights. The question was when to run matching: after each Scoring (batch), when a Soul opens the app, or continuously.
+**Decision.** Offer matching is a two-layer process:
+- **Server-side Exchange (gate):** matches Consents to Listings by Category, Yield floor, and score threshold. The Exchange operates on noisy Insight scores from the server database. This is the privacy-preserving, approximate matching layer.
+- **On-device ranking (optional v2):** SoulMind can compute a richer relevance score for a received Offer using full unnoised Insight data — the score visible only to the Soul. In Phase 2, this on-device score is displayed to the Soul ("This Offer matches you at 96%") but is not transmitted to the Brand or Exchange.
 
-## Decision
-The Exchange runs continuous real-time matching. Two events trigger a match pass:
-1. A new Listing is posted → match against all eligible Souls
-2. A Scoring completes for a Soul → match that Soul against all active Listings
+Semantic v2: SoulMind uses embedding similarity (CoreML NaturalLanguage framework) to compare the Soul's inferred intent signals against Listing creative content. This enables relevance ranking beyond Category matching — a Listing for Patagonia is ranked above a Listing for fast fashion even if both are in `apparel.outdoor` — without transmitting fine-grained data to the server.
 
-The Exchange acts as a personal assistant to the Soul — it curates Offers intelligently rather than delivering everything that technically matches.
+**Consequences.** The Exchange operates on noisy scores (privacy-preserving but approximate). The Soul's on-device ranking provides a richer, accurate relevance signal for their own display. This architecture gives the Soul more signal than the Exchange has — consistent with the "Soul is more informed than the Brand" product promise.
+
+---
+
+## Implementation Detail
+
+*Merged from the original Exchange Matching ADR (pre-unified numbering). Contains Offer ranking, notification control, and expiry model specifics not covered in the architectural decision above.*
 
 ### Offer Ranking
 Matched Offers are ranked by a composite score: `bid × Reputation × recency_weight`, where:
@@ -34,12 +37,18 @@ When a Scoring run produces multiple matched Offers, only the top-ranked Offer (
 
 This ensures no Offer expires without the Soul having had a fair opportunity to act on it.
 
-## Alternatives Considered
+### Offer Expiry
+- For Offers where a push notification was sent: the 72-hour expiry clock starts at push delivery time.
+- For silent Offers queued behind the Soul's notification cap: the expiry clock starts when the Offer is promoted to a push slot or first seen by the Soul in-app — whichever comes first.
+
+This ensures no Offer expires without the Soul having had a fair opportunity to act on it.
+
+### Alternatives Considered (original ADR)
 - **Post-Scoring batch** — simpler infrastructure, but introduces latency between fresh Insights and Offer delivery. A Soul with a new high-value Insight could miss a time-sensitive Listing.
 - **On app-open** — ties matching to engagement, not data freshness. A Soul who doesn't open the app for a week misses all matches during that window.
 - **Flood delivery** — delivering all matched Offers immediately with push notifications. Rejected: notification fatigue degrades Soul trust and engagement.
 
-## Consequences
+### Consequences (original ADR)
 - Requires an event-driven matching service that reacts to both Listing and Scoring events.
 - Higher infrastructure complexity than batch matching.
 - Ensures Offers always reflect the freshest Insights and Listings are filled as fast as possible.

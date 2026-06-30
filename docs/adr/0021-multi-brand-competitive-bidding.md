@@ -1,13 +1,20 @@
-# ADR-0006: Reputation Scoring via Plaid Harvest Detection
+# ADR-21: Multi-brand competitive bidding for declared Consent
 
-## Status
-Accepted (amended: per-Signal-Type conversion windows, time-based decay, Voucher webhook)
+**Status:** Accepted · **Source:** ADR log
 
-## Context
-After a Soul Claims an Offer, there is no guaranteed connection between that Claim and an actual purchase. Brands care about real buyers, not just attention. The platform needed a mechanism to surface Souls who act on Claims — without requiring Brand-reported attribution, without unique per-Soul coupon tracking, and without breaking the anonymity model.
+**Decision.** Multiple Brands may hold active Listings for the same Category. The Exchange ranks them by `bid × Reputation × recency_weight` and delivers the highest-ranked Offer to the Soul per Category per day (subject to Consent notification limits). The Soul sees the Brand, the Yield amount, and the Category. They Claim or dismiss. If dismissed, the second-ranked Brand may be surfaced the next day.
 
-## Decision
-Reputation is scored per-Signal-Type using Plaid Harvest data. After a Claim in a given Category, Scoring monitors subsequent Harvests for matching purchase Transaktions in that category. If a matching purchase is detected within the Category's conversion window, the Soul's Reputation for that Category increases. There is no direct attribution between a specific Claim and a specific purchase — the category-level purchase signal is sufficient.
+A Soul never sees competing Brand names simultaneously for the same intent (to avoid a sponsored-results inbox aesthetic). The competitive dynamic is visible in the Yield amount — higher bids appear as higher Yield to the Soul.
+
+**Consequences.** Brands compete on price (bid) and track record (Reputation). Reputation score decays if a Soul Claim does not result in a detected purchase (via next Harvest). This creates accountability: a Brand whose Offers are Claimed but not converted accumulates Reputation decay and must bid higher to maintain Exchange position.
+
+---
+
+## Section 4 — Intelligence Architecture (SoulMind)
+
+## Implementation Detail
+
+*Merged from the original Reputation Scoring ADR (pre-unified numbering). Contains per-Category conversion windows, Reputation decay model, and Voucher webhook mechanics.*
 
 ### Conversion Windows
 Conversion windows are defined per Category by PersonalOS and published as part of the open Scoring algorithm (ADR-0003). They are not Soul-configurable. Example windows:
@@ -31,7 +38,14 @@ For Brands who want protected single-use codes, PersonalOS supports an optional 
 
 Non-webhook Vouchers remain non-unique per Soul — Brands accept this limitation when not using the webhook integration.
 
-## Alternatives Considered
+### Vouchers
+Vouchers (discount codes, promo offers) may be included in Listing content as a Soul-facing benefit. Voucher integrity is the Brand's responsibility. PersonalOS never generates, stores, or tracks Voucher codes.
+
+For Brands who want protected single-use codes, PersonalOS supports an optional `voucher_delivery_webhook` field on Listings. On each Claim, PersonalOS calls the webhook and the Brand's system returns a fresh code. The code generation and validity logic stays entirely on the Brand side. This is documented explicitly in Brand onboarding.
+
+Non-webhook Vouchers remain non-unique per Soul — Brands accept this limitation when not using the webhook integration.
+
+### Alternatives Considered (original ADR)
 - **Brand-reported redemption via API** — requires every Brand to build an integration. Raises onboarding bar significantly. Not viable for early-stage platform with unproven volume.
 - **Unique per-Claim coupon codes** — enables precise redemption tracking but creates a de-anonymization risk: the Brand's checkout system can join the coupon code to their customer record, bridging from anonymous to identifiable. Contradicts the privacy model.
 - **Soul self-reporting** — "Did you make a purchase?" prompt in-app. Gameable — Souls have Yield incentive to misreport. Unreliable as a signal.
@@ -39,7 +53,7 @@ Non-webhook Vouchers remain non-unique per Soul — Brands accept this limitatio
 - **Fixed conversion window across all Categories** — rejected. Purchase consideration time varies too widely by category to use a single window without systematically over- or under-counting Reputation in high and low-velocity categories.
 - **Soul-configurable Reputation decay** — rejected. Reputation is a signal for Brands, not a setting for Souls. Allowing Souls to slow decay would create an incentive to inflate their own scores.
 
-## Consequences
+### Consequences (original ADR)
 - Reputation is a directional signal, not a precise attribution. A Soul who buys a car is a real automotive buyer regardless of which specific Listing triggered the purchase.
 - Reputation computation runs on-device during Scoring — consistent with the privacy model (ADR-0003). Only the resulting Reputation scores reach the server.
 - Plaid coverage is not universal: cash purchases, business accounts, and non-linked banks are invisible. Reputation will undercount for some Souls. This is acceptable — it means Reputation is conservative, not inflated.
