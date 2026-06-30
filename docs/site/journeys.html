@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PersonalOS — Journeys, Build Order & Test Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E0F12;          /* base */
+    --surface:#16181D;      /* raised */
+    --surface2:#1C1F26;     /* raised 2 */
+    --hair:#2A2D34;         /* hairline */
+    --hair2:#383C45;
+    --text:#ECECE7;         /* bright */
+    --muted:#8A8F98;        /* muted */
+    --faint:#5B606B;        /* faintest */
+    --gold:#C9A84C;         /* VALUE / Yield */
+    --gold-dim:#7d6a32;
+    --teal:#5FB7C4;         /* PRIVACY / on-device */
+    --teal-dim:#356b73;
+    --rose:#C96F5F;         /* risk / open */
+    --display:"Fraunces",Georgia,serif;
+    --body:"Space Grotesk",system-ui,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0;background:var(--ink);color:var(--text);
+    font-family:var(--body);line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(circle at 80% -5%,rgba(95,183,196,.06),transparent 45%),
+                     radial-gradient(circle at 0% 100%,rgba(201,168,76,.05),transparent 40%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+  .mono{font-family:var(--mono)}
+  a{color:inherit}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+    background:rgba(14,15,18,.72);border-bottom:1px solid var(--hair)}
+  nav .wrap{display:flex;align-items:center;gap:8px;height:56px;flex-wrap:wrap}
+  nav .brand{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--muted);
+    text-transform:uppercase;margin-right:auto}
+  nav .brand b{color:var(--text);font-weight:500}
+  nav a.lk{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--muted);
+    text-decoration:none;padding:6px 11px;border:1px solid var(--hair);border-radius:2px;
+    transition:.18s}
+  nav a.lk:hover,nav a.lk:focus-visible{color:var(--text);border-color:var(--hair2);outline:none}
+  nav a.lk b{color:var(--gold);font-weight:500}
+
+  /* ---------- hero ---------- */
+  header.hero{padding:84px 0 56px;border-bottom:1px solid var(--hair)}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--teal);margin:0 0 22px}
+  h1{font-family:var(--display);font-weight:500;font-size:clamp(38px,6.4vw,72px);
+    line-height:1.02;letter-spacing:-.02em;margin:0 0 24px;font-optical-sizing:auto}
+  h1 em{font-style:italic;color:var(--gold)}
+  .lede{font-size:clamp(16px,2vw,19px);color:var(--muted);max-width:60ch;margin:0}
+  .lede b{color:var(--text);font-weight:500}
+
+  /* boundary key */
+  .key{display:flex;gap:26px;flex-wrap:wrap;margin-top:38px;
+    font-family:var(--mono);font-size:12px;letter-spacing:.04em}
+  .key span{display:flex;align-items:center;gap:9px;color:var(--muted)}
+  .dot{width:11px;height:11px;border-radius:50%;flex:none}
+  .dot.t{background:var(--teal)} .dot.g{background:var(--gold)} .dot.r{background:var(--rose)}
+
+  /* ---------- section frame ---------- */
+  section{padding:78px 0;border-bottom:1px solid var(--hair)}
+  .sec-head{display:flex;align-items:baseline;gap:18px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-num{font-family:var(--mono);font-size:13px;color:var(--gold);letter-spacing:.1em}
+  h2{font-family:var(--display);font-weight:500;font-size:clamp(28px,4vw,44px);
+    letter-spacing:-.015em;margin:0;line-height:1.05}
+  .sec-sub{color:var(--muted);max-width:64ch;margin:16px 0 0;font-size:15.5px}
+  .sec-sub b{color:var(--text);font-weight:500}
+
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+  /* ---------- USER JOURNEY ---------- */
+  .phase-tag{display:inline-flex;align-items:center;gap:10px;margin:46px 0 6px;
+    font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+  .phase-tag .n{color:var(--ink);background:var(--teal);border-radius:2px;padding:3px 8px;font-weight:500}
+  .phase-tag.p2 .n{background:var(--gold)}
+  .phase-tag h3{font-family:var(--display);font-style:italic;font-weight:400;font-size:22px;
+    margin:0;color:var(--text);letter-spacing:0}
+
+  .journey{position:relative;margin-top:26px}
+  /* the device-boundary spine */
+  .journey::before{content:"";position:absolute;left:23px;top:6px;bottom:6px;width:2px;
+    background:linear-gradient(var(--teal),var(--teal-dim) 55%,var(--gold-dim) 56%,var(--gold))}
+  @media(max-width:640px){.journey::before{left:15px}}
+
+  .step{position:relative;display:grid;grid-template-columns:48px 1fr;gap:18px;
+    padding:11px 0}
+  .step .marker{position:relative;z-index:2;width:48px;display:flex;justify-content:center}
+  .step .marker i{width:15px;height:15px;border-radius:50%;background:var(--ink);
+    border:2px solid var(--teal);margin-top:5px;font-style:normal}
+  .step.gold .marker i{border-color:var(--gold)}
+  .step .card{background:var(--surface);border:1px solid var(--hair);border-radius:3px;
+    padding:14px 17px;transition:.2s}
+  .step .card:hover{border-color:var(--hair2);background:var(--surface2)}
+  .step .st{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--teal);margin-bottom:3px}
+  .step.gold .st{color:var(--gold)}
+  .step .ti{font-weight:600;font-size:15.5px;margin:0 0 3px;letter-spacing:-.01em}
+  .step .ds{color:var(--muted);font-size:13.5px;margin:0}
+  .step .adr{font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-top:6px;letter-spacing:.03em}
+
+  /* boundary callout between phases */
+  .boundary{position:relative;z-index:2;margin:20px 0 6px 66px;
+    border:1px dashed var(--teal-dim);border-radius:3px;background:rgba(95,183,196,.06);
+    padding:13px 16px;font-family:var(--mono);font-size:12.5px;color:var(--teal);letter-spacing:.02em}
+  .boundary b{color:var(--text);font-weight:500}
+  @media(max-width:640px){.boundary{margin-left:40px}}
+
+  /* ---------- BUILD JOURNEY ---------- */
+  .layers{display:flex;flex-direction:column-reverse;gap:14px;margin-top:30px}
+  .layer{border:1px solid var(--hair);border-radius:4px;background:var(--surface);
+    padding:18px 20px;position:relative;overflow:hidden}
+  .layer::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--hair2)}
+  .layer.l-found::before{background:var(--teal)}
+  .layer.l-mvp::before{background:linear-gradient(var(--teal),var(--gold))}
+  .layer.l-rev::before{background:var(--gold)}
+  .layer-top{display:flex;align-items:baseline;gap:13px;flex-wrap:wrap;margin-bottom:11px}
+  .layer-id{font-family:var(--mono);font-size:12px;color:var(--gold);letter-spacing:.08em}
+  .layer h4{font-family:var(--display);font-weight:500;font-size:21px;margin:0;letter-spacing:-.01em}
+  .badge{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+    padding:3px 8px;border-radius:2px;margin-left:auto}
+  .badge.mvp{background:rgba(95,183,196,.14);color:var(--teal);border:1px solid var(--teal-dim)}
+  .badge.rev{background:rgba(201,168,76,.14);color:var(--gold);border:1px solid var(--gold-dim)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  .chip{font-family:var(--mono);font-size:11.5px;color:var(--muted);background:var(--surface2);
+    border:1px solid var(--hair);border-radius:2px;padding:5px 10px;letter-spacing:.02em}
+  .chip .a{color:var(--faint)}
+  .chip.crit{color:var(--text);border-color:var(--gold-dim);background:rgba(201,168,76,.08)}
+  .chip.crit::before{content:"★ ";color:var(--gold)}
+  .gate{font-size:13px;color:var(--muted);border-top:1px dashed var(--hair);padding-top:10px}
+  .gate b{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--teal);font-weight:500;display:block;margin-bottom:3px}
+  .buildflow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--faint);
+    text-transform:uppercase;text-align:center;margin:6px 0 0}
+
+  .critnote{margin-top:22px;border:1px solid var(--gold-dim);border-radius:4px;
+    background:rgba(201,168,76,.06);padding:15px 18px;font-size:14px;color:var(--muted)}
+  .critnote b{color:var(--gold);font-weight:600}
+
+  /* ---------- TEST MAP ---------- */
+  .tgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:30px}
+  @media(max-width:760px){.tgrid{grid-template-columns:1fr}}
+  .tcard{border:1px solid var(--hair);border-radius:4px;background:var(--surface);padding:17px 19px}
+  .tcard.span{grid-column:1/-1}
+  .tcard.trust{border-color:var(--gold-dim);background:rgba(201,168,76,.05)}
+  .tcard h5{font-family:var(--display);font-weight:500;font-size:18px;margin:0 0 3px;letter-spacing:-.01em}
+  .tcard .layer-ref{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--teal);
+    text-transform:uppercase;margin-bottom:12px;display:block}
+  .tcard.trust .layer-ref{color:var(--gold)}
+  .tcard ul{margin:0;padding:0;list-style:none}
+  .tcard li{position:relative;padding:6px 0 6px 22px;font-size:13.6px;color:var(--text);
+    border-top:1px solid var(--hair)}
+  .tcard li:first-child{border-top:none}
+  .tcard li::before{content:"";position:absolute;left:2px;top:13px;width:7px;height:7px;
+    border:1.5px solid var(--teal);border-radius:1px}
+  .tcard.trust li::before{border-color:var(--gold)}
+  .tcard li span{color:var(--muted)} .tcard li .m{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+  .tcard li.open::before{border-color:var(--rose)}
+  .tcard li.open .m{color:var(--rose)}
+
+  footer{padding:48px 0 70px;color:var(--faint);font-family:var(--mono);font-size:11.5px;
+    letter-spacing:.04em;line-height:1.8}
+  footer b{color:var(--muted);font-weight:400}
+  ::selection{background:var(--gold);color:var(--ink)}
+  :focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><b>PersonalOS</b> · Journeys &amp; Architecture</div>
+    <a class="lk" href="#journey"><b>I</b> User Journey</a>
+    <a class="lk" href="#build"><b>II</b> Build Order</a>
+    <a class="lk" href="#tests"><b>III</b> Test Map</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Derived from the Unified ADR Log · 37 decisions</p>
+    <h1>The Soul crosses one<br>boundary — and only<br><em>insight</em> goes with it.</h1>
+    <p class="lede">Everything below is organised around the single architectural truth that defines PersonalOS: <b>raw data is harvested, enriched, and encrypted on the Soul's device</b>; only noisy Insight scores, Arweave pointers, and Claim actions ever leave it. The user journey, the build order, and the test strategy all live on one side or the other of that line.</p>
+    <div class="key">
+      <span><i class="dot t"></i> Teal — on-device / privacy boundary</span>
+      <span><i class="dot g"></i> Gold — value / Yield &amp; marketplace</span>
+      <span><i class="dot r"></i> Rose — open / unresolved</span>
+    </div>
+  </div>
+</header>
+
+<!-- ============ I. USER JOURNEY ============ -->
+<section id="journey">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-num">I</span><h2>The Soul's Journey</h2></div>
+    <p class="sec-sub reveal">Two phases. <b>Phase 1 earns Phase 2.</b> A Soul first comes to understand themselves better than any advertiser could — then, and only then, unlocks a marketplace where brands must reach <em>up</em> to them across a Yield floor they set.</p>
+
+    <!-- PHASE 1 -->
+    <div class="phase-tag reveal"><span class="n">Phase 1</span><h3>Self-knowledge — no marketplace yet</h3></div>
+    <div class="journey">
+      <div class="step reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">01 · On device</div><p class="ti">Create your Soul</p>
+        <p class="ds">A WebAuthn passkey is generated in the Secure Enclave — it's both your identity and the source of your encryption key. Under 3 minutes, no password.</p>
+        <p class="adr">ADR-31 · ADR-08</p></div></div>
+
+      <div class="step reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">02 · On device</div><p class="ti">A wallet appears, silently</p>
+        <p class="ds">A Coinbase Smart Wallet (ERC-4337) is provisioned in the background — no seed phrase, no crypto knowledge required. It's where Yield will land later.</p>
+        <p class="adr">ADR-32</p></div></div>
+
+      <div class="step reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">03 · On device</div><p class="ti">Connect the first bank</p>
+        <p class="ds">Plaid Link opens in a WebView. Credentials go to Plaid, never to PersonalOS. This single Konnection is the entire first session.</p>
+        <p class="adr">ADR-02 · ADR-05 (Tier 1)</p></div></div>
+
+      <div class="step reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">04 · On device</div><p class="ti">Harvest &amp; SoulMind enrich</p>
+        <p class="ds">Raw transactions land in a sandboxed memory buffer. SoulMind's Semantic Curation Engine resolves merchants, assigns categories, attaches intent tags, and stamps compliance flags — then zeroes the plaintext.</p>
+        <p class="adr">ADR-01 · ADR-30</p></div></div>
+
+      <div class="step reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">05 · On device → Ledger</div><p class="ti">Write to the Ledger</p>
+        <p class="ds">The enriched batch is encrypted (AES-256-GCM) and written to Arweave via Irys — permanent, immutable, readable only with your passkey-derived key.</p>
+        <p class="adr">ADR-11 · ADR-08</p></div></div>
+
+      <div class="step reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">06 · On device</div><p class="ti">The 90-second Insight</p>
+        <p class="ds">Your first Insight fires within 90 seconds: <em>"$816 a year on an Adobe subscription with no usage signals."</em> This is the moment the product earns trust.</p>
+        <p class="adr">ADR-06 · ADR-23</p></div></div>
+
+      <div class="step reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">07 · On device</div><p class="ti">A SoulProfile &amp; Archetype form</p>
+        <p class="ds">Scores accumulate into a behavioural profile and an Archetype — e.g. <em>"The Discerning Researcher."</em> This is self-knowledge, not a target.</p>
+        <p class="adr">ADR-17 · ADR-23</p></div></div>
+
+      <div class="step reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">08 · On device</div><p class="ti">Deepen — add Health, Google</p>
+        <p class="ds">Contextual prompts invite more sources. Cross-source correlations emerge: <em>"your best glucose months are your highest Whole Foods months"</em> — visible only to you.</p>
+        <p class="adr">ADR-05 · ADR-24 · ADR-16</p></div></div>
+
+      <div class="step reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">09 · On device</div><p class="ti">Depth Score climbs</p>
+        <p class="ds">Each source and each month of history raises your SoulProfile Depth Score toward the 60% gate. Financial data is weighted highest.</p>
+        <p class="adr">ADR-18 · ADR-19</p></div></div>
+    </div>
+
+    <div class="boundary reveal">⟶ Across this line, all that ever traveled was <b>noisy Insight scores + Arweave content hashes</b>. No transaction, no merchant, no amount. <b>The server cannot read you.</b> &nbsp;(ADR-07 · ADR-14)</div>
+
+    <!-- PHASE 2 -->
+    <div class="phase-tag p2 reveal"><span class="n">Phase 2</span><h3>The marketplace — unlocked at 60%</h3></div>
+    <div class="journey">
+      <div class="step gold reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">10 · Unlocked</div><p class="ti">"Your SoulProfile is ready"</p>
+        <p class="ds">Crossing 60% Depth opens Phase 2 — framed as something earned through contribution, never sold as an upgrade.</p>
+        <p class="adr">ADR-18</p></div></div>
+
+      <div class="step gold reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">11 · You declare intent</div><p class="ti">Grant a Consent + set a Yield floor</p>
+        <p class="ds">You pick a Category (e.g. <span class="mono">automotive.new_vehicle_purchase</span>) and set the minimum Yield a brand must pay to reach you. No Consent = no offers, no matter your score.</p>
+        <p class="adr">ADR-20 · ADR-13</p></div></div>
+
+      <div class="step gold reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">12 · The Exchange discovers</div><p class="ti">A Listing matches you</p>
+        <p class="ds">Brands holding Listings in your consented Category compete; the Exchange ranks them by <span class="mono">bid × Reputation × recency</span> and surfaces one.</p>
+        <p class="adr">ADR-21 · ADR-25</p></div></div>
+
+      <div class="step gold reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">13 · Offer arrives</div><p class="ti">Claim or dismiss</p>
+        <p class="ds">You see the brand, the Yield, and an on-device match score ("matches you 96%") that the brand never sees. You're the most-informed party in the transaction.</p>
+        <p class="adr">ADR-25</p></div></div>
+
+      <div class="step gold reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">14 · Settlement</div><p class="ti">USDC lands in your wallet</p>
+        <p class="ds">A Claim settles USDC Yield via <span class="mono">BudgetEscrow.sol</span> on Base — plus an optional brand Voucher on top. The contract's fee split is immutable; PersonalOS cannot redirect it.</p>
+        <p class="adr">ADR-33 · ADR-34 · ADR-35</p></div></div>
+
+      <div class="step gold reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">15 · The accountability loop</div><p class="ti">Conversion is verified</p>
+        <p class="ds">Your next Harvest detects whether the purchase happened. Brands whose offers are claimed but never convert accumulate Reputation decay and must bid higher.</p>
+        <p class="adr">ADR-21</p></div></div>
+
+      <div class="step gold reveal"><div class="marker"><i></i></div><div class="card">
+        <div class="st">16 · Yours, verifiably</div><p class="ti">Withdraw</p>
+        <p class="ds">The USDC is non-custodial and on-chain. You can verify every Claim credited your wallet correctly, independent of PersonalOS.</p>
+        <p class="adr">ADR-32 · ADR-35</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ II. BUILD JOURNEY ============ -->
+<section id="build">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-num">II</span><h2>The Build Order</h2></div>
+    <p class="sec-sub reveal">Build foundation-up. Each layer has a <b>gate</b> — a provable condition — that must hold before the next begins. The diagram reads bottom-to-top, the order you build in. The critical path is <b>SoulMind's Semantic Curation Engine</b>: it's the most complex component and the quality of every Insight, Archetype, and Offer depends on it.</p>
+
+    <p class="buildflow reveal">▲ build order — each layer stands on the one beneath it</p>
+    <div class="layers">
+
+      <!-- Layer 0 -->
+      <div class="layer l-found reveal">
+        <div class="layer-top"><span class="layer-id">LAYER 0</span><h4>Identity &amp; Crypto Foundation</h4></div>
+        <div class="chips">
+          <span class="chip">iOS app shell <span class="a">· Swift</span></span>
+          <span class="chip">WebAuthn passkey + Secure Enclave <span class="a">· ADR-31</span></span>
+          <span class="chip">AES-256-GCM + PBKDF2 key derivation <span class="a">· ADR-08</span></span>
+          <span class="chip">Coinbase Smart Wallet provisioning <span class="a">· ADR-32</span></span>
+        </div>
+        <p class="gate"><b>Gate to pass</b> A Soul can be created and the same encryption key re-derived deterministically from the passkey — and never extracted from the Enclave.</p>
+      </div>
+
+      <!-- Layer 1 -->
+      <div class="layer reveal">
+        <div class="layer-top"><span class="layer-id">LAYER 1</span><h4>Harvest &amp; Ledger — the data spine</h4></div>
+        <div class="chips">
+          <span class="chip">Plaid connector (first source only) <span class="a">· ADR-02</span></span>
+          <span class="chip crit">SoulMind Semantic Curation Engine <span class="a">· ADR-30</span></span>
+          <span class="chip">Arweave / Irys Ledger write + read <span class="a">· ADR-11</span></span>
+          <span class="chip">Append-only shard model <span class="a">· ADR-10</span></span>
+        </div>
+        <p class="gate"><b>Gate to pass</b> A real bank's data is enriched, encrypted, written to Arweave, and read back to an identical record — with the plaintext buffer provably zeroed.</p>
+      </div>
+
+      <!-- Layer 2 -->
+      <div class="layer l-mvp reveal">
+        <div class="layer-top"><span class="layer-id">LAYER 2</span><h4>Intelligence &amp; Phase 1 value</h4><span class="badge mvp">← MVP / Phase 1 launch</span></div>
+        <div class="chips">
+          <span class="chip">SoulMind CoreML Scoring (≤5s on A12) <span class="a">· ADR-23</span></span>
+          <span class="chip">Cross-source correlation engine <span class="a">· ADR-24</span></span>
+          <span class="chip">Insight feed + 90-second first Insight <span class="a">· ADR-06</span></span>
+          <span class="chip">Differential-privacy noise on scores <span class="a">· ADR-14</span></span>
+        </div>
+        <p class="gate"><b>Gate to pass</b> The "$816 moment" reliably fires from financial data alone. This is the smallest thing worth shipping — the product people fall in love with before any marketplace exists.</p>
+      </div>
+
+      <!-- Layer 3 -->
+      <div class="layer reveal">
+        <div class="layer-top"><span class="layer-id">LAYER 3</span><h4>Breadth &amp; Depth</h4></div>
+        <div class="chips">
+          <span class="chip">Apple Health FHIR <span class="a">· ADR-16</span></span>
+          <span class="chip">Google Data Portability API <span class="a">· ADR-04</span></span>
+          <span class="chip">Setu Account Aggregator (India) <span class="a">· ADR-03</span></span>
+          <span class="chip">Tiered onboarding 2 &amp; 3 <span class="a">· ADR-05</span></span>
+          <span class="chip">Depth Score + health exclusion gate <span class="a">· ADR-18/19 · ADR-15</span></span>
+        </div>
+        <p class="gate"><b>Gate to pass</b> Souls reliably cross 60% Depth Score with multi-source data, and health-derived insights are provably barred from any marketplace path.</p>
+      </div>
+
+      <!-- Layer 4 -->
+      <div class="layer l-rev reveal">
+        <div class="layer-top"><span class="layer-id">LAYER 4</span><h4>The Marketplace — Phase 2</h4><span class="badge rev">← revenue</span></div>
+        <div class="chips">
+          <span class="chip">Consent model + UX <span class="a">· ADR-20</span></span>
+          <span class="chip">Server Exchange matching <span class="a">· ADR-25</span></span>
+          <span class="chip">Multi-brand bidding + Reputation <span class="a">· ADR-21</span></span>
+          <span class="chip">BudgetEscrow.sol on Base + USDC <span class="a">· ADR-33/35</span></span>
+          <span class="chip">Claim → Yield + Voucher <span class="a">· ADR-34</span></span>
+        </div>
+        <p class="gate"><b>Gate to pass</b> An end-to-end Claim settles real USDC on Base testnet, then mainnet — Consent-gated, Yield-floor-honoured, fee-split-immutable.</p>
+      </div>
+
+      <!-- Layer 5 -->
+      <div class="layer reveal">
+        <div class="layer-top"><span class="layer-id">LAYER 5</span><h4>Hardening, Scale &amp; Sovereignty</h4></div>
+        <div class="chips">
+          <span class="chip">k-anonymity k=50 floor <span class="a">· ADR-37</span></span>
+          <span class="chip">§1033 enforcement at Exchange <span class="a">· ADR-02</span></span>
+          <span class="chip">ConsentRegistry.sol + upgrade governance <span class="a">· ADR-35</span></span>
+          <span class="chip">Soul-owned Arweave opt-in <span class="a">· ADR-36</span></span>
+          <span class="chip">Passkey recovery path <span class="a">· ADR-31 (open)</span></span>
+        </div>
+        <p class="gate"><b>Gate to pass</b> External smart-contract audit and an independent privacy audit both pass before scaled launch.</p>
+      </div>
+
+    </div>
+
+    <div class="critnote reveal"><b>★ Watch the critical path.</b> SoulMind's Semantic Curation Engine (ADR-30) is the only component that touches raw plaintext, and it determines the quality of everything downstream. It is also proprietary IP. Resource it first and protect it — a thin SCE makes every later layer feel hollow no matter how well it's built.</div>
+  </div>
+</section>
+
+<!-- ============ III. TEST MAP ============ -->
+<section id="tests">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-num">III</span><h2>The Test Map</h2></div>
+    <p class="sec-sub reveal">Tests are grouped to mirror the build layers, so a green group is a green light to move up. One group stands apart: the <b>trust-defining tests</b>. If those ever fail, the product's entire premise fails with them — they are release-blocking, no exceptions.</p>
+
+    <div class="tgrid">
+
+      <div class="tcard reveal">
+        <h5>A · Foundation</h5><span class="layer-ref">Layer 0 — identity &amp; crypto</span>
+        <ul>
+          <li>Passkey creates, asserts, and survives app reinstall via iCloud Keychain</li>
+          <li>AES key derivation is <span>deterministic</span> from the passkey; identical key every time</li>
+          <li>Key is <span>never extractable</span> from the Secure Enclave, even by PersonalOS</li>
+          <li class="open">Passkey-loss recovery behaves as specified <span class="m">OPEN · ADR-31</span></li>
+        </ul>
+      </div>
+
+      <div class="tcard reveal">
+        <h5>B · Harvest &amp; SCE</h5><span class="layer-ref">Layer 1 — quality of everything downstream</span>
+        <ul>
+          <li>Plaid sandbox round-trip lands real transactions in the buffer</li>
+          <li>Merchant resolution accuracy meets target on a labeled set <span class="m">"WHOLEFDS #1234" → Whole Foods</span></li>
+          <li>Every source maps cleanly to the <span class="m">SoulTransaktion</span> schema, lossless</li>
+          <li>Compliance tags are stamped: <span class="m">cfpb_1033</span> on Plaid, <span class="m">health_flag</span> on Health</li>
+          <li>Cross-source tags correct <span class="m">Adobe + zero usage → zero_usage_signal</span></li>
+          <li>No plaintext Transaktion ever written to disk; buffer zeroed post-encrypt</li>
+        </ul>
+      </div>
+
+      <div class="tcard reveal">
+        <h5>C · Ledger</h5><span class="layer-ref">Layer 1 — Arweave permanence</span>
+        <ul>
+          <li>Write → read round-trip decrypts to an identical record array</li>
+          <li>Append-only: a new Harvest never mutates prior shards</li>
+          <li>Adding a source later re-Scores history without modifying old shards</li>
+        </ul>
+      </div>
+
+      <div class="tcard reveal">
+        <h5>D · Intelligence</h5><span class="layer-ref">Layer 2 — SoulMind on-device</span>
+        <ul>
+          <li>Scoring ≤ 5s for ~500 records on an A12 Bionic device</li>
+          <li>First Insight fires ≤ 90s after the first Konnection</li>
+          <li>DP noise bounded at ε ≤ 2.0; Soul sees unnoised, server sees noised</li>
+          <li>Depth Score matches spec <span class="m">Plaid 12mo alone = 30%</span></li>
+          <li>The "$816 moment" reproduces on seeded data</li>
+        </ul>
+      </div>
+
+      <div class="tcard trust span reveal">
+        <h5>★ E · Trust-defining — release-blocking</h5><span class="layer-ref">Cross-layer — the promise itself</span>
+        <ul>
+          <li>Network capture proves the server <span>never</span> receives raw or even ciphertext Transaktions — only hashes, scores, Claims</li>
+          <li>k = 50 anonymity floor: no Exchange query can return a result implying fewer than 50 Souls</li>
+          <li>Health hard-gate: a record with <span class="m">marketplace_eligible:false</span> can never reach Listing matching</li>
+          <li>§1033 use-limitation is enforced at the Exchange, not just tagged</li>
+          <li>Smart-contract fee split is immutable; PersonalOS cannot redirect a Soul's Yield</li>
+          <li>Account deletion = key destruction renders the Arweave Ledger permanently unreadable</li>
+        </ul>
+      </div>
+
+      <div class="tcard reveal">
+        <h5>F · Marketplace</h5><span class="layer-ref">Layer 4 — Phase 2 economics</span>
+        <ul>
+          <li>Consent gate: no Consent → no Offer, regardless of Insight score</li>
+          <li>Exchange ranking equals <span class="m">bid × Reputation × recency</span>, deterministically</li>
+          <li>Yield floor honoured: no Offer ever surfaces below the Soul's floor</li>
+          <li>Claim settles correct USDC via <span class="m">BudgetEscrow.sol</span> on Base testnet</li>
+          <li>Voucher delivers via webhook and is additive to USDC</li>
+          <li>Reputation decays when a Claim doesn't convert, verified via next Harvest</li>
+        </ul>
+      </div>
+
+      <div class="tcard reveal">
+        <h5>G · End-to-end &amp; acceptance</h5><span class="layer-ref">Full lifecycle</span>
+        <ul>
+          <li>Full onboarding completes in under 3 minutes</li>
+          <li>Phase 1 → 2 unlocks at exactly 60% Depth Score</li>
+          <li>Whole lifecycle on testnet: create → Harvest → Insight → Consent → Offer → Claim → USDC → withdraw</li>
+          <li>SCE degrades gracefully with only one source connected</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <b>PersonalOS — Journeys, Build Order &amp; Test Map.</b> Generated from <b>PersonalOS_ADR_Unified.md</b> (37 ADRs, June 2026).<br>
+    Every stage, layer, and test traces to a numbered decision. Teal marks the on-device privacy boundary; gold marks value and the marketplace; rose marks what's still open.
+  </div>
+</footer>
+
+<script>
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(Math.min(i,6)*40)+'ms';io.observe(el)});
+</script>
+</body>
+</html>

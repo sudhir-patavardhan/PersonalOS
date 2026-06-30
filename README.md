@@ -33,13 +33,18 @@ Key concepts at a glance:
 | **Yield** | Payment deposited into a Soul's Wallet after a Claim |
 | **Wallet** | A Soul's accumulated Yield balance |
 
-## Build Order (MVP)
+## Build Order
 
-1. **Konnections** — Soul signup + Plaid integration. A Soul connects their bank via Plaid; Transaktions Harvest into the Ledger.
-2. **Ledger** — Secure storage and display of a Soul's Transaktions.
-3. **Scoring** — Compute Insights from Ledger data. Start with financial Categories.
-4. **Exchange (v1)** — Brand Listings, Consent-gated matching, Offer delivery.
-5. **Claims + Wallet** — Claim flow, Yield deposit, Wallet balance display.
+Six layers, built foundation-up. Each layer has a **gate** — a provable condition that must hold before the next begins. The critical path is **SoulMind's Semantic Curation Engine** (ADR-30): it touches raw plaintext and determines the quality of everything downstream.
+
+| Layer | Name | Key Components | Gate |
+|---|---|---|---|
+| **0** | **Identity & Crypto Foundation** | iOS app shell (Swift), WebAuthn passkey + Secure Enclave (ADR-31), AES-256-GCM + PBKDF2 key derivation (ADR-08), Coinbase Smart Wallet provisioning (ADR-32) | A Soul can be created and the same encryption key re-derived deterministically from the passkey — never extracted from the Enclave |
+| **1** | **Harvest & Ledger — the data spine** | Plaid connector (ADR-02), **★ SoulMind Semantic Curation Engine** (ADR-30), Arweave/Irys Ledger write + read (ADR-11), append-only shard model (ADR-10) | A real bank's data is enriched, encrypted, written to Arweave, and read back identically — plaintext buffer provably zeroed |
+| **2** | **Intelligence & Phase 1 value** ← MVP | SoulMind CoreML Scoring ≤5s on A12 (ADR-23), cross-source correlation (ADR-24), Insight feed + 90-second first Insight (ADR-06), differential-privacy noise on scores (ADR-14) | The "$816 moment" reliably fires from financial data alone — the smallest thing worth shipping |
+| **3** | **Breadth & Depth** | Apple Health FHIR (ADR-16), Google Data Portability API (ADR-04), Setu Account Aggregator for India (ADR-03), tiered onboarding (ADR-05), Depth Score + health exclusion gate (ADR-18/19, ADR-15) | Souls reliably cross 60% Depth with multi-source data; health insights are barred from any marketplace path |
+| **4** | **The Marketplace — Phase 2** ← revenue | Consent model + UX (ADR-20), server Exchange matching (ADR-25), multi-brand bidding + Reputation (ADR-21), BudgetEscrow.sol on Base + USDC (ADR-33/35), Claim → Yield + Voucher (ADR-34) | An end-to-end Claim settles real USDC on Base testnet, then mainnet — Consent-gated, Yield-floor-honoured, fee-split-immutable |
+| **5** | **Hardening, Scale & Sovereignty** | k-anonymity k=50 floor (ADR-37), §1033 enforcement at Exchange (ADR-02), ConsentRegistry.sol + upgrade governance (ADR-35), Soul-owned Arweave opt-in (ADR-36), passkey recovery path (ADR-31, open) | External smart-contract audit and independent privacy audit both pass before scaled launch |
 
 ## Domain Modeling Status
 
@@ -50,13 +55,13 @@ The domain model is being developed via grilling sessions (`/grill-with-docs`). 
 - Consent model: Consent per Category with Yield floor
 - Revenue model: take rate on Claims + Brand subscription
 - Exchange matching: continuous real-time (triggered on new Listing and on Scoring)
+- MVP scope and sequencing: 6-layer build order with gates; MVP at Layer 2 (see Build Order above)
+- Data residency and Ledger security: E2E encrypted (AES-256-GCM) on Arweave via Irys; passkey-derived keys in Secure Enclave; plaintext zeroed post-encrypt (ADR-08, ADR-11)
+- Insight computation: SoulMind Semantic Curation Engine (ADR-30) enriches on-device; CoreML scoring ≤5s on A12 (ADR-23); differential-privacy noise ε ≤ 2.0 on exported scores (ADR-14)
 
 The following areas are **not yet resolved** (continue grilling):
 
-- Wallet withdrawal mechanics (bank transfer vs. gift cards, KYC requirements)
-- MVP scope and sequencing decisions
-- Data residency and Ledger security model
-- Insight computation detail (what signals → what scores)
+- Wallet withdrawal mechanics (USDC on Base decided as primary rail; fiat off-ramp details via Coinbase on/off-ramp still light)
 - Brand onboarding and Listing workflow
 
 ## Tech Stack
