@@ -74,44 +74,12 @@ The following areas are **not yet resolved** (continue grilling):
 
 ## Architecture Decisions
 
-37 architecture decisions are recorded in [`docs/adr/`](./docs/adr/). The canonical consolidated register is [`PersonalOS_ADR_Unified.md`](./docs/adr/PersonalOS_ADR_Unified.md).
+Key decisions are recorded in [`docs/adr/`](./docs/adr/):
 
-| ADR | Decision | Status |
-|---|---|---|
-| [01](./docs/adr/0001-multi-source-harvest-plaid-us-aa-india-google-dpa-apple-heal.md) | Multi-source Harvest: Plaid, AA, Google DPA, Apple Health, BYOD | Accepted |
-| [02](./docs/adr/0002-plaid-for-us-bank-card-konnections.md) | Plaid for US bank & card Konnections | Accepted |
-| [03](./docs/adr/0003-setu-rbi-account-aggregator-for-india-financial-data.md) | Setu / RBI Account Aggregator for India | Accepted |
-| [04](./docs/adr/0004-google-data-portability-api-one-resource-per-archive-job.md) | Google Data Portability API | Accepted |
-| [05](./docs/adr/0005-tiered-harvest-onboarding-zero-low-deferred-friction.md) | Tiered Harvest onboarding: zero / low / deferred friction | Accepted |
-| [06](./docs/adr/0006-insight-feed-as-the-onboarding-engine.md) | Insight feed as the onboarding engine | Accepted |
-| [07](./docs/adr/0007-on-device-processing-scores-only-leave-the-device.md) | On-device processing; scores-only leave the device | Accepted |
-| [08](./docs/adr/0008-aes-256-gcm-encryption-for-all-on-device-state.md) | AES-256-GCM encryption for all on-device state | Accepted |
-| [09](./docs/adr/0009-data-deletion-passkey-destruction-not-arweave-erasure.md) | Data deletion = passkey destruction, not Arweave erasure | Accepted |
-| [10](./docs/adr/0010-portable-compounding-ledger-on-arweave.md) | Portable, compounding Ledger on Arweave | Accepted |
-| [11](./docs/adr/0011-arweave-irys-as-the-encrypted-ledger-store.md) | Arweave / Irys as the encrypted Ledger store | Accepted |
-| [12](./docs/adr/0012-privacy-preserving-broker-consents-yield-floor-gate.md) | Privacy-preserving Exchange: Consents + Yield floor gate | Accepted |
-| [13](./docs/adr/0013-consent-tokens-carry-derived-insights-never-raw-transaktions.md) | Consent tokens carry derived Insights, never raw Transaktions | Accepted |
-| [14](./docs/adr/0014-differential-privacy-noise-on-published-insight-scores.md) | Differential-privacy noise on published Insight scores | Accepted |
-| [15](./docs/adr/0015-health-data-insight-only-excluded-from-listing-matching-unti.md) | Health data: Insight-only; excluded from Listing matching | Accepted |
-| [16](./docs/adr/0016-apple-health-records-fhir-over-bespoke-mychart-aggregation.md) | Apple Health Records (FHIR) over bespoke MyChart | Accepted |
-| [17](./docs/adr/0017-two-phase-model-soulmind-insight-engine-intent-marketplace.md) | Two-phase model: SoulMind insight engine → intent marketplace | Accepted |
-| [18](./docs/adr/0018-soulprofile-depth-score-as-phase-1-2-gate-60.md) | SoulProfile Depth Score as Phase 1→2 gate (60%) | Accepted |
-| [19](./docs/adr/0019-two-axis-depth-score-breadth-depth-financial-data-weighted-2.md) | Two-axis Depth Score: breadth × depth; financial weighted 2× | Accepted |
-| [20](./docs/adr/0020-intent-first-consent-matching-over-passive-inference.md) | Intent-first Consent matching; Exchange augments with Scoring | Accepted |
-| [21](./docs/adr/0021-multi-brand-competitive-bidding-for-declared-consent.md) | Multi-brand competitive bidding for declared Consent | Accepted |
-| [22](./docs/adr/0022-on-device-ios-soulmind-models-over-cloud-llm-agent-sdk.md) | On-device iOS SoulMind models over cloud LLM Agent SDK | Accepted |
-| [23](./docs/adr/0023-soulmind-runs-coreml-scoring-models-on-device-no-raw-data-to.md) | SoulMind CoreML Scoring on-device; no raw data to server | Accepted |
-| [24](./docs/adr/0024-cross-source-semantic-correlation-on-device-via-soulmind.md) | Cross-source semantic correlation on-device via SoulMind | Accepted |
-| [25](./docs/adr/0025-offer-matching-consent-yield-floor-soulmind-score-semantic-v.md) | Offer matching: Consent + Yield floor + SoulMind score | Accepted |
-| [26](./docs/adr/0026-postgresql-supabase-for-metadata-only-no-raw-transaktions-se.md) | PostgreSQL for metadata only; no raw Transaktions server-side | Accepted |
-| [27](./docs/adr/0027-harvest-scheduler-cron-plaid-webhook-soulmind-scores-pushed-.md) | Harvest scheduler: cron + Plaid webhook | Accepted |
-| [28](./docs/adr/0028-on-device-intelligence-replaces-zero-retention-cloud-api.md) | On-device intelligence replaces zero-retention cloud API | Accepted |
-| [29](./docs/adr/0029-key-destruction-as-deletion-for-arweave-resident-ledger.md) | Key-destruction as deletion for Arweave Ledger | Accepted |
-| [30](./docs/adr/0030-soulmind-on-device-semantic-curation-layer-before-ledger-wri.md) | **SoulMind: on-device semantic curation (SCE)** | Accepted — NEW |
-| [31](./docs/adr/0031-webauthn-passkey-as-soul-identity-anchor-and-encryption-key.md) | WebAuthn passkey as Soul identity anchor + AES key derivation | Accepted |
-| [32](./docs/adr/0032-coinbase-smart-wallet-erc-4337-for-yield-settlement.md) | Coinbase Smart Wallet (ERC-4337) for Yield settlement | Accepted |
-| [33](./docs/adr/0033-usdc-on-base-chain-as-settlement-currency-budgetescrow-sol.md) | USDC on Base; BudgetEscrow.sol | Accepted |
-| [34](./docs/adr/0034-blended-settlement-usdc-yield-optional-fiat-voucher-per-list.md) | Blended settlement: USDC Yield + optional fiat Voucher | Accepted |
-| [35](./docs/adr/0035-smart-contract-enforces-fee-split-and-yield-deposit.md) | Smart contract enforces fee split and Yield deposit | Accepted |
-| [36](./docs/adr/0036-arweave-account-model-shared-default-vs-soul-owned-opt-in.md) | Arweave account model: shared vs Soul-owned | Accepted |
-| [37](./docs/adr/0037-re-identification-mitigation-k-anonymity-floor-insight-noise.md) | Re-identification mitigation: k-anonymity + Insight noise | Accepted |
+| ADR | Decision |
+|---|---|
+| [0001](./docs/adr/0001-continuous-exchange-matching.md) | Exchange runs continuous real-time matching |
+| [0002](./docs/adr/0002-base-usdc-payment-rail.md) | Base chain + USDC as primary Payment Rail |
+| [0003](./docs/adr/0003-e2e-encrypted-ledger-local-scoring.md) | E2E encrypted Ledger, Scoring runs on-device |
+| [0004](./docs/adr/0004-arweave-ledger-storage.md) | Arweave via Irys for permanent Ledger storage |
+| [0005](./docs/adr/0005-coinbase-smart-wallet.md) | Coinbase Smart Wallet for Soul Wallets |
