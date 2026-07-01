@@ -80,6 +80,7 @@ Both prior sources used different terminology for the same concepts. This docume
 | 40 | Instagram BYOD export connector for interest and aspiration signals | Accepted | — |
 | 41 | Soul onboarding sequence: install → passkey → wallet → Plaid → first Insight | Accepted | — |
 | 42 | Brand onboarding, Listing creation, and budget lifecycle | Accepted | — |
+| 43 | Wallet withdrawal: USDC transfer and fiat off-ramp via Coinbase | Accepted | — |
 
 ---
 

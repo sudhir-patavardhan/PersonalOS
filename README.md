@@ -61,9 +61,9 @@ The domain model is being developed via grilling sessions (`/grill-with-docs`). 
 
 - Brand onboarding and Listing lifecycle: gated verification, Listing creation with creative review, USDC budget escrow, refund via 2-of-2 multisig (ADR-42)
 
-The following areas are **not yet resolved** (continue grilling):
+- Wallet withdrawal: three paths — fiat off-ramp via Coinbase Pay SDK, USDC transfer to external wallet, in-app accumulation; no PersonalOS withdrawal fee; gas sponsored (ADR-43)
 
-- Wallet withdrawal mechanics (USDC on Base decided as primary rail; fiat off-ramp details via Coinbase on/off-ramp still light)
+All domain modeling areas are **resolved**. No open items remain.
 
 ## Tech Stack
 
@@ -75,7 +75,7 @@ The following areas are **not yet resolved** (continue grilling):
 
 ## Architecture Decisions
 
-42 decisions are recorded in [`docs/adr/`](./docs/adr/). See [`PersonalOS_ADR_Unified.md`](./docs/adr/PersonalOS_ADR_Unified.md) for the full consolidated register.
+43 decisions are recorded in [`docs/adr/`](./docs/adr/). See [`PersonalOS_ADR_Unified.md`](./docs/adr/PersonalOS_ADR_Unified.md) for the full consolidated register.
 
 | Group | ADRs | Summary |
 |---|---|---|
@@ -83,5 +83,5 @@ The following areas are **not yet resolved** (continue grilling):
 | Privacy & Security | [07](./docs/adr/0007-on-device-processing-scores-only.md)–[16](./docs/adr/0016-apple-health-fhir.md) | On-device processing, AES-256-GCM, Arweave Ledger, differential privacy, health data |
 | Product Model & Marketplace | [17](./docs/adr/0017-two-phase-soulmind-marketplace.md)–[21](./docs/adr/0021-multi-brand-competitive-bidding.md), [42](./docs/adr/0042-brand-onboarding-listing-lifecycle.md) | Two-phase model, Depth Score, Consent matching, competitive bidding, Brand onboarding |
 | SoulMind Intelligence | [22](./docs/adr/0022-on-device-soulmind-models.md)–[30](./docs/adr/0030-soulmind-semantic-curation-engine.md) | CoreML scoring, semantic correlation, curation engine (SCE) |
-| Settlement & Wallet | [31](./docs/adr/0031-webauthn-passkey-identity-anchor.md)–[35](./docs/adr/0035-smart-contract-fee-split.md) | Passkey identity, Coinbase Smart Wallet, USDC/BudgetEscrow, fee split |
+| Settlement & Wallet | [31](./docs/adr/0031-webauthn-passkey-identity-anchor.md)–[35](./docs/adr/0035-smart-contract-fee-split.md), [43](./docs/adr/0043-wallet-withdrawal-fiat-offramp.md) | Passkey identity, Coinbase Smart Wallet, USDC/BudgetEscrow, fee split, withdrawal/off-ramp |
 | Hardening | [36](./docs/adr/0036-arweave-account-model.md)–[37](./docs/adr/0037-re-identification-mitigation.md) | Arweave account model, k-anonymity floor |
