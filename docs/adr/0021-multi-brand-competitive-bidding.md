@@ -10,8 +10,6 @@ A Soul never sees competing Brand names simultaneously for the same intent (to a
 
 ---
 
-## Section 4 — Intelligence Architecture (SoulMind)
-
 ## Implementation Detail
 
 *Merged from the original Reputation Scoring ADR (pre-unified numbering). Contains per-Category conversion windows, Reputation decay model, and Voucher webhook mechanics.*

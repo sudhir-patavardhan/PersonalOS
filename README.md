@@ -59,10 +59,11 @@ The domain model is being developed via grilling sessions (`/grill-with-docs`). 
 - Data residency and Ledger security: E2E encrypted (AES-256-GCM) on Arweave via Irys; passkey-derived keys in Secure Enclave; plaintext zeroed post-encrypt (ADR-08, ADR-11)
 - Insight computation: SoulMind Semantic Curation Engine (ADR-30) enriches on-device; CoreML scoring ≤5s on A12 (ADR-23); differential-privacy noise ε ≤ 2.0 on exported scores (ADR-14)
 
+- Brand onboarding and Listing lifecycle: gated verification, Listing creation with creative review, USDC budget escrow, refund via 2-of-2 multisig (ADR-42)
+
 The following areas are **not yet resolved** (continue grilling):
 
 - Wallet withdrawal mechanics (USDC on Base decided as primary rail; fiat off-ramp details via Coinbase on/off-ramp still light)
-- Brand onboarding and Listing workflow
 
 ## Tech Stack
 
@@ -74,13 +75,13 @@ The following areas are **not yet resolved** (continue grilling):
 
 ## Architecture Decisions
 
-41 decisions are recorded in [`docs/adr/`](./docs/adr/). See [`PersonalOS_ADR_Unified.md`](./docs/adr/PersonalOS_ADR_Unified.md) for the full consolidated register.
+42 decisions are recorded in [`docs/adr/`](./docs/adr/). See [`PersonalOS_ADR_Unified.md`](./docs/adr/PersonalOS_ADR_Unified.md) for the full consolidated register.
 
 | Group | ADRs | Summary |
 |---|---|---|
 | Data Acquisition & Onboarding | [01](./docs/adr/0001-multi-source-harvest.md)–[06](./docs/adr/0006-insight-feed-onboarding-engine.md), [38](./docs/adr/0038-amazon-byod-csv-connector.md)–[41](./docs/adr/0041-soul-onboarding-sequence.md) | Multi-source Harvest, Plaid, Setu AA, Google DPA, tiered onboarding, Insight feed, Amazon/Uber/Instagram BYOD, Soul onboarding sequence |
 | Privacy & Security | [07](./docs/adr/0007-on-device-processing-scores-only.md)–[16](./docs/adr/0016-apple-health-fhir.md) | On-device processing, AES-256-GCM, Arweave Ledger, differential privacy, health data |
-| Product Model | [17](./docs/adr/0017-two-phase-soulmind-marketplace.md)–[21](./docs/adr/0021-multi-brand-competitive-bidding.md) | Two-phase model, Depth Score, Consent matching, competitive bidding |
+| Product Model & Marketplace | [17](./docs/adr/0017-two-phase-soulmind-marketplace.md)–[21](./docs/adr/0021-multi-brand-competitive-bidding.md), [42](./docs/adr/0042-brand-onboarding-listing-lifecycle.md) | Two-phase model, Depth Score, Consent matching, competitive bidding, Brand onboarding |
 | SoulMind Intelligence | [22](./docs/adr/0022-on-device-soulmind-models.md)–[30](./docs/adr/0030-soulmind-semantic-curation-engine.md) | CoreML scoring, semantic correlation, curation engine (SCE) |
 | Settlement & Wallet | [31](./docs/adr/0031-webauthn-passkey-identity-anchor.md)–[35](./docs/adr/0035-smart-contract-fee-split.md) | Passkey identity, Coinbase Smart Wallet, USDC/BudgetEscrow, fee split |
 | Hardening | [36](./docs/adr/0036-arweave-account-model.md)–[37](./docs/adr/0037-re-identification-mitigation.md) | Arweave account model, k-anonymity floor |

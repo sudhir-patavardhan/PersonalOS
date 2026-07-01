@@ -79,6 +79,7 @@ Both prior sources used different terminology for the same concepts. This docume
 | 39 | Uber BYOD export connector for ride and mobility history | Accepted | — |
 | 40 | Instagram BYOD export connector for interest and aspiration signals | Accepted | — |
 | 41 | Soul onboarding sequence: install → passkey → wallet → Plaid → first Insight | Accepted | — |
+| 42 | Brand onboarding, Listing creation, and budget lifecycle | Accepted | — |
 
 ---
 

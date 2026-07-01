@@ -43,16 +43,6 @@ The contract is immutable once deployed. The fee rate is set at deploy time and 
 
 Fee split percentage is deferred to a commercial decision.
 
-### Smart Contract Model
-Claim settlement uses an immutable OpenZeppelin escrow pattern deployed on Base:
-- `deposit(listing_id, amount)` — Brand locks USDC into the contract
-- `settle(soul_address, claim_amount)` — PersonalOS backend calls on each Claim; contract splits atomically into platform fee and Soul Yield
-- Contract balance exhausted → Listing deactivates automatically
-
-The contract is immutable once deployed. The fee rate is set at deploy time and published openly — it is a public, auditable commitment, not a terms-of-service promise. If the fee rate changes, a new contract version is deployed; existing Listings honour the rate at which they were funded. Contract address and ABI are published openly on Base chain.
-
-Fee split percentage is deferred to a commercial decision.
-
 ### Alternatives Considered (original ADR)
 - **Stripe-first** — simpler to start, familiar, but requires separate solutions for India (UPI), creates credit risk, and doesn't align with the data sovereignty narrative.
 - **Bitcoin** — too volatile for micro-payments, high transaction fees, slow settlement. Wrong tool for $2–20 Claim payments.
