@@ -6,6 +6,12 @@
 
 Irys provides optimistic finality guarantees before Arweave network propagation is confirmed. The Irys receipt is the functional confirmation for the iOS app; Arweave `tx_id` is the permanent reference.
 
+**Write validation.** Arweave writes are irreversible — validation before write is critical:
+- **Read-back verification:** After each Irys write, the iOS app reads back the uploaded data using the Irys receipt ID and compares the SHA-256 checksum against the pre-upload checksum. A mismatch triggers re-upload (up to 3 retries). The Arweave `tx_id` is not committed to the server until read-back passes.
+- **Batch size limits:** Maximum batch size is 5MB compressed (covers ~10,000 enriched Transaktions). Larger Harvests are split into multiple shards with sequential `shard_index` metadata. This prevents a single corrupt upload from losing an entire large Harvest.
+- **Shard ordering metadata:** Each encrypted batch includes a plaintext (unencrypted) metadata envelope: `{soul_id_hash, shard_index, shard_count, batch_timestamp, checksum}`. This metadata is visible on Arweave but contains no Transaktion data — it enables the iOS app to locate and sequence Ledger shards without decrypting them.
+- **Irys receipt persistence:** The Irys receipt (optimistic finality proof) is stored on-device and on the server `souls.ledger_shards[]` array until Arweave network confirmation (typically 20–30 minutes). If Arweave confirmation does not arrive within 2 hours, an alert is logged for ops investigation.
+
 **Consequences.** Arweave storage has a one-time permanent cost (currently ~$0.003/MB via Irys at scale). This must be modelled per Soul per Harvest in the Bill of Materials. Arweave writes are irreversible — SoulMind (ADR-30) must produce the final enriched, privacy-normalised form before upload, because post-write correction is impossible. Data compaction strategy (how many Transaktions per shard, compression format) must be specified in the SoulMind design.
 
 ---
@@ -21,13 +27,6 @@ Irys is a third-party bundling service. If Irys is unavailable:
 - Direct Arweave writes (bypassing Irys) are supported as an emergency fallback, at higher per-transaction cost
 - Alternative bundlers (e.g. Turbo) are evaluated if Irys reliability becomes a material issue
 - Harvest always completes locally — an Arweave write failure never blocks data ingestion
-
-### Soul-Owned Wallet Funding
-For Soul-owned Arweave accounts, AR token funding is managed automatically:
-- PersonalOS maintains a platform AR reserve and tops up Soul-owned wallets as needed
-- The cost is deducted as a small amount from the Soul's next Yield deposit
-- A low-balance alert surfaces in-app for visibility
-- The Soul never manages AR funding manually
 
 ### Soul-Owned Wallet Funding
 For Soul-owned Arweave accounts, AR token funding is managed automatically:

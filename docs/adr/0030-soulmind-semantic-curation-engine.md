@@ -19,6 +19,8 @@ SoulTransaktion {
   id: uuid
   source: enum (plaid | setu_aa | google_activity | apple_health |
                  uber | amazon | instagram | mychart | ...)
+  transaction_type: enum (purchase | transfer | payment | income |
+                          fee | refund | interest | activity | unknown)
   harvested_at: timestamp
   occurred_at: timestamp
   raw_ref: string          // source-specific ID — never transmitted
@@ -36,6 +38,14 @@ SoulTransaktion {
   confidence: float        // SCE confidence in enrichment
 }
 ```
+
+**1a. Input validation.** Before enrichment, the SCE validates every raw record and rejects or quarantines bad data:
+- **Duplicate detection:** records with the same `source + raw_ref` as an existing Ledger entry are dropped (idempotent re-Harvest).
+- **Schema completeness:** records missing required fields (`source`, `occurred_at`) are quarantined with `confidence: 0.0` and `soul_tags: ["schema_incomplete"]`. They are written to the Ledger for completeness but excluded from Scoring.
+- **Temporal bounds:** records with `occurred_at` in the future or more than 10 years in the past are flagged `soul_tags: ["temporal_anomaly"]` and excluded from Scoring.
+- **Amount sanity:** financial records with `amount_usd` exceeding $1,000,000 or negative amounts (except refunds) are flagged `soul_tags: ["amount_anomaly"]` for manual review in the Insight feed. Not dropped — large legitimate purchases exist.
+- **Transaction type classification:** Plaid records are classified by `transaction_type` using Plaid's `transaction_type` and `payment_channel` fields. Peer transfers (Zelle, Venmo), paper checks, interest payments, and bank fees are classified as `transfer`, `payment`, `interest`, or `fee` respectively. Only `purchase` and `refund` types flow into purchase-intent Scoring models. All types are written to the Ledger — non-purchase types contribute to financial health Insights (income patterns, fee burden) but not to marketplace-facing Category Insights.
+- **Source-specific validation:** each connector applies its own validation before handing off to SCE — Plaid validates institution_id, Setu AA validates consent_handle, Google DPA validates archive job status, BYOD connectors validate CSV/JSON schema version.
 
 **2. Merchant resolution.** Raw merchant strings ("WHOLEFDS #1234 NYC 4920") are resolved to canonical names ("Whole Foods Market") using an on-device merchant resolution dictionary (bundled with the app, updated via app updates). Unknown merchants are passed through unresolved with `confidence: 0.0`. The dictionary contains the top 50,000 US and Indian merchants by transaction volume; a fallback fuzzy-match handles variants.
 

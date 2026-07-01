@@ -13,6 +13,14 @@
 
 All SoulMind semantic enrichment (ADR-30), CoreML Scoring (ADR-22, ADR-23), cross-source correlation (ADR-24), and Insight generation runs on-device before any Arweave write. This supersedes ADR-28's acceptance of a cloud LLM API call for intelligence.
 
+**Server-side ingestion validation.** The `POST /souls/{soul_id}/insights` endpoint validates inbound data to prevent corrupted or malicious scores from entering the Exchange:
+- **Schema validation:** Each Insight record must contain `category`, `score`, `confidence`, `computed_at`, and `algorithm_version`. Missing fields reject the entire batch.
+- **Score bounds:** `score` must be in [0.0, 100.0], `confidence` must be in [0.0, 1.0]. Out-of-bounds values reject the record.
+- **Temporal consistency:** `computed_at` must be within 24 hours of the current server time. Stale or future-dated scores are rejected.
+- **Algorithm version check:** `algorithm_version` must match a known deployed version. Scores from unrecognised algorithm versions are held in quarantine until the app version is verified.
+- **Soul identity verification:** The request must be signed by the Soul's passkey (ADR-31). The server verifies the WebAuthn assertion before accepting any Insight update.
+- **Rate limiting:** No more than 10 Insight updates per Soul per hour. Excessive updates indicate a client bug, not legitimate Scoring.
+
 **Consequences.** The privacy claim becomes architectural rather than contractual: PersonalOS structurally cannot read Soul data because it never receives it. This is the strongest possible trust guarantee. Requires SoulMind and CoreML Scoring models to run on iPhone hardware (A14 Bionic or later recommended; A12 Bionic minimum for acceptable Scoring latency). Adds an iOS-native ML engineering dependency that was absent from the prior ADR log.
 
 ---
@@ -30,13 +38,6 @@ PersonalOS controls the Scoring trigger threshold — it is not Soul-configurabl
 - 7 days have elapsed since the last Scoring
 
 This threshold is tuned for device battery and performance, not sovereignty. Souls should not need to think about it.
-
-### Algorithm Versioning and Updates
-Insight scores are versioned alongside the algorithm version that produced them. When a new Scoring algorithm ships:
-- Re-scoring runs incrementally in the background, on charging + wifi only
-- A progress flag is maintained per Insight record indicating whether it reflects the current algorithm version
-- The Exchange continues serving stale-but-valid scores until re-scoring completes for that Soul
-- No blocking re-scoring on upgrade day
 
 ### Algorithm Versioning and Updates
 Insight scores are versioned alongside the algorithm version that produced them. When a new Scoring algorithm ships:

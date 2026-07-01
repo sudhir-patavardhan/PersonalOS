@@ -57,4 +57,6 @@ Install → [A12+ check] → Passkey creation → [key derived]
                                       First Insight in feed (≤ 90s)
 ```
 
+**Performance budget (90s first-Insight target).** Plaid API response ~10s, SCE 6-step enrichment ~5s, AES-256-GCM encrypt ~1s, Arweave/Irys write ~15s, CoreML Scoring ~5s, DP noise + POST Insights ~2s. Total ~38s consumed of 90s budget, leaving ~52s margin for network variance and older devices. Validate on A12 Bionic (iPhone XS) with a 500-record 12-month Plaid batch before committing the 90s target in any public-facing copy. If A12 consistently exceeds 90s, raise minimum to A14 (iPhone 12) or relax to 120s with a progress animation.
+
 **Consequences.** The onboarding sequence is the most constrained UX flow in the product — five steps with hard ordering dependencies, three external service calls (iCloud Keychain, Coinbase, Plaid), and a 90-second SoulMind computation. The < 3-minute target is aggressive but achievable because Step 3 (wallet) runs in parallel with Step 4 (Plaid Link). The earn-first wallet reveal (deferred to first Yield) eliminates crypto friction from onboarding entirely — the Soul does not know they have a blockchain wallet until they earn into it. Every failure path allows forward progress — no step permanently blocks onboarding except passkey creation, which is architecturally non-negotiable.

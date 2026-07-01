@@ -13,4 +13,9 @@
 5. Only the Arweave content hash and aggregate Insight scores leave the device to PersonalOS Backend.
 6. The in-memory plaintext buffer is zeroed. Raw source data is never stored on-device or server-side beyond the duration of step 2.
 
+**Data validation gates.** The Harvest pipeline enforces validation at three boundaries to prevent bad data from reaching the Ledger:
+1. **Connector boundary (pre-SCE):** Each source connector validates API response integrity — HTTP status, pagination completeness, schema version match, and auth token validity. Partial or malformed API responses trigger a retry (up to 3 attempts with exponential backoff) before the Harvest is marked failed. A failed Harvest never passes partial data to the SCE.
+2. **SCE boundary (pre-encrypt):** The SCE validates every record (see ADR-30 § Input validation). Duplicates are dropped, schema-incomplete records are quarantined, temporal and amount anomalies are flagged. Only validated, enriched `SoulTransaktion` records proceed to encryption.
+3. **Ledger boundary (pre-Arweave):** After AES-256-GCM encryption (ADR-08), the encrypted batch is checksummed (SHA-256). The checksum is verified after Arweave write by reading back and comparing. A checksum mismatch triggers re-encryption and re-write. The Arweave `tx_id` is not committed to the server until the read-back checksum passes.
+
 **Consequences.** Every downstream system — Ledger, Exchange, Marketplace — operates on semantically enriched, privacy-normalised data. The heterogeneity of source formats is resolved once, on-device, at ingestion time. Adds SoulMind as a required dependency for every Harvest job.
