@@ -75,6 +75,9 @@ Both prior sources used different terminology for the same concepts. This docume
 | 35 | Smart contract enforces fee split and Yield deposit | Accepted | policy-based fee model |
 | 36 | Arweave account model: shared (default) vs Soul-owned (opt-in) | Accepted | — |
 | 37 | Re-identification mitigation: k-anonymity floor + Insight noise | Accepted | ADR-14 (Open) |
+| 38 | Amazon BYOD CSV connector for purchase and browsing history | Accepted | — |
+| 39 | Uber BYOD export connector for ride and mobility history | Accepted | — |
+| 40 | Instagram BYOD export connector for interest and aspiration signals | Accepted | — |
 
 ---
 

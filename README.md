@@ -74,11 +74,11 @@ The following areas are **not yet resolved** (continue grilling):
 
 ## Architecture Decisions
 
-37 decisions are recorded in [`docs/adr/`](./docs/adr/). See [`PersonalOS_ADR_Unified.md`](./docs/adr/PersonalOS_ADR_Unified.md) for the full consolidated register.
+40 decisions are recorded in [`docs/adr/`](./docs/adr/). See [`PersonalOS_ADR_Unified.md`](./docs/adr/PersonalOS_ADR_Unified.md) for the full consolidated register.
 
 | Group | ADRs | Summary |
 |---|---|---|
-| Data Acquisition | [01](./docs/adr/0001-multi-source-harvest.md)–[06](./docs/adr/0006-insight-feed-onboarding-engine.md) | Multi-source Harvest, Plaid, Setu AA, Google DPA, tiered onboarding, Insight feed |
+| Data Acquisition | [01](./docs/adr/0001-multi-source-harvest.md)–[06](./docs/adr/0006-insight-feed-onboarding-engine.md), [38](./docs/adr/0038-amazon-byod-csv-connector.md)–[40](./docs/adr/0040-instagram-byod-export-connector.md) | Multi-source Harvest, Plaid, Setu AA, Google DPA, tiered onboarding, Insight feed, Amazon/Uber/Instagram BYOD |
 | Privacy & Security | [07](./docs/adr/0007-on-device-processing-scores-only.md)–[16](./docs/adr/0016-apple-health-fhir.md) | On-device processing, AES-256-GCM, Arweave Ledger, differential privacy, health data |
 | Product Model | [17](./docs/adr/0017-two-phase-soulmind-marketplace.md)–[21](./docs/adr/0021-multi-brand-competitive-bidding.md) | Two-phase model, Depth Score, Consent matching, competitive bidding |
 | SoulMind Intelligence | [22](./docs/adr/0022-on-device-soulmind-models.md)–[30](./docs/adr/0030-soulmind-semantic-curation-engine.md) | CoreML scoring, semantic correlation, curation engine (SCE) |
