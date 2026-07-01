@@ -78,6 +78,7 @@ Both prior sources used different terminology for the same concepts. This docume
 | 38 | Amazon BYOD CSV connector for purchase and browsing history | Accepted | — |
 | 39 | Uber BYOD export connector for ride and mobility history | Accepted | — |
 | 40 | Instagram BYOD export connector for interest and aspiration signals | Accepted | — |
+| 41 | Soul onboarding sequence: install → passkey → wallet → Plaid → first Insight | Accepted | — |
 
 ---
 
