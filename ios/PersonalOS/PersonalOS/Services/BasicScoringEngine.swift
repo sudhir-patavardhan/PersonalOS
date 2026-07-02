@@ -26,13 +26,12 @@ class BasicScoringEngine {
     func computeInsights(transaktions: [SoulTransaktion], soulID: UUID) -> [Insight] {
         guard !transaktions.isEmpty else { return [] }
 
-        let grouped = Dictionary(grouping: transaktions) { categoryRoot($0.soulCategory) }
+        let mapped = Dictionary(grouping: transaktions) { mapToScoringCategory($0.soulCategory) }
         let totalSpend = transaktions.compactMap { $0.amountUSD }.filter { $0 > 0 }.reduce(Decimal.zero, +)
         let sources = Set(transaktions.map(\.source))
 
-        return Self.allCategories.compactMap { category ->Insight? in
-            let root = categoryRoot(category)
-            guard let txns = grouped[root], !txns.isEmpty else { return nil }
+        return Self.allCategories.compactMap { category -> Insight? in
+            guard let txns = mapped[category], !txns.isEmpty else { return nil }
 
             let drivers = computeDrivers(
                 categoryTxns: txns,
@@ -74,10 +73,12 @@ class BasicScoringEngine {
         var drivers = ScoreDrivers()
 
         let categorySources = Set(categoryTxns.map(\.source))
-        if sourceCount > 1 && categorySources.count > 1 {
-            drivers.crossSourceCorrelation = Double(categorySources.count) / Double(sourceCount) * 100
-        } else if sourceCount == 1 {
-            drivers.crossSourceCorrelation = 40
+        let baseCorrelation: Double = 25
+        if categorySources.count > 1 {
+            let multiSourceBonus = Double(categorySources.count - 1) * 25
+            drivers.crossSourceCorrelation = min(baseCorrelation + multiSourceBonus, 100)
+        } else {
+            drivers.crossSourceCorrelation = baseCorrelation
         }
 
         drivers.behavioralPattern = computeBehavioralPattern(categoryTxns)
@@ -141,8 +142,44 @@ class BasicScoringEngine {
         return (volumeConfidence + spanConfidence) / 2.0
     }
 
-    private func categoryRoot(_ category: String) -> String {
-        String(category.split(separator: ".").first ?? Substring(category))
+    static let subcategoryMap: [String: String] = [
+        "dining.coffee": "dining.restaurant",
+        "dining.delivery": "dining.restaurant",
+        "transport.rideshare": "transport.commute",
+        "transport.transit": "transport.commute",
+        "transport.fuel": "transport.commute",
+        "shopping.online": "shopping.research",
+        "shopping.clothing": "shopping.impulse",
+        "shopping.home": "shopping.research",
+        "shopping.business": "shopping.research",
+        "shopping.tools": "shopping.research",
+        "entertainment.recreation": "entertainment.streaming",
+        "health.personal_care": "health.medical",
+        "travel.flights": "travel.pattern",
+        "travel.lodging": "travel.pattern",
+        "workspace.coworking": "transport.commute",
+        "education.kids": "education.growth",
+        "finance.insurance": "finance.health",
+        "finance.investment": "finance.health",
+        "finance.loan": "finance.health",
+        "finance.property_tax": "finance.health",
+        "finance.income": "finance.health",
+        "finance.alimony": "finance.health",
+        "finance.remittance": "finance.health",
+        "housing.rent": "finance.health",
+        "housing.mortgage": "finance.health",
+        "bills.utilities": "subscription.management",
+    ]
+
+    private func mapToScoringCategory(_ soulCategory: String) -> String {
+        if Self.allCategories.contains(soulCategory) {
+            return soulCategory
+        }
+        if let mapped = Self.subcategoryMap[soulCategory] {
+            return mapped
+        }
+        let root = String(soulCategory.split(separator: ".").first ?? Substring(soulCategory))
+        return Self.allCategories.first { $0.hasPrefix(root + ".") } ?? soulCategory
     }
 
     private func daySpan(_ txns: [SoulTransaktion]) -> Int {

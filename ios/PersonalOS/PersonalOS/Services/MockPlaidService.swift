@@ -55,11 +55,22 @@ class MockPlaidService: PlaidProviding {
 
     // MARK: - Personas
 
-    enum Persona: String, CaseIterable {
+    enum Persona: String, CaseIterable, Identifiable {
         case priya
         case marcus
         case sofia
         case james
+
+        var id: String { rawValue }
+
+        var displayName: String {
+            switch self {
+            case .priya: return "Priya — NYC, 28, Tech PM, $95K"
+            case .marcus: return "Marcus — Austin, 42, Business Owner, $130K"
+            case .sofia: return "Sofia — Miami, 35, Freelance Designer, $70K"
+            case .james: return "James — Chicago, 55, VP Finance, $160K"
+            }
+        }
 
         var bankName: String {
             switch self {

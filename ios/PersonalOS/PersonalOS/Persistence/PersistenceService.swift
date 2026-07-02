@@ -235,6 +235,17 @@ class PersistenceService {
         try modelContext.save()
     }
 
+    func deleteAllKonnections(for soulID: UUID) throws {
+        let descriptor = FetchDescriptor<SDKonnection>(
+            predicate: #Predicate { $0.soul?.soulID == soulID }
+        )
+        let konnections = try modelContext.fetch(descriptor)
+        for k in konnections {
+            modelContext.delete(k)
+        }
+        try modelContext.save()
+    }
+
     func createSDSoul(from soul: Soul) throws {
         let sd = SDSoul(soulID: soul.id, createdAt: soul.createdAt, depthScore: soul.depthScore, phase: soul.phase.rawValue)
         sd.walletAddress = soul.walletAddress
@@ -244,11 +255,18 @@ class PersistenceService {
     }
 
     func loadAllTransaktions(for soulID: UUID) throws -> [SoulTransaktion] {
+        let konnectionDescriptor = FetchDescriptor<SDKonnection>(
+            predicate: #Predicate { $0.soul?.soulID == soulID }
+        )
+        let konnectionIDs = try modelContext.fetch(konnectionDescriptor).map(\.konnectionID)
+
         let descriptor = FetchDescriptor<SDSoulTransaktion>(
-            predicate: #Predicate { $0.konnection?.soul?.soulID == soulID },
             sortBy: [SortDescriptor(\.occurredAt, order: .reverse)]
         )
-        let results = try modelContext.fetch(descriptor)
+        let results = try modelContext.fetch(descriptor).filter { sd in
+            guard let kid = sd.konnection?.konnectionID else { return false }
+            return konnectionIDs.contains(kid)
+        }
         return results.compactMap { sd in
             guard let source = SoulTransaktion.Source(rawValue: sd.source),
                   let txnType = SoulTransaktion.TransactionType(rawValue: sd.transactionType) else { return nil }

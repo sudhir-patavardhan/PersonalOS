@@ -188,6 +188,27 @@ class SandboxDataGenerator {
             ))
         }
 
+        let subscriptions: [(name: String, amount: Double)] = [
+            ("AMAZON PRIME", 14.99), ("KINDLE UNLIMITED", 11.99), ("AUDIBLE", 14.95),
+        ]
+        for (idx, sub) in subscriptions.prefix(Int.random(in: 1...3)).enumerated() {
+            for month in 0..<3 {
+                let date = calendar.date(byAdding: .month, value: -month, to: now)!
+                let billingDate = calendar.date(bySettingHour: 0, minute: 0, second: 0, of: date)!
+                txns.append(SoulTransaktion(
+                    source: .amazon, transactionType: .purchase,
+                    occurredAt: billingDate,
+                    rawRef: "amzn_sub_\(prefix)_\(idx)_\(month)",
+                    amountUSD: Decimal(sub.amount), currency: "USD",
+                    merchantRaw: sub.name, merchantCanonical: "Amazon",
+                    categoryRaw: "Subscription",
+                    soulCategory: "subscription.management",
+                    soulTags: ["subscription", "recurring", "digital"],
+                    confidence: 1.0
+                ))
+            }
+        }
+
         let browseCount = Int.random(in: 30...60)
         for i in 0..<browseCount {
             let daysAgo = Int.random(in: 0...89)

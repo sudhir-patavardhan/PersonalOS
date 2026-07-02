@@ -13,13 +13,14 @@ class SoulManager: ObservableObject {
     @Published var syncError: String?
     @Published var appOpenCount: Int
     @Published var isSandboxMode = false
+    @Published var sandboxPersona: MockPlaidService.Persona = .priya
 
     let passkeyService: PasskeyProviding
     let plaidService: PlaidProviding
     let scoringEngine: BasicScoringEngine
     let persistence: PersistenceService
     let syncObserver: SyncObserver
-    let sandboxGenerator: SandboxDataGenerator
+    var sandboxGenerator: SandboxDataGenerator
 
     private var backgroundTimestamp: Date?
     private static let backgroundTimeout: TimeInterval = 300
@@ -166,6 +167,11 @@ class SoulManager: ObservableObject {
             let report = syncObserver.completeSync(provider: konnection.provider)
             try persistence.saveSyncReport(report)
 
+            if let idx = konnections.firstIndex(where: { $0.id == konnection.id }) {
+                konnections[idx].transaktionCount = transaktions.count
+                try persistence.saveKonnection(konnections[idx], soulID: currentSoul!.id)
+            }
+
             try await recomputeInsights()
             isSyncing = false
         } catch {
@@ -206,6 +212,11 @@ class SoulManager: ObservableObject {
             try persistence.saveTransaktions(txns, konnectionID: konnection.id)
             let report = syncObserver.completeSync(provider: provider)
             try persistence.saveSyncReport(report)
+
+            if let idx = konnections.firstIndex(where: { $0.id == konnection.id }) {
+                konnections[idx].transaktionCount = txns.count
+                try persistence.saveKonnection(konnections[idx], soulID: soul.id)
+            }
         }
 
         if !konnections.contains(where: { $0.provider == .plaid }) {
@@ -245,8 +256,27 @@ class SoulManager: ObservableObject {
         let report = syncObserver.completeSync(provider: provider)
         try persistence.saveSyncReport(report)
 
+        if let idx = konnections.firstIndex(where: { $0.id == konnection.id }) {
+            konnections[idx].transaktionCount = txns.count
+            try persistence.saveKonnection(konnections[idx], soulID: soul.id)
+        }
+
         try await recomputeInsights()
         isSyncing = false
+    }
+
+    func switchSandboxPersona(to persona: MockPlaidService.Persona) async throws {
+        guard isSandboxMode, let soul = currentSoul else { return }
+
+        sandboxPersona = persona
+        sandboxGenerator = SandboxDataGenerator(persona: persona)
+
+        try persistence.deleteAllKonnections(for: soul.id)
+        konnections.removeAll()
+        insights.removeAll()
+
+        isSandboxMode = false
+        try await activateSandboxMode()
     }
 
     // MARK: - Scoring

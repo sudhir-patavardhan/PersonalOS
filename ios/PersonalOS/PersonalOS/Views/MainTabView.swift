@@ -41,6 +41,7 @@ struct KonnectionListView: View {
     @State private var isLinking = false
     @State private var connectingProvider: Konnection.Provider?
     @State private var isActivatingAll = false
+    @State private var isSwitchingPersona = false
 
     var body: some View {
         NavigationStack {
@@ -60,6 +61,33 @@ struct KonnectionListView: View {
                                 .padding(.vertical, 2)
                                 .background(Color.orange.opacity(0.2))
                                 .clipShape(Capsule())
+                        }
+
+                        HStack {
+                            Text("Persona")
+                                .font(.subheadline)
+                            Spacer()
+                            if isSwitchingPersona {
+                                ProgressView()
+                                    .padding(.trailing, 4)
+                            }
+                            Picker("Persona", selection: $soulManager.sandboxPersona) {
+                                ForEach(MockPlaidService.Persona.allCases) { persona in
+                                    Text(persona.rawValue.capitalized)
+                                        .tag(persona)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .disabled(isSwitchingPersona)
+                        }
+                    } footer: {
+                        Text(soulManager.sandboxPersona.displayName)
+                    }
+                    .onChange(of: soulManager.sandboxPersona) { _, newPersona in
+                        Task {
+                            isSwitchingPersona = true
+                            try? await soulManager.switchSandboxPersona(to: newPersona)
+                            isSwitchingPersona = false
                         }
                     }
                 }
