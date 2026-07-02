@@ -26,6 +26,7 @@
 		1775CE8FBF18466F9E7DF34A /* PlaidProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BA88326C0347C2B4502A41 /* PlaidProviding.swift */; };
 		634E2FA87A974ED99A50D5E4 /* SoulManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76F42669B9134D3CA1204C0C /* SoulManager.swift */; };
 		258A08B7335249CB9ABA562C /* SyncObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E482B3656743EA81EA9690 /* SyncObserver.swift */; };
+		5018552011D84811A0B454B9 /* SandboxDataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC725627BAA472982E9C836 /* SandboxDataGenerator.swift */; };
 		34B348DC77D7402FB8BDD5F5 /* WalletService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9ECABDC4CB74109A6F5864F /* WalletService.swift */; };
 		43FE9AF76A6646C389C6683B /* InsightFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F4D0C147DB4D7DBAC50057 /* InsightFeedView.swift */; };
 		BC4410D306554143BFF185FE /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB7900361EB4DF9AA43A2ED /* MainTabView.swift */; };
@@ -73,6 +74,7 @@
 		D7BA88326C0347C2B4502A41 /* PlaidProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaidProviding.swift; sourceTree = "<group>"; };
 		76F42669B9134D3CA1204C0C /* SoulManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoulManager.swift; sourceTree = "<group>"; };
 		23E482B3656743EA81EA9690 /* SyncObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncObserver.swift; sourceTree = "<group>"; };
+		EEC725627BAA472982E9C836 /* SandboxDataGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxDataGenerator.swift; sourceTree = "<group>"; };
 		A9ECABDC4CB74109A6F5864F /* WalletService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletService.swift; sourceTree = "<group>"; };
 		45F4D0C147DB4D7DBAC50057 /* InsightFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightFeedView.swift; sourceTree = "<group>"; };
 		3EB7900361EB4DF9AA43A2ED /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 				D7BA88326C0347C2B4502A41 /* PlaidProviding.swift */,
 				76F42669B9134D3CA1204C0C /* SoulManager.swift */,
 				23E482B3656743EA81EA9690 /* SyncObserver.swift */,
+				EEC725627BAA472982E9C836 /* SandboxDataGenerator.swift */,
 				A9ECABDC4CB74109A6F5864F /* WalletService.swift */,
 			);
 			path = Services;
@@ -318,6 +321,7 @@
 				1775CE8FBF18466F9E7DF34A /* PlaidProviding.swift in Sources */,
 				634E2FA87A974ED99A50D5E4 /* SoulManager.swift in Sources */,
 				258A08B7335249CB9ABA562C /* SyncObserver.swift in Sources */,
+				5018552011D84811A0B454B9 /* SandboxDataGenerator.swift in Sources */,
 				34B348DC77D7402FB8BDD5F5 /* WalletService.swift in Sources */,
 				43FE9AF76A6646C389C6683B /* InsightFeedView.swift in Sources */,
 				BC4410D306554143BFF185FE /* MainTabView.swift in Sources */,

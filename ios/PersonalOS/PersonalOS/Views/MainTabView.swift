@@ -39,12 +39,33 @@ struct MainTabView: View {
 struct KonnectionListView: View {
     @EnvironmentObject var soulManager: SoulManager
     @State private var isLinking = false
+    @State private var connectingProvider: Konnection.Provider?
+    @State private var isActivatingAll = false
 
     var body: some View {
         NavigationStack {
             List {
+                if soulManager.isSandboxMode {
+                    Section {
+                        HStack {
+                            Image(systemName: "flask.fill")
+                                .foregroundStyle(.orange)
+                            Text("Sandbox Mode")
+                                .font(.headline)
+                                .foregroundStyle(.orange)
+                            Spacer()
+                            Text("Synthetic Data")
+                                .font(.caption2)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 2)
+                                .background(Color.orange.opacity(0.2))
+                                .clipShape(Capsule())
+                        }
+                    }
+                }
+
                 if !soulManager.konnections.isEmpty {
-                    Section("Connected") {
+                    Section("Connected (\(soulManager.konnections.count))") {
                         ForEach(soulManager.konnections) { konnection in
                             HStack {
                                 Image(systemName: iconName(for: konnection.provider))
@@ -62,79 +83,96 @@ struct KonnectionListView: View {
                     }
                 }
 
-                Section("Available") {
-                    if !soulManager.konnections.contains(where: { $0.provider == .plaid }) {
+                let availableProviders = allConnectors.filter { connector in
+                    !soulManager.konnections.contains(where: { $0.provider == connector.provider })
+                }
+
+                if !availableProviders.isEmpty {
+                    Section("Available") {
+                        ForEach(availableProviders, id: \.provider) { connector in
+                            Button {
+                                Task {
+                                    connectingProvider = connector.provider
+                                    do {
+                                        if connector.provider == .plaid {
+                                            try await soulManager.linkPlaid()
+                                        } else {
+                                            try await soulManager.connectSandboxProvider(connector.provider)
+                                        }
+                                    } catch {}
+                                    connectingProvider = nil
+                                }
+                            } label: {
+                                HStack {
+                                    Image(systemName: connector.icon)
+                                    VStack(alignment: .leading) {
+                                        Text(connector.name)
+                                            .font(.headline)
+                                        Text(connector.description)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    Spacer()
+                                    if connectingProvider == connector.provider {
+                                        ProgressView()
+                                    } else {
+                                        Image(systemName: "plus.circle.fill")
+                                            .foregroundStyle(.blue)
+                                    }
+                                }
+                            }
+                            .disabled(connectingProvider != nil)
+                        }
+                    }
+
+                    Section {
                         Button {
                             Task {
-                                isLinking = true
-                                try? await soulManager.linkPlaid()
-                                isLinking = false
+                                isActivatingAll = true
+                                try? await soulManager.activateSandboxMode()
+                                isActivatingAll = false
                             }
                         } label: {
                             HStack {
-                                Image(systemName: "building.columns.fill")
-                                VStack(alignment: .leading) {
-                                    Text("Bank Account (Plaid)")
-                                        .font(.headline)
-                                    Text("Financial transactions and patterns")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
+                                Image(systemName: "flask.fill")
+                                Text("Connect All (Sandbox)")
+                                    .font(.headline)
                                 Spacer()
-                                if isLinking {
+                                if isActivatingAll {
                                     ProgressView()
                                 } else {
-                                    Image(systemName: "plus.circle.fill")
-                                        .foregroundStyle(.blue)
+                                    Image(systemName: "bolt.fill")
+                                        .foregroundStyle(.orange)
                                 }
                             }
                         }
-                        .disabled(isLinking)
-                    }
-
-                    ForEach(upcomingConnectors, id: \.name) { connector in
-                        HStack {
-                            Image(systemName: connector.icon)
-                                .foregroundStyle(.secondary)
-                            VStack(alignment: .leading) {
-                                Text(connector.name)
-                                    .font(.headline)
-                                Text(connector.description)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Spacer()
-                            Text("Coming Soon")
-                                .font(.caption2)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 2)
-                                .background(Color.gray.opacity(0.2))
-                                .clipShape(Capsule())
-                        }
-                        .foregroundStyle(.secondary)
+                        .disabled(isActivatingAll || connectingProvider != nil)
+                    } footer: {
+                        Text("Loads synthetic data for all connectors to preview the full PersonalOS experience.")
                     }
                 }
             }
             .navigationTitle("Data Sources")
             .overlay {
-                if soulManager.konnections.isEmpty && !isLinking {
+                if soulManager.konnections.isEmpty && connectingProvider == nil && !isActivatingAll {
                     ContentUnavailableView(
                         "No Sources Connected",
                         systemImage: "link.circle",
-                        description: Text("Connect a data source to start building your profile.")
+                        description: Text("Connect a data source or activate sandbox mode to explore.")
                     )
                 }
             }
         }
     }
 
-    private var upcomingConnectors: [(name: String, icon: String, description: String)] {
+    private var allConnectors: [(provider: Konnection.Provider, name: String, icon: String, description: String)] {
         [
-            ("Apple Health", "heart.fill", "Fitness and wellness data"),
-            ("Google Activity", "globe", "Search and browsing patterns"),
-            ("Amazon", "shippingbox.fill", "Purchase history"),
-            ("Uber", "car.fill", "Ride and delivery patterns"),
-            ("Instagram", "camera.fill", "Content and engagement"),
+            (.plaid, "Bank Account (Plaid)", "building.columns.fill", "Financial transactions and patterns"),
+            (.appleHealth, "Apple Health", "heart.fill", "Fitness, sleep, and wellness data"),
+            (.googleDPA, "Google Activity", "globe", "Search, browsing, and location patterns"),
+            (.amazonBYOD, "Amazon", "shippingbox.fill", "Purchase history and browsing"),
+            (.uberBYOD, "Uber", "car.fill", "Rides and Uber Eats delivery"),
+            (.instagramBYOD, "Instagram", "camera.fill", "Content engagement and interests"),
         ]
     }
 

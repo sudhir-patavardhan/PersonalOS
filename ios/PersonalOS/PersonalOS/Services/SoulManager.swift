@@ -12,12 +12,14 @@ class SoulManager: ObservableObject {
     @Published var isSyncing = false
     @Published var syncError: String?
     @Published var appOpenCount: Int
+    @Published var isSandboxMode = false
 
     let passkeyService: PasskeyProviding
     let plaidService: PlaidProviding
     let scoringEngine: BasicScoringEngine
     let persistence: PersistenceService
     let syncObserver: SyncObserver
+    let sandboxGenerator: SandboxDataGenerator
 
     private var backgroundTimestamp: Date?
     private static let backgroundTimeout: TimeInterval = 300
@@ -38,6 +40,7 @@ class SoulManager: ObservableObject {
         self.plaidService = plaidService ?? MockPlaidService()
         self.scoringEngine = BasicScoringEngine()
         self.syncObserver = SyncObserver()
+        self.sandboxGenerator = SandboxDataGenerator()
         self.appOpenCount = UserDefaults.standard.integer(forKey: "appOpenCount")
     }
 
@@ -172,6 +175,78 @@ class SoulManager: ObservableObject {
             syncError = error.localizedDescription
             throw error
         }
+    }
+
+    // MARK: - Sandbox Mode
+
+    func activateSandboxMode() async throws {
+        guard let soul = currentSoul else { throw SoulManagerError.noSoul }
+        isSyncing = true
+        isSandboxMode = true
+
+        let sandboxProviders: [Konnection.Provider] = [.appleHealth, .googleDPA, .amazonBYOD, .uberBYOD, .instagramBYOD]
+
+        for provider in sandboxProviders {
+            guard !konnections.contains(where: { $0.provider == provider }) else { continue }
+
+            let konnection = Konnection(
+                id: UUID(), soulID: soul.id, provider: provider,
+                status: .active, connectedAt: Date(), transaktionCount: 0
+            )
+            try persistence.saveKonnection(konnection, soulID: soul.id)
+            konnections.append(konnection)
+
+            let txns = sandboxGenerator.generate(for: provider, konnectionID: konnection.id)
+
+            syncObserver.beginSync(provider: provider, konnectionID: konnection.id)
+            for _ in txns {
+                syncObserver.recordReceived(provider: provider)
+            }
+
+            try persistence.saveTransaktions(txns, konnectionID: konnection.id)
+            let report = syncObserver.completeSync(provider: provider)
+            try persistence.saveSyncReport(report)
+        }
+
+        if !konnections.contains(where: { $0.provider == .plaid }) {
+            try await linkPlaid()
+        }
+
+        try await recomputeInsights()
+        isSyncing = false
+    }
+
+    func connectSandboxProvider(_ provider: Konnection.Provider) async throws {
+        guard let soul = currentSoul else { throw SoulManagerError.noSoul }
+        guard !konnections.contains(where: { $0.provider == provider }) else { return }
+
+        isSyncing = true
+
+        let konnection = Konnection(
+            id: UUID(), soulID: soul.id, provider: provider,
+            status: .active, connectedAt: Date(), transaktionCount: 0
+        )
+        try persistence.saveKonnection(konnection, soulID: soul.id)
+        konnections.append(konnection)
+
+        if provider == .plaid {
+            try await syncTransactions(konnection: konnection)
+            return
+        }
+
+        let txns = sandboxGenerator.generate(for: provider, konnectionID: konnection.id)
+
+        syncObserver.beginSync(provider: provider, konnectionID: konnection.id)
+        for _ in txns {
+            syncObserver.recordReceived(provider: provider)
+        }
+
+        try persistence.saveTransaktions(txns, konnectionID: konnection.id)
+        let report = syncObserver.completeSync(provider: provider)
+        try persistence.saveSyncReport(report)
+
+        try await recomputeInsights()
+        isSyncing = false
     }
 
     // MARK: - Scoring
