@@ -75,7 +75,7 @@ All domain modeling areas are **resolved**. No open items remain.
 
 ## Architecture Decisions
 
-43 decisions are recorded in [`docs/adr/`](./docs/adr/). See [`PersonalOS_ADR_Unified.md`](./docs/adr/PersonalOS_ADR_Unified.md) for the full consolidated register.
+44 decisions are recorded in [`docs/adr/`](./docs/adr/). See [`PersonalOS_ADR_Unified.md`](./docs/adr/PersonalOS_ADR_Unified.md) for the full consolidated register.
 
 | Group | ADRs | Summary |
 |---|---|---|
