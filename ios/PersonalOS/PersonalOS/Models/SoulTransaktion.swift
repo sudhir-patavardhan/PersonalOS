@@ -20,6 +20,34 @@ struct SoulTransaktion: Identifiable, Codable {
     var useLimitationTags: [String]
     var confidence: Double
 
+    init(id: UUID = UUID(), source: Source, transactionType: TransactionType,
+         harvestedAt: Date = Date(), occurredAt: Date, rawRef: String,
+         amountUSD: Decimal? = nil, currency: String? = nil,
+         merchantRaw: String? = nil, merchantCanonical: String? = nil,
+         categoryRaw: String? = nil, soulCategory: String,
+         soulTags: [String] = [], intentSignals: [String] = [],
+         healthFlag: Bool = false, marketplaceEligible: Bool = true,
+         useLimitationTags: [String] = [], confidence: Double = 1.0) {
+        self.id = id
+        self.source = source
+        self.transactionType = transactionType
+        self.harvestedAt = harvestedAt
+        self.occurredAt = occurredAt
+        self.rawRef = rawRef
+        self.amountUSD = amountUSD
+        self.currency = currency
+        self.merchantRaw = merchantRaw
+        self.merchantCanonical = merchantCanonical
+        self.categoryRaw = categoryRaw
+        self.soulCategory = soulCategory
+        self.soulTags = soulTags
+        self.intentSignals = intentSignals
+        self.healthFlag = healthFlag
+        self.marketplaceEligible = marketplaceEligible
+        self.useLimitationTags = useLimitationTags
+        self.confidence = confidence
+    }
+
     enum Source: String, Codable {
         case plaid
         case setuAA = "setu_aa"

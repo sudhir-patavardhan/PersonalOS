@@ -56,11 +56,8 @@ struct WelcomeStep: View {
 
             Spacer()
 
-            Button("Create Your Soul") {
-                Task {
-                    try? await soulManager.createSoul()
-                    soulManager.advanceOnboarding()
-                }
+            Button("Get Started") {
+                soulManager.advanceOnboarding()
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
@@ -71,6 +68,8 @@ struct WelcomeStep: View {
 
 struct PasskeyStep: View {
     @EnvironmentObject var soulManager: SoulManager
+    @State private var isCreating = false
+    @State private var errorMessage: String?
 
     var body: some View {
         VStack(spacing: 24) {
@@ -87,14 +86,43 @@ struct PasskeyStep: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
 
+            Text("This step is required")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            if let error = errorMessage {
+                Text(error)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .padding(.horizontal)
+            }
+
             Spacer()
 
-            Button("Create Passkey") {
-                // L0.2: PasskeyService.createPasskey()
-                soulManager.advanceOnboarding()
+            Button {
+                Task {
+                    isCreating = true
+                    errorMessage = nil
+                    do {
+                        try await soulManager.createSoul()
+                        soulManager.advanceOnboarding()
+                    } catch {
+                        errorMessage = error.localizedDescription
+                    }
+                    isCreating = false
+                }
+            } label: {
+                HStack {
+                    if isCreating {
+                        ProgressView()
+                            .tint(.white)
+                    }
+                    Text(isCreating ? "Creating Passkey..." : "Create Passkey")
+                }
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+            .disabled(isCreating)
             .padding(.bottom, 48)
         }
     }
@@ -102,6 +130,8 @@ struct PasskeyStep: View {
 
 struct PlaidLinkStep: View {
     @EnvironmentObject var soulManager: SoulManager
+    @State private var isLinking = false
+    @State private var errorMessage: String?
 
     var body: some View {
         VStack(spacing: 24) {
@@ -118,17 +148,42 @@ struct PlaidLinkStep: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
 
+            if let error = errorMessage {
+                Text(error)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .padding(.horizontal)
+            }
+
             Spacer()
 
-            Button("Link Bank Account") {
-                // L0.2+: Plaid Link SDK integration
-                soulManager.advanceOnboarding()
+            Button {
+                Task {
+                    isLinking = true
+                    errorMessage = nil
+                    do {
+                        try await soulManager.linkPlaid()
+                        soulManager.advanceOnboarding()
+                    } catch {
+                        errorMessage = error.localizedDescription
+                    }
+                    isLinking = false
+                }
+            } label: {
+                HStack {
+                    if isLinking {
+                        ProgressView()
+                            .tint(.white)
+                    }
+                    Text(isLinking ? "Linking..." : "Link Bank Account")
+                }
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+            .disabled(isLinking)
 
             Button("Skip for Now") {
-                soulManager.advanceOnboarding()
+                soulManager.skipPlaid()
             }
             .foregroundStyle(.secondary)
             .padding(.bottom, 48)
@@ -138,26 +193,49 @@ struct PlaidLinkStep: View {
 
 struct FirstInsightStep: View {
     @EnvironmentObject var soulManager: SoulManager
+    @State private var showInsights = false
 
     var body: some View {
         VStack(spacing: 24) {
             Spacer()
-            Image(systemName: "chart.bar.xaxis.ascending")
-                .font(.system(size: 72))
-                .foregroundStyle(.tint)
 
-            Text("Your First Insight")
-                .font(.title.bold())
+            if soulManager.insights.isEmpty {
+                Image(systemName: "chart.bar.xaxis.ascending")
+                    .font(.system(size: 72))
+                    .foregroundStyle(.tint)
 
-            Text("PersonalOS analyzes your data on-device to build Insight scores — your knowledge profile that you control.")
-                .font(.body)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+                Text("Your First Insight")
+                    .font(.title.bold())
+
+                if soulManager.konnections.isEmpty {
+                    Text("Connect a data source to start building your profile. You can do this from the Sources tab.")
+                        .font(.body)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
+                } else {
+                    Text("Your data is being analyzed on-device to build Insight scores — your knowledge profile that you control.")
+                        .font(.body)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
+                }
+            } else {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 72))
+                    .foregroundStyle(.green)
+
+                Text("Insights Ready!")
+                    .font(.title.bold())
+
+                Text("\(soulManager.insights.count) insights computed. Depth Score: \(Int(soulManager.depthScore))")
+                    .font(.body)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            }
 
             Spacer()
 
-            Button("Get Started") {
-                // Onboarding complete — transition to main app
+            Button("Enter PersonalOS") {
+                // Transition handled by PersonalOSApp — soul exists + authenticated = MainTabView
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)

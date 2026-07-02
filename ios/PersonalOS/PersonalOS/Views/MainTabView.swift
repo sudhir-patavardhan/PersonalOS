@@ -25,33 +25,99 @@ struct MainTabView: View {
                     Label("Settings", systemImage: "gearshape.fill")
                 }
         }
+        .alert("Connect Your Bank?", isPresented: .constant(soulManager.shouldShowPlaidNudge)) {
+            Button("Link Now") {
+                Task { try? await soulManager.linkPlaid() }
+            }
+            Button("Not Now", role: .cancel) { }
+        } message: {
+            Text("Linking a bank account helps PersonalOS build richer insights about your financial patterns.")
+        }
     }
 }
 
 struct KonnectionListView: View {
     @EnvironmentObject var soulManager: SoulManager
+    @State private var isLinking = false
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(soulManager.konnections) { konnection in
-                    HStack {
-                        Image(systemName: iconName(for: konnection.provider))
-                        VStack(alignment: .leading) {
-                            Text(konnection.provider.displayName)
-                                .font(.headline)
-                            Text("\(konnection.transaktionCount) transactions")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                if !soulManager.konnections.isEmpty {
+                    Section("Connected") {
+                        ForEach(soulManager.konnections) { konnection in
+                            HStack {
+                                Image(systemName: iconName(for: konnection.provider))
+                                VStack(alignment: .leading) {
+                                    Text(konnection.provider.displayName)
+                                        .font(.headline)
+                                    Text("\(konnection.transaktionCount) transactions")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                statusBadge(konnection.status)
+                            }
                         }
-                        Spacer()
-                        statusBadge(konnection.status)
+                    }
+                }
+
+                Section("Available") {
+                    if !soulManager.konnections.contains(where: { $0.provider == .plaid }) {
+                        Button {
+                            Task {
+                                isLinking = true
+                                try? await soulManager.linkPlaid()
+                                isLinking = false
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "building.columns.fill")
+                                VStack(alignment: .leading) {
+                                    Text("Bank Account (Plaid)")
+                                        .font(.headline)
+                                    Text("Financial transactions and patterns")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                if isLinking {
+                                    ProgressView()
+                                } else {
+                                    Image(systemName: "plus.circle.fill")
+                                        .foregroundStyle(.blue)
+                                }
+                            }
+                        }
+                        .disabled(isLinking)
+                    }
+
+                    ForEach(upcomingConnectors, id: \.name) { connector in
+                        HStack {
+                            Image(systemName: connector.icon)
+                                .foregroundStyle(.secondary)
+                            VStack(alignment: .leading) {
+                                Text(connector.name)
+                                    .font(.headline)
+                                Text(connector.description)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Text("Coming Soon")
+                                .font(.caption2)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 2)
+                                .background(Color.gray.opacity(0.2))
+                                .clipShape(Capsule())
+                        }
+                        .foregroundStyle(.secondary)
                     }
                 }
             }
             .navigationTitle("Data Sources")
             .overlay {
-                if soulManager.konnections.isEmpty {
+                if soulManager.konnections.isEmpty && !isLinking {
                     ContentUnavailableView(
                         "No Sources Connected",
                         systemImage: "link.circle",
@@ -60,6 +126,16 @@ struct KonnectionListView: View {
                 }
             }
         }
+    }
+
+    private var upcomingConnectors: [(name: String, icon: String, description: String)] {
+        [
+            ("Apple Health", "heart.fill", "Fitness and wellness data"),
+            ("Google Activity", "globe", "Search and browsing patterns"),
+            ("Amazon", "shippingbox.fill", "Purchase history"),
+            ("Uber", "car.fill", "Ride and delivery patterns"),
+            ("Instagram", "camera.fill", "Content and engagement"),
+        ]
     }
 
     private func iconName(for provider: Konnection.Provider) -> String {
@@ -85,24 +161,108 @@ struct KonnectionListView: View {
 
 struct SettingsView: View {
     @EnvironmentObject var soulManager: SoulManager
+    @State private var showDeleteConfirm = false
+    @State private var showExportSheet = false
+    @State private var exportData: Data?
+    @State private var isExporting = false
+    @State private var isDeleting = false
+    @State private var errorMessage: String?
 
     var body: some View {
         NavigationStack {
             List {
                 Section("Soul") {
                     if let soul = soulManager.currentSoul {
-                        LabeledContent("ID", value: soul.id.uuidString.prefix(8) + "…")
+                        LabeledContent("ID", value: String(soul.id.uuidString.prefix(8)) + "...")
                         LabeledContent("Phase", value: soul.phase == .one ? "Self-Knowledge" : "Marketplace")
                         LabeledContent("Depth Score", value: String(format: "%.1f%%", soul.depthScore))
+                        LabeledContent("Sources", value: "\(soulManager.konnections.count)")
+                        LabeledContent("Insights", value: "\(soulManager.insights.count)")
                     }
                 }
 
-                Section("Security") {
-                    Button("Export Data") { }
-                    Button("Delete Account", role: .destructive) { }
+                Section("Data") {
+                    Button {
+                        Task {
+                            isExporting = true
+                            do {
+                                exportData = try await soulManager.exportData()
+                                showExportSheet = true
+                            } catch {
+                                errorMessage = error.localizedDescription
+                            }
+                            isExporting = false
+                        }
+                    } label: {
+                        HStack {
+                            Label("Export All Data", systemImage: "square.and.arrow.up")
+                            Spacer()
+                            if isExporting { ProgressView() }
+                        }
+                    }
+                    .disabled(isExporting)
+                }
+
+                Section {
+                    Button(role: .destructive) {
+                        showDeleteConfirm = true
+                    } label: {
+                        HStack {
+                            Label("Delete Account", systemImage: "trash")
+                            Spacer()
+                            if isDeleting { ProgressView() }
+                        }
+                    }
+                    .disabled(isDeleting)
+                } footer: {
+                    Text("This permanently deletes all your data from this device. This cannot be undone.")
+                }
+
+                if let error = errorMessage {
+                    Section {
+                        Text(error)
+                            .foregroundStyle(.red)
+                            .font(.caption)
+                    }
+                }
+
+                Section("About") {
+                    LabeledContent("Version", value: "0.2.0")
+                    LabeledContent("Algorithm", value: BasicScoringEngine.algorithmVersion)
                 }
             }
             .navigationTitle("Settings")
+            .confirmationDialog("Delete Account?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
+                Button("Delete Everything", role: .destructive) {
+                    Task {
+                        isDeleting = true
+                        do {
+                            try await soulManager.deleteAccount()
+                        } catch {
+                            errorMessage = error.localizedDescription
+                        }
+                        isDeleting = false
+                    }
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("This will permanently delete your Soul, all connected data sources, transaction history, and insights. You will need to re-authenticate with your passkey.")
+            }
+            .sheet(isPresented: $showExportSheet) {
+                if let data = exportData {
+                    ShareSheet(items: [data])
+                }
+            }
         }
     }
+}
+
+struct ShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

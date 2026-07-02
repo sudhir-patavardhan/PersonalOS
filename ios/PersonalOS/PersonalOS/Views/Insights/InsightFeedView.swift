@@ -12,9 +12,30 @@ struct InsightFeedView: View {
                 .listRowInsets(EdgeInsets())
                 .listRowBackground(Color.clear)
 
-                Section("Your Insights") {
-                    ForEach(soulManager.insights) { insight in
-                        InsightRow(insight: insight)
+                if soulManager.isSyncing {
+                    Section {
+                        HStack {
+                            ProgressView()
+                            Text("Syncing transactions...")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+
+                if let error = soulManager.syncError {
+                    Section {
+                        Label(error, systemImage: "exclamationmark.triangle")
+                            .font(.caption)
+                            .foregroundStyle(.orange)
+                    }
+                }
+
+                if !soulManager.insights.isEmpty {
+                    Section("Your Insights") {
+                        ForEach(soulManager.insights) { insight in
+                            InsightRow(insight: insight)
+                        }
                     }
                 }
 
@@ -27,8 +48,11 @@ struct InsightFeedView: View {
                 }
             }
             .navigationTitle("PersonalOS")
+            .refreshable {
+                try? await soulManager.recomputeInsights()
+            }
             .overlay {
-                if soulManager.insights.isEmpty {
+                if soulManager.insights.isEmpty && !soulManager.isSyncing {
                     ContentUnavailableView(
                         "No Insights Yet",
                         systemImage: "chart.bar.xaxis.ascending",
@@ -58,7 +82,7 @@ struct DepthScoreCard: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                ProgressView(value: score, total: 60.0)
+                ProgressView(value: min(score, 60), total: 60.0)
                     .tint(.blue)
             } else {
                 Label("Marketplace Active", systemImage: "checkmark.seal.fill")
@@ -76,18 +100,56 @@ struct InsightRow: View {
 
     var body: some View {
         HStack {
-            VStack(alignment: .leading) {
-                Text(insight.category)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(displayName(for: insight.category))
                     .font(.headline)
-                Text("Confidence: \(String(format: "%.0f%%", insight.confidence * 100))")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 8) {
+                    Text("Confidence: \(String(format: "%.0f%%", insight.confidence * 100))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    if !insight.marketplaceEligible {
+                        Text("Private")
+                            .font(.caption2)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 1)
+                            .background(Color.red.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                    if insight.isStale {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.caption2)
+                            .foregroundStyle(.orange)
+                    }
+                }
             }
             Spacer()
-            Text(String(format: "%.0f", insight.score))
-                .font(.title2.bold())
-                .foregroundStyle(.tint)
+            VStack(alignment: .trailing) {
+                Text(String(format: "%.0f", insight.score))
+                    .font(.title2.bold())
+                    .foregroundStyle(.tint)
+                Text("/ 100")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
         }
+    }
+
+    private func displayName(for category: String) -> String {
+        let names: [String: String] = [
+            "finance.health": "Financial Health",
+            "dining.grocery": "Grocery Patterns",
+            "dining.restaurant": "Dining Out",
+            "transport.commute": "Commute & Transport",
+            "shopping.research": "Smart Shopping",
+            "shopping.impulse": "Impulse Spending",
+            "health.fitness": "Fitness & Wellness",
+            "health.medical": "Health (Private)",
+            "entertainment.streaming": "Entertainment",
+            "travel.pattern": "Travel Patterns",
+            "education.growth": "Learning & Growth",
+            "subscription.management": "Subscriptions",
+        ]
+        return names[category] ?? category
     }
 }
 
