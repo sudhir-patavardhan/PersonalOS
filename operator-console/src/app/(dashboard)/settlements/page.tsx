@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import type { Settlement } from '@/lib/types';
 import { CATEGORY_DISPLAY_NAMES } from '@/lib/types';
+import { basescanTx } from '@/lib/contracts';
 
 export default function SettlementsPage() {
   const [settlements, setSettlements] = useState<Settlement[]>([]);
@@ -82,9 +83,17 @@ export default function SettlementsPage() {
                   <td className="py-2 text-right text-green-700">${s.yieldUsdc.toFixed(2)}</td>
                   <td className="py-2 text-right text-indigo-700">${s.feeUsdc.toFixed(2)}</td>
                   <td className="py-2">
-                    <span className="font-mono text-xs text-zinc-400 cursor-help" title={`Synthetic — ${s.txHash}`}>
-                      {s.txHash.slice(0, 10)}...
-                    </span>
+                    {(s as any).onChain ? (
+                      <a href={basescanTx(s.txHash)} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 font-mono text-xs text-indigo-600 hover:text-indigo-800">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                        {s.txHash.slice(0, 10)}...
+                      </a>
+                    ) : (
+                      <span className="font-mono text-xs text-zinc-400 cursor-help" title={`Synthetic — ${s.txHash}`}>
+                        {s.txHash.slice(0, 10)}...
+                      </span>
+                    )}
                   </td>
                 </tr>
               ))}

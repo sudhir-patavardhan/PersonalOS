@@ -1,0 +1,32 @@
+export const BUDGET_ESCROW_ABI = [
+  { inputs: [{ name: "_usdc", type: "address" }, { name: "_operator", type: "address" }], stateMutability: "nonpayable", type: "constructor" },
+  { inputs: [], name: "InsufficientBalance", type: "error" },
+  { inputs: [], name: "ListingExists", type: "error" },
+  { inputs: [], name: "OnlyBrand", type: "error" },
+  { inputs: [], name: "OnlyOperator", type: "error" },
+  { inputs: [{ name: "token", type: "address" }], name: "SafeERC20FailedOperation", type: "error" },
+  { inputs: [], name: "ZeroAmount", type: "error" },
+  { anonymous: false, inputs: [{ indexed: true, name: "listingId", type: "bytes32" }, { indexed: true, name: "soul", type: "address" }, { indexed: false, name: "yield", type: "uint256" }, { indexed: false, name: "fee", type: "uint256" }], name: "Claimed", type: "event" },
+  { anonymous: false, inputs: [{ indexed: true, name: "listingId", type: "bytes32" }, { indexed: true, name: "brand", type: "address" }, { indexed: false, name: "amount", type: "uint256" }], name: "Deposited", type: "event" },
+  { anonymous: false, inputs: [{ indexed: true, name: "listingId", type: "bytes32" }, { indexed: true, name: "brand", type: "address" }, { indexed: false, name: "amount", type: "uint256" }], name: "Refunded", type: "event" },
+  { inputs: [], name: "FEE_BPS", outputs: [{ name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "listingId", type: "bytes32" }, { name: "soul", type: "address" }, { name: "amount", type: "uint256" }], name: "claim", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ name: "listingId", type: "bytes32" }, { name: "amount", type: "uint256" }], name: "deposit", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ name: "listingId", type: "bytes32" }], name: "getBalance", outputs: [{ name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "listingId", type: "bytes32" }], name: "getBrand", outputs: [{ name: "", type: "address" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "", type: "bytes32" }], name: "listings", outputs: [{ name: "brand", type: "address" }, { name: "balance", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "operator", outputs: [{ name: "", type: "address" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "listingId", type: "bytes32" }], name: "refund", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [], name: "usdc", outputs: [{ name: "", type: "address" }], stateMutability: "view", type: "function" },
+] as const;
+
+export const ERC20_ABI = [
+  { inputs: [{ name: "spender", type: "address" }, { name: "amount", type: "uint256" }], name: "approve", outputs: [{ name: "", type: "bool" }], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ name: "owner", type: "address" }, { name: "spender", type: "address" }], name: "allowance", outputs: [{ name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "account", type: "address" }], name: "balanceOf", outputs: [{ name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "decimals", outputs: [{ name: "", type: "uint8" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "symbol", outputs: [{ name: "", type: "string" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "to", type: "address" }, { name: "amount", type: "uint256" }], name: "transfer", outputs: [{ name: "", type: "bool" }], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ name: "from", type: "address" }, { name: "to", type: "address" }, { name: "amount", type: "uint256" }], name: "transferFrom", outputs: [{ name: "", type: "bool" }], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ name: "to", type: "address" }, { name: "amount", type: "uint256" }], name: "mint", outputs: [], stateMutability: "nonpayable", type: "function" },
+] as const;

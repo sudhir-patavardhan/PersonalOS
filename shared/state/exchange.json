@@ -1,0 +1,119 @@
+{
+  "listings": [
+    {
+      "brandId": "brand_1",
+      "brandName": "Whole Foods Market",
+      "category": "dining.grocery",
+      "bidPerClaim": 1.5,
+      "escrowFunded": 50,
+      "minScoreThreshold": 40,
+      "headline": "Share your grocery insights",
+      "body": "",
+      "id": "listing_live_mr4f8kz9_xk9r9c",
+      "escrowRemaining": 47,
+      "status": "active",
+      "createdAt": "2026-07-03T04:16:32.565Z"
+    }
+  ],
+  "offers": [
+    {
+      "id": "offer_live_mr4f8p20_wii0sz",
+      "listingId": "listing_live_mr4f8kz9_xk9r9c",
+      "soulId": "priya",
+      "brandId": "brand_1",
+      "brandName": "Whole Foods Market",
+      "category": "dining.grocery",
+      "bidPerClaim": 1.5,
+      "compositeScore": 1.27,
+      "matchedCategories": [
+        "dining.grocery"
+      ],
+      "status": "claimed",
+      "exchangeRunId": "run_live_mr4f8p20_whq5gp",
+      "createdAt": "2026-07-03T04:16:37.848Z"
+    },
+    {
+      "id": "offer_live_mr4f8p20_p2sve2",
+      "listingId": "listing_live_mr4f8kz9_xk9r9c",
+      "soulId": "marcus",
+      "brandId": "brand_1",
+      "brandName": "Whole Foods Market",
+      "category": "dining.grocery",
+      "bidPerClaim": 1.5,
+      "compositeScore": 1.2,
+      "matchedCategories": [
+        "dining.grocery"
+      ],
+      "status": "pending",
+      "exchangeRunId": "run_live_mr4f8p20_whq5gp",
+      "createdAt": "2026-07-03T04:16:37.848Z"
+    },
+    {
+      "id": "offer_live_mr5krmj9_rmtjz3",
+      "listingId": "listing_live_mr4f8kz9_xk9r9c",
+      "soulId": "priya",
+      "brandId": "brand_1",
+      "brandName": "Whole Foods Market",
+      "category": "dining.grocery",
+      "bidPerClaim": 1.5,
+      "compositeScore": 1.27,
+      "matchedCategories": [
+        "dining.grocery"
+      ],
+      "status": "claimed",
+      "exchangeRunId": "run_live_mr5krmj9_qp5dok",
+      "createdAt": "2026-07-03T23:39:05.301Z"
+    }
+  ],
+  "settlements": [
+    {
+      "id": "settlement_live_mr5kp9ia_4i8usg",
+      "offerId": "offer_live_mr4f8p20_wii0sz",
+      "listingId": "listing_live_mr4f8kz9_xk9r9c",
+      "soulId": "priya",
+      "brandId": "brand_1",
+      "category": "dining.grocery",
+      "bidUsdc": 1.5,
+      "yieldUsdc": 1.35,
+      "feeUsdc": 0.15,
+      "txHash": "0xaf8be61e65b88e2c9660247c978aa7a9fb24c5b2653f2bcd60373c85377f465d",
+      "claimedAt": "2026-07-03T23:37:15.106Z"
+    },
+    {
+      "id": "settlement_live_mr5kruzm_arpcun",
+      "offerId": "offer_live_mr5krmj9_rmtjz3",
+      "listingId": "listing_live_mr4f8kz9_xk9r9c",
+      "soulId": "priya",
+      "brandId": "brand_1",
+      "category": "dining.grocery",
+      "bidUsdc": 1.5,
+      "yieldUsdc": 1.35,
+      "feeUsdc": 0.15,
+      "txHash": "0xa06739003dd87a41e9ce4299298f569886560d3d01f81eff5b8a43d8fa6f31fa",
+      "claimedAt": "2026-07-03T23:39:16.258Z"
+    }
+  ],
+  "exchangeRuns": [
+    {
+      "id": "run_live_mr4f8p20_whq5gp",
+      "matchCount": 2,
+      "categoriesCovered": 1,
+      "offersCreated": 2,
+      "ranAt": "2026-07-03T04:16:37.848Z"
+    },
+    {
+      "id": "run_live_mr5kocpr_mxswiz",
+      "matchCount": 2,
+      "categoriesCovered": 0,
+      "offersCreated": 0,
+      "ranAt": "2026-07-03T23:36:32.608Z"
+    },
+    {
+      "id": "run_live_mr5krmj9_qp5dok",
+      "matchCount": 2,
+      "categoriesCovered": 1,
+      "offersCreated": 1,
+      "ranAt": "2026-07-03T23:39:05.301Z"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+services:
+  launcher:
+    build: ./demo-launcher
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./demo-launcher/src:/app/src
+      - ./demo-launcher/public:/app/public
+    environment:
+      - DEMO_MODE=true
+    depends_on:
+      - operator
+      - brand
+      - soul
+
+  operator:
+    build: ./operator-console
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./operator-console/src:/app/src
+    environment:
+      - DEMO_MODE=true
+
+  brand:
+    build: ./brand-portal
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./brand-portal/src:/app/src
+    environment:
+      - DEMO_MODE=true
+
+  soul:
+    build: ./soul-app
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./soul-app/src:/app/src
+    environment:
+      - DEMO_MODE=true

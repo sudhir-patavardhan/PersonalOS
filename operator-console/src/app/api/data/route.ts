@@ -1,6 +1,7 @@
 import { getSyntheticData } from '@/lib/synthetic-data';
 import { CATEGORIES, CATEGORY_DISPLAY_NAMES, FEE_RATE } from '@/lib/types';
 import type { CategoryMetrics, DashboardKPI } from '@/lib/types';
+import { getSettlements as getLiveSettlements } from '@/lib/state';
 
 export async function GET() {
   const { souls, brands, settlements } = getSyntheticData();
@@ -87,16 +88,32 @@ export async function GET() {
     };
   });
 
-  const totalVolume = settlements.reduce((s, t) => s + t.bidUsdc, 0);
-  const totalFees = settlements.reduce((s, t) => s + t.feeUsdc, 0);
-  const totalYield = settlements.reduce((s, t) => s + t.yieldUsdc, 0);
+  const liveSettlements = getLiveSettlements();
+  const convertedLiveSettlements = liveSettlements.map(s => ({
+    id: s.id,
+    brandName: s.brandId === 'brand_1' ? 'Whole Foods Market' : s.brandId === 'brand_3' ? 'Chase Sapphire' : s.brandId,
+    category: s.category,
+    soulWalletDisplay: `${s.soulId}`,
+    bidUsdc: s.bidUsdc,
+    yieldUsdc: s.yieldUsdc,
+    feeUsdc: s.feeUsdc,
+    txHash: s.txHash,
+    settledAt: s.claimedAt,
+    onChain: s.txHash.startsWith('0x') && s.txHash.length === 66,
+  }));
+
+  const allSettlements = [...convertedLiveSettlements, ...settlements];
+
+  const totalVolume = allSettlements.reduce((s, t) => s + t.bidUsdc, 0);
+  const totalFees = allSettlements.reduce((s, t) => s + t.feeUsdc, 0);
+  const totalYield = allSettlements.reduce((s, t) => s + t.yieldUsdc, 0);
 
   return Response.json({
     kpis,
     categories,
     brands,
     souls: souls.map(s => ({ id: s.id, walletDisplay: s.walletDisplay, depthScore: s.depthScore, phase: s.phase, consentCount: s.consents.filter(c => !c.revokedAt).length })),
-    settlements,
-    summary: { totalSettlements: settlements.length, totalVolume, totalFees, totalYield },
+    settlements: allSettlements,
+    summary: { totalSettlements: allSettlements.length, totalVolume, totalFees, totalYield },
   });
 }

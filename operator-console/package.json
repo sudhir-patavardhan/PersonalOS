@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@personalos/matching": "file:../shared/matching",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.11.1",
     "jose": "^6.2.3",
@@ -19,7 +20,8 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "recharts": "^3.9.1",
-    "uuid": "^14.0.1"
+    "uuid": "^14.0.1",
+    "viem": "^2.54.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'personalos-operator-console-dev-secret-change-in-production');
-const PUBLIC_PATHS = ['/login', '/setup', '/api/auth/login', '/api/auth/setup', '/api/auth/check-setup'];
+const PUBLIC_PATHS = ['/login', '/setup', '/api/auth/login', '/api/auth/setup', '/api/auth/check-setup', '/api/auth/demo-login', '/api/health'];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;

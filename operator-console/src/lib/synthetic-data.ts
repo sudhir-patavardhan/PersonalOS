@@ -1,5 +1,6 @@
 import { createHash } from 'crypto';
 import { Soul, Brand, Listing, Settlement, Consent, FEE_RATE } from './types';
+import { categoryOverlaps } from './matching';
 
 class SeededRandom {
   private seed: number;
@@ -232,7 +233,7 @@ function generateSettlements(souls: Soul[], brands: Brand[], rng: SeededRandom):
       const eligibleListings = allListings.filter(listing => {
         if (listing.status !== 'active') return false;
         if (listing.escrowRemainingUsdc < listing.bidPerClaimUsdc) return false;
-        const consent = soul.consents.find(cn => cn.category === listing.category && !cn.revokedAt);
+        const consent = soul.consents.find(cn => categoryOverlaps(cn.category, [listing.category]) && !cn.revokedAt);
         if (!consent) return false;
         if (consent.yieldFloorUsdc > listing.bidPerClaimUsdc) return false;
         const score = soul.noisyScores[listing.category];
