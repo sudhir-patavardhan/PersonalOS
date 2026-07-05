@@ -83,6 +83,8 @@ export interface Offer {
   claimedAt: string | null;
   dismissedAt: string | null;
   soulFraming: string;
+  brandBadge?: string | null;
+  brandScore?: number;
 }
 
 export interface WalletTransaction {

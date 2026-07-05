@@ -44,9 +44,10 @@ export interface ListingProfile {
   bidPerClaim: number;
   minScoreThreshold: number;
   escrowRemaining: number;
-  status: 'active' | 'paused' | 'depleted';
+  status: 'active' | 'paused' | 'depleted' | 'exhausted';
   headline: string;
   body: string;
+  brandContextualScore?: number;
 }
 
 export interface MatchResult {

@@ -1,0 +1,52 @@
+{
+  "weights": {
+    "claimRate": 0.40,
+    "bidFairness": 0.30,
+    "escrowHealth": 0.30
+  },
+  "coldStart": {
+    "baseScore": 75,
+    "graduationThreshold": 20
+  },
+  "trend": {
+    "minBaselineSettlements": 20,
+    "minCurrentSettlements": 3,
+    "baselineDays": 30,
+    "currentDays": 7,
+    "multiplierMin": 0.9,
+    "multiplierMax": 1.2,
+    "floor": 60
+  },
+  "escrowHealth": {
+    "absoluteFloor": 50,
+    "tiers": [
+      { "minDays": 30, "score": 100 },
+      { "minDays": 14, "score": 70 },
+      { "minDays": 7, "score": 40 },
+      { "minDays": 0, "score": 10 }
+    ]
+  },
+  "seasonality": {
+    "dining.grocery": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.1, 1.2],
+    "dining.restaurant": [0.9, 1.0, 1.0, 1.0, 1.1, 1.15, 1.15, 1.1, 1.0, 1.0, 1.1, 1.2],
+    "shopping.fashion": [0.9, 0.9, 1.0, 1.1, 1.1, 1.0, 1.0, 1.1, 1.1, 1.0, 1.2, 1.3],
+    "shopping.research": [0.95, 0.95, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.1, 1.2, 1.2],
+    "travel.pattern": [0.8, 0.9, 1.1, 1.1, 1.1, 1.3, 1.3, 1.2, 1.0, 0.9, 1.1, 1.2],
+    "health.fitness": [1.3, 1.2, 1.1, 1.0, 1.0, 1.0, 0.9, 0.9, 1.1, 1.0, 0.9, 0.9],
+    "finance.banking": [1.1, 1.0, 1.0, 1.2, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.1],
+    "entertainment.streaming": [1.0, 1.0, 1.0, 1.0, 1.0, 0.9, 0.9, 0.9, 1.1, 1.1, 1.2, 1.2]
+  },
+  "cohorts": {
+    "wellness": { "requires": ["dining.grocery", "health.fitness"], "boost": 1.10 },
+    "techForward": { "requires": ["shopping.research", "entertainment.streaming"], "boost": 1.05 },
+    "traveler": { "requires": ["travel.pattern", "transport.commute"], "boost": 1.08 },
+    "foodie": { "requires": ["dining.grocery", "dining.restaurant"], "boost": 1.07 },
+    "financeSavvy": { "requires": ["finance.banking", "finance.investment"], "boost": 1.06 }
+  },
+  "badges": {
+    "trending": { "threshold": 1.10 },
+    "seasonalPick": { "threshold": 1.15 },
+    "popularNearby": { "threshold": 1.10, "requiresMarketOverlap": true },
+    "repeatFavorite": { "claimsRequired": 3, "windowDays": 30 }
+  }
+}

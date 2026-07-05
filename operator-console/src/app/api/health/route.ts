@@ -8,7 +8,7 @@ export async function GET() {
 
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const claimsToday = data.settlements.filter(s => new Date(s.timestamp) >= todayStart).length;
+  const claimsToday = data.settlements.filter(s => new Date(s.settledAt) >= todayStart).length;
 
   return Response.json({
     status: 'ok',

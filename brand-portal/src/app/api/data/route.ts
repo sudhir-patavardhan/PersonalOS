@@ -72,11 +72,46 @@ export async function GET() {
   const liveSettlements = getLiveSettlements({ brandId: session.brandId });
   const liveMetrics = getLiveMetrics();
 
+  const convertedLiveListings = liveListings.map(l => ({
+    id: l.id,
+    brandId: l.brandId,
+    brandName: l.brandName,
+    category: l.category,
+    bidPerClaimUsdc: l.bidPerClaim,
+    minScoreThreshold: l.minScoreThreshold,
+    escrowFundedUsdc: l.escrowFunded,
+    escrowRemainingUsdc: l.escrowRemaining,
+    status: l.status as string,
+    createdAt: l.createdAt,
+    headline: l.headline,
+    body: l.body,
+    isLive: true,
+  }));
+
+  const liveListingIds = new Set(convertedLiveListings.map(l => l.id));
+  const mergedListings = [
+    ...convertedLiveListings,
+    ...listings.filter(l => !liveListingIds.has(l.id)),
+  ];
+
+  const convertedLiveSettlements = liveSettlements.map(s => ({
+    id: s.id,
+    listingId: s.listingId,
+    category: s.category,
+    yieldUsdc: s.yieldUsdc,
+    feeUsdc: s.feeUsdc,
+    bidUsdc: s.bidUsdc,
+    txHash: s.txHash,
+    settledAt: s.claimedAt,
+  }));
+
+  const allSettlements = [...convertedLiveSettlements, ...settlements];
+
   return Response.json({
     profile,
     kpis,
-    listings,
-    settlements,
+    listings: mergedListings,
+    settlements: allSettlements,
     escrowTransactions,
     reputationTrend,
     alerts,
@@ -84,9 +119,9 @@ export async function GET() {
     topListings,
     dailyClaims: Object.values(dailyClaims).reverse(),
     summary: {
-      totalClaims: settlements.length,
-      totalSpend,
-      totalFees: settlements.reduce((s, t) => s + t.feeUsdc, 0),
+      totalClaims: allSettlements.length,
+      totalSpend: allSettlements.reduce((s, t) => s + t.bidUsdc, 0),
+      totalFees: allSettlements.reduce((s, t) => s + t.feeUsdc, 0),
       budgetRemaining,
     },
     live: {

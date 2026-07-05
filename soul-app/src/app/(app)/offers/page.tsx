@@ -144,6 +144,7 @@ export default function OffersPage() {
                   <h3 className="text-sm font-medium text-white mt-1">{offer.headline}</h3>
                   <div className="flex items-center gap-2 mt-2">
                     <span className="text-[10px] font-medium text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded-full">{offer.categoryDisplay}</span>
+                    {offer.brandBadge && <BrandBadge badge={offer.brandBadge} />}
                     <span className="text-[10px] text-zinc-500"><TimeLeft expiresAt={offer.expiresAt} /></span>
                   </div>
                 </div>
@@ -190,7 +191,10 @@ export default function OffersPage() {
             <div className="glass-card p-4">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-medium text-white bg-white/10 px-2 py-0.5 rounded">{selectedOffer.brandName}</span>
-                <span className="text-[10px] text-zinc-500">Rep: {selectedOffer.brandReputation}/100</span>
+                {selectedOffer.brandBadge && <BrandBadge badge={selectedOffer.brandBadge} />}
+                {selectedOffer.brandScore !== undefined && (
+                  <span className="text-[10px] text-zinc-500">Score: {selectedOffer.brandScore}/100</span>
+                )}
               </div>
               <h3 className="text-lg font-semibold text-white">{selectedOffer.headline}</h3>
               <p className="text-sm text-zinc-300 mt-2 leading-relaxed">{selectedOffer.body}</p>
@@ -223,5 +227,29 @@ export default function OffersPage() {
         </div>
       )}
     </div>
+  );
+}
+
+const BADGE_STYLES: Record<string, string> = {
+  'Trending': 'text-orange-400 bg-orange-500/10',
+  'Seasonal Pick': 'text-emerald-400 bg-emerald-500/10',
+  'Popular Nearby': 'text-blue-400 bg-blue-500/10',
+  'Repeat Favorite': 'text-pink-400 bg-pink-500/10',
+};
+
+const BADGE_ICONS: Record<string, string> = {
+  'Trending': '🔥',
+  'Seasonal Pick': '🌿',
+  'Popular Nearby': '📍',
+  'Repeat Favorite': '💜',
+};
+
+function BrandBadge({ badge }: { badge: string }) {
+  const style = BADGE_STYLES[badge] || 'text-zinc-400 bg-zinc-500/10';
+  const icon = BADGE_ICONS[badge] || '';
+  return (
+    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${style}`}>
+      {icon} {badge}
+    </span>
   );
 }

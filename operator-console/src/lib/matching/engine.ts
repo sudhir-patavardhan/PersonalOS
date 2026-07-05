@@ -56,7 +56,10 @@ export function matchSoulToListing(soul: SoulProfile, listing: ListingProfile): 
 
   if (!bestConsent || bestScore < 0) return null;
 
-  const composite = listing.bidPerClaim * soul.reputation * recencyWeight(soul, bestConsent.category);
+  const brandScoreFactor = listing.brandContextualScore !== undefined
+    ? listing.brandContextualScore / 100
+    : 1.0;
+  const composite = listing.bidPerClaim * soul.reputation * recencyWeight(soul, bestConsent.category) * brandScoreFactor;
 
   return {
     soulId: soul.id,
