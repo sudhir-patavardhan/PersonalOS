@@ -57,3 +57,51 @@ Fee split percentage is deferred to a commercial decision.
 - Base is EVM-compatible — standard Solidity tooling applies.
 - Immutable contract means bugs in settlement logic cannot be patched without migrating to a new contract and updating all active Listings.
 - Crypto-native positioning may slow early Brand adoption among non-crypto advertisers; offset by the seamless Coinbase Commerce conversion flow.
+
+---
+
+## Amendment: Soul Reputation Proof On-Chain (July 2026)
+
+To support the Compounding Data Identity vertex of the Impossible Triangle (ADR-62 §1), soul reputation data is anchored on-chain as a verifiable, tamper-proof record.
+
+### What is stored on-chain
+
+A periodic reputation proof for each active soul, submitted as calldata on Base:
+
+```
+ReputationProof {
+  soulHash: bytes32        // hashed soul identifier (not wallet address — privacy-preserving)
+  compositeScore: uint16   // 0-100 composite reputation score
+  followThroughRate: uint16 // 0-10000 (basis points, e.g., 7800 = 78%)
+  sourceCount: uint8       // number of connected data sources (0-15)
+  tenureWeeks: uint16      // weeks since soul onboarding
+  proofTimestamp: uint256
+}
+```
+
+### How it works
+
+1. The PersonalOS backend computes the soul's composite reputation score on the server from aggregated, anonymized signals (claim history, follow-through rate, source count, tenure)
+2. A weekly batch job submits reputation proofs for all active souls as calldata on Base
+3. The proof is a commitment — it does not reveal raw data, individual transactions, or PII
+4. Souls can reference their on-chain reputation proof when interacting with other platforms or services that recognize PersonalOS reputation
+
+### Why on-chain
+
+- **Compounding identity:** A soul's reputation proof accumulates over time. Even if PersonalOS ceased to exist, the on-chain record persists — the soul's verified behavioral history is theirs, not the platform's
+- **Portable trust:** Other platforms or services can verify a soul's reputation without trusting PersonalOS's API — the proof is on Base chain, readable by anyone
+- **Anti-gaming:** Historical proofs are immutable. A soul cannot retroactively inflate their reputation. The chain of weekly proofs creates a verifiable trajectory
+- **Impossible Triangle support:** The accumulated reputation proofs are the concrete mechanism behind "compounding data identity" (ADR-62 Vertex 2) — technology is replicable, but years of verified on-chain reputation history is not
+
+### Privacy constraints
+
+- `soulHash` is a one-way hash — cannot be reversed to identify the soul without the original identifier
+- No PII, wallet address, or transaction data is included in the proof
+- The proof reveals aggregate reputation metrics only — not which categories, which brands, or which specific claims contributed to the score
+- Souls can opt out of on-chain reputation proofing (reputation is still computed, just not anchored on-chain)
+
+### Storage choice
+
+Base chain calldata (not contract storage) for cost efficiency. At ~$0.001 per proof submission on Base L2, weekly proofs for 10,000 souls cost ~$10/week. Alternative: Arweave for permanent storage at even lower cost if Base calldata pruning becomes a concern at scale.
+
+> **Amendment log:** July 2026 — Added soul reputation proof on-chain storage per delivery channel grilling decisions. Supports ADR-62 (Impossible Triangle, Vertex 2: Compounding Data Identity).

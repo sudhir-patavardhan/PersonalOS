@@ -39,7 +39,7 @@ Left sidebar navigation:
 └── Settings          (Brand profile, team members, API keys)
 ```
 
-#### Module A — Dashboard (Campaign Overview)
+#### Module A — Dashboard (Campaign Overview + Aggregate Demand)
 
 Landing page with 6 KPI cards:
 
@@ -53,6 +53,8 @@ Landing page with 6 KPI cards:
 | Estimated Runway | Days until budget exhaustion at current spend rate |
 
 Plus: a claims-over-time sparkline chart, top-performing Listings by claim rate, and alerts (low escrow, depleted Listing, paused Listing).
+
+**Aggregate Demand Dashboard (Free — all tiers including Starter):** Below the KPI cards, all brands (including free Starter tier) see an aggregate demand overview showing verified intent volume by category, region, and engagement level. This is the "browse before you buy" hook — brands see real demand exists before spending anything. Data is privacy-preserved (k≥50, noised ±10%) and sourced from aggregate soul consent data. This dashboard is the entry point to PersonalOS's demand intelligence product (ADR-61 §2, Channel B).
 
 #### Module B — Listing Management
 
@@ -84,6 +86,8 @@ Read-only campaign analytics with aggregate data:
 - **Budget utilization:** Spend vs. funded across all Listings.
 - **Conversion signal:** Aggregate Reputation trend — did claims lead to detected purchases? Shown as a directional indicator (improving/stable/declining), not per-Soul.
 - **Comparative benchmarks:** Brand's cost-per-claim vs. category median (without revealing competitor bids).
+- **Conversion attribution (Scale+ only):** Measures PersonalOS direct channel conversion vs. brand's other channels — establishes the "what good looks like" benchmark for the brand's entire media portfolio (ADR-61 §2).
+- **Exclusion list API (Scale+ only):** API endpoint delivering time-locked (7-day) category-level suppression signal batches. Brands integrate these signals into their Meta/Google campaigns to reduce waste on audiences that have already converted or declared non-intent. Access is gated by subscription NFT (ADR-60 §3-4).
 
 #### Module E — Campaign Optimization
 
@@ -204,3 +208,8 @@ Shared code: The synthetic data module lives in a shared workspace package (`pac
 - ADR-37: Re-identification mitigation (k ≥ 50)
 - ADR-42: Brand onboarding and Listing lifecycle
 - ADR-45: Operator Console (shared synthetic data, shared tech stack)
+- ADR-58: Revenue Model & Subscription Tiers
+- ADR-60: Brand Intelligence Protection (subscription NFT, access audit, exclusion time-locks)
+- ADR-61: Platform Positioning & Delivery Channel Strategy (demand intelligence product tiers)
+
+> **Amendment log:** July 2026 — Added aggregate demand dashboard as free Starter feature (Module A), conversion attribution and exclusion list API at Scale+ (Module D), per delivery channel grilling decisions.

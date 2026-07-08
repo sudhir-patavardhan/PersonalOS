@@ -104,6 +104,7 @@ The free Starter tier is the "browse before you buy" pattern from the user journ
 | Creative review | Standard queue (< 24 hours) |
 | Support | Email, 48-hour SLA |
 | Escrow requirement | Per ADR-42 (minimum 10× bid per listing) |
+| **Demand intelligence** | Category-level demand patterns: intent peaks, correlated behaviors, converting price points |
 
 #### Scale — $999/month
 
@@ -117,6 +118,9 @@ The free Starter tier is the "browse before you buy" pattern from the user journ
 | Support | Email + chat, 24-hour SLA |
 | Reputation bond | Required ($1K refundable USDC, per ADR-53 §10) |
 | API access | Full Brand Portal API for programmatic listing management |
+| **Conversion attribution** | PersonalOS direct channel conversion vs. brand's other channels — "what good looks like" benchmark |
+| **Category suppression signals** | Aggregate signals to reduce waste on Meta/Google by adjusting targeting based on real conversion data (ADR-61 §5) |
+| **Exclusion list API** | Time-locked (7-day) category-level suppression signal batches via API (ADR-60 §4) |
 
 #### Enterprise — $4,999/month
 
@@ -132,6 +136,8 @@ The free Starter tier is the "browse before you buy" pattern from the user journ
 | API access | Full API + webhooks for real-time claim events |
 | Platinum pool access | Can target Platinum souls via commitment escrow (ADR-54 §5) |
 | Custom categories | Request new subcategories in the taxonomy |
+| **ZK matching** | Zero-knowledge matching for Ready/Platinum audience composition — brand sees results, never matching criteria (ADR-60 §5) |
+| **Demand forecasting** | Predictive models for category demand based on cross-source intent patterns |
 
 ### 5. Brand Billing
 
@@ -189,4 +195,6 @@ The immutable settlement fee ceiling (10%) remains the trust anchor. Subscriptio
 
 ---
 
-> **See also:** ADR-33 (USDC Settlement), ADR-35 (Fee Split), ADR-42 (Brand Lifecycle), ADR-53 (Intent Marketplace), ADR-54 (Soul Tiers)
+> **See also:** ADR-33 (USDC Settlement), ADR-35 (Fee Split), ADR-42 (Brand Lifecycle), ADR-53 (Intent Marketplace), ADR-54 (Soul Tiers), ADR-60 (Brand Intelligence Protection), ADR-61 (Delivery Channel Strategy)
+>
+> **Amendment log:** July 2026 — Added tiered intelligence products (demand intelligence at Growth, conversion attribution + suppression + exclusion API at Scale, ZK matching + demand forecasting at Enterprise) per delivery channel grilling decisions.
